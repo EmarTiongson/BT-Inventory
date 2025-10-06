@@ -1,0 +1,71 @@
+# ---- PYTHON ----
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+*.manifest
+*.spec
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+.pytest_cache/
+.mypy_cache/
+.dmypy.json
+.pyre/
+
+# Django-related
+db.sqlite3
+media/
+staticfiles/
+*.log
+
+# ---- NODE / FRONTEND ----
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Build outputs
+dist/
+build/
+.cache/
+coverage/
+*.tmp
+*.temp
+
+# ---- ENVIRONMENT & CONFIG ----
+.env
+*.env
+.env.*
+
+# ---- OS / EDITOR FILES ----
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
+*.bak
+
+# ---- PROJECT SPECIFIC ----
+# Ignore uploaded or large media files
+assets/video/
+assets/images/
+
+# Keep icons or small logos if needed
+!assets/images/brite-logo.png
+
+# ---- DOCKER ----
+*.pid
+docker-compose.override.yml
+
+# ---- MISC ----
+# Ignore compiled JS maps if you use bundlers
+*.map

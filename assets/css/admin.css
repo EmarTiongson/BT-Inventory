@@ -1,0 +1,167 @@
+/* dashboard.css - light / base styles (no dark-mode rules) */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #f8f9fa;
+  color: #222;
+  min-height: 100vh;
+  display: flex;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background: #fff;
+  border-right: 1px solid #e0e0e0;
+  padding: 18px 0;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  height: 100vh;
+  overflow-y: auto;
+  transition: width 0.28s ease;
+}
+
+.sidebar.collapsed { width: 80px; }
+.sidebar.collapsed .nav-item span { opacity: 0; width: 0; overflow: hidden; }
+.sidebar.collapsed .toggle-text { display: none; }
+
+/* Toggle button */
+.toggle-btn {
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: none;
+  border: none;
+  color: #667eea;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.toggle-btn:hover { background: #f0f0ff; }
+.toggle-btn i { font-size: 1.2rem; width: 24px; text-align: center; }
+
+/* Nav items */
+.nav-item {
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #2c3e50;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border-left: 3px solid transparent;
+  transition: background .18s ease;
+}
+.nav-item i { font-size: 1.2rem; width: 24px; text-align:center; }
+.nav-item:hover { background: #f5f5f5; color: #000; }
+.nav-item.active { background: #d4f4dd; border-left-color: #28a745; color: #000; }
+.nav-item.signout { margin-top: auto; color: #dc3545; }
+.nav-item.signout:hover { background: #ffe6e6; }
+
+/* Main content */
+.main-content {
+  margin-left: 250px;
+  flex: 1;
+  padding: 30px 40px;
+  transition: margin-left 0.28s ease;
+}
+.main-content.expanded { margin-left: 80px; }
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+.search-bar {
+  flex: 1;
+  max-width: 600px;
+  position: relative;
+}
+.search-bar input {
+  width: 100%;
+  padding: 10px 16px 10px 42px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 0.95rem;
+}
+.search-bar i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+}
+
+/* Theme toggle (settings button) */
+.settings-btn, .settings-btn:focus {
+  width: 45px;
+  height: 45px;
+  background: #2c3e50;
+  border: none;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #fff;
+  margin-left: 18px;
+  transition: transform .2s ease, background .2s;
+}
+.settings-btn:hover { transform: rotate(90deg); background: #1a252f; }
+
+/* Titles & content */
+.page-title { font-size: 1.85rem; color: #2c3e50; margin: 12px 0 24px; font-weight: 400; }
+.content-card { background: #fff; border-radius: 12px; padding: 22px; box-shadow: 0 6px 20px rgba(0,0,0,0.04); }
+
+/* Add button */
+.add-btn {
+  padding: 10px 18px;
+  background: #6dd5ed;
+  border: none;
+  border-radius: 8px;
+  color: #1e2130;
+  font-weight: 600;
+  margin-bottom: 16px;
+  cursor: pointer;
+}
+.add-btn:hover { background: #5bc5dd; transform: translateY(-2px); }
+
+/* Table */
+.data-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+.data-table thead { background: #f8f9fa; }
+.data-table th, .data-table td {
+  padding: 14px 12px;
+  text-align: left;
+  font-size: 0.92rem;
+  border-bottom: 1px solid #eef1f4;
+}
+.data-table th { font-weight: 600; color: #6c757d; border-bottom: 2px solid #e9ecef; }
+.data-table tbody tr:hover { background: #fbfdff; }
+
+/* Action buttons */
+.action-btn { padding: 7px 14px; border-radius: 6px; border: none; font-weight: 600; cursor: pointer; margin-right: 8px; }
+.update-btn { background: #e9ecef; color: #495057; }
+.update-btn:hover { background: #dee2e6; }
+.delete-btn { background: #dc3545; color: #fff; }
+.delete-btn:hover { background: #c82333; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar { width: 200px; }
+  .main-content { margin-left: 200px; padding: 18px; }
+  .page-title { font-size: 1.4rem; }
+}
+@media (max-width: 576px) {
+  .sidebar { transform: translateX(-100%); position: fixed; z-index: 1000; }
+  .sidebar.open { transform: translateX(0); }
+  .main-content { margin-left: 0; }
+}

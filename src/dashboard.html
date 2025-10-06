@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inventory System - Dashboard</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
+
+  <!-- Base (light) styles then dark overrides -->
+  <link rel="stylesheet" href="../assets/css/admin.css">
+  <link rel="stylesheet" href="../assets/css/darkcont.css">
+</head>
+
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <button class="toggle-btn" id="sidebarToggle">
+      <i class="bi bi-list"></i>
+      <span class="toggle-text">Collapse Menu</span>
+    </button>
+
+    <a href="#" class="nav-item active">
+      <i class="bi bi-house-door-fill"></i>
+      <span>Dashboard</span>
+    </a>
+
+    <a href="#" class="nav-item">
+      <i class="bi bi-box-seam"></i>
+      <span>Inventory Management</span>
+    </a>
+
+    <a href="#" class="nav-item">
+      <i class="bi bi-cart3"></i>
+      <span>Order Management</span>
+    </a>
+
+    <a href="#" class="nav-item">
+      <i class="bi bi-file-earmark-text"></i>
+      <span>Reports</span>
+    </a>
+
+    <a href="#" class="nav-item">
+      <i class="bi bi-bell"></i>
+      <span>Alert & Notification</span>
+    </a>
+
+    <a href="#" class="nav-item">
+      <i class="bi bi-people"></i>
+      <span>User Management</span>
+    </a>
+
+    <a href="#" class="nav-item signout">
+      <i class="bi bi-box-arrow-right"></i>
+      <span>Signout</span>
+    </a>
+  </div>
+
+  <!-- Main content -->
+  <div class="main-content" id="mainContent">
+    <div class="header">
+      <div class="search-bar">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Search here..." aria-label="Search">
+      </div>
+
+      <!-- Dark mode toggle button -->
+      <button class="settings-btn" id="themeToggle" aria-pressed="false" title="Toggle dark mode">
+        <i id="darkModeIcon" class="bi bi-moon-fill" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <h1 class="page-title">User Management</h1>
+
+    <div class="content-card">
+  <!-- JS (base behavior then dark mode logic) -->
+  <script src="../assets/js/admin.js"></script>
+  <script src="../assets/js/darkcont.js"></script>
+</body>
+</html>

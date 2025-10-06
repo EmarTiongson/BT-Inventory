@@ -1,0 +1,306 @@
+/* Reset and base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #e8eaf0, #d0d4dc);
+  overflow: hidden;
+  transition: background 0.3s ease, color 0.3s ease;
+  position: relative;
+  color: #000;
+}
+
+body.dark-mode {
+  background: linear-gradient(135deg, #121212, #000);
+  color: #fff;
+}
+
+/* Canvas */
+#backgroundCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+/* Container */
+.container {
+  position: relative;
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-radius: 16px;
+  padding: 50px;
+  width: 150%;
+  max-width: 380px;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.12);
+  text-align: center;
+  transition: all 0.3s ease;
+  margin-bottom: 20px;
+}
+
+body.dark-mode .container {
+  background: rgba(20, 20, 20, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.5);
+}
+
+/* Logo (above container) */
+.logo-top {
+  margin-bottom: 15px;
+  text-align: center;
+  z-index: 2;
+}
+
+.logo-top img {
+  width: 160px;
+  height: auto;
+}
+
+/* Title */
+.login-box h3 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: inherit;
+}
+
+.login-box .subtitle {
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+body.dark-mode .login-box .subtitle {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Form */
+.form-group {
+  margin-bottom: 18px;
+  text-align: left;
+  position: relative;
+}
+
+.form-group label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px 44px 12px 12px; /* extra padding right for eye icon */
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.2); /* default border */
+  font-size: 0.95rem;
+  font-family: 'Poppins', sans-serif;
+  background: rgba(255, 255, 255, 0.85);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, background 0.3s ease, color 0.3s ease;
+  color: #000;
+}
+
+.form-group input::placeholder {
+  color: #666;
+}
+
+/* Orange glow shadow on focus */
+.form-group input:focus {
+  outline: none;
+  border-color: #ff7a00;
+  box-shadow: 0 0 8px 3px rgba(255, 122, 0, 0.4);
+}
+
+/* Dark mode form inputs */
+body.dark-mode .form-group input {
+  background: rgba(40, 40, 40, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+body.dark-mode .form-group input::placeholder {
+  color: #aaa;
+}
+
+body.dark-mode .form-group input:focus {
+  border-color: #ff7a00;
+  box-shadow: 0 0 8px 3px rgba(255, 140, 60, 0.4);
+}
+
+/* Forgot Password */
+.forgot-password {
+  text-align: right;
+  margin-top: 4px;
+}
+
+.forgot-password a {
+  font-size: 0.8rem;
+  text-decoration: none;
+  color: #666;
+  font-weight: 400;
+  transition: color 0.3s ease;
+}
+
+.forgot-password a:hover {
+  color: #000;
+}
+
+body.dark-mode .forgot-password a {
+  color: #bbb;
+}
+
+body.dark-mode .forgot-password a:hover {
+  color: #fff;
+}
+
+/* Reveal Password Icon */
+#togglePassword {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.15rem;
+  color: #444; /* default icon color */
+  cursor: pointer;
+  z-index: 2;
+  opacity: 0.9;
+  user-select: none;
+  transition: color 0.2s ease;
+}
+
+body.dark-mode #togglePassword {
+  color: #ccc; /* lighter icon in dark mode */
+}
+
+#togglePassword:hover {
+  opacity: 1;
+}
+
+/* Button */
+.sign-in-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  color: #fff;
+  background: linear-gradient(135deg, #739EC9, #003399);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 12px;
+}
+
+.sign-in-btn:hover {
+  background: linear-gradient(135deg, #3399ff, #0044cc);
+  transform: translateY(-2px);
+}
+
+body.dark-mode .sign-in-btn {
+  background: linear-gradient(135deg, #0066cc, #0044aa);
+}
+
+body.dark-mode .sign-in-btn:hover {
+  background: linear-gradient(135deg, #3399ff, #0055cc);
+}
+
+
+body.dark-mode .divider::before,
+body.dark-mode .divider::after {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.divider span {
+  margin: 0 8px;
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+body.dark-mode .divider span {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+body.dark-mode .signup-text a {
+  color: #fff;
+}
+
+.signup-text a:hover {
+  text-decoration: underline;
+}
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+/* Remove in Chrome/Safari */
+input[type="password"]::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-clear-button {
+  display: none !important;
+  visibility: hidden;
+}
+
+/* Footer copyright at bottom center */
+.footer {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.75rem;
+  color: rgba(0, 0, 0, 0.7);
+  text-align: center;
+  z-index: 2;
+}
+
+body.dark-mode .footer {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Toggle */
+.theme-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  font-family: 'Poppins', sans-serif;
+  z-index: 10;
+  transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode .theme-toggle {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.05);
+}
+
+.hidden {
+  display: none !important;
+}
