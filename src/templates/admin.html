@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,8 +12,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
 
   <!-- Base (light) styles then dark overrides -->
-  <link rel="stylesheet" href="../assets/css/admin.css">
-  <link rel="stylesheet" href="../assets/css/darkcont.css">
+  <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+  <link rel="stylesheet" href="{% static 'css/darkcont.css' %}">
 </head>
 
 <body>
@@ -53,10 +54,14 @@
       <span>User Management</span>
     </a>
 
-    <a href="#" class="nav-item signout">
-      <i class="bi bi-box-arrow-right"></i>
-      <span>Signout</span>
-    </a>
+    <form method="post" action="{% url 'logout' %}">
+      {% csrf_token %}
+      <button type="submit" class="nav-item signout">
+        <i class="bi bi-box-arrow-right"></i>
+        <span>Signout</span>
+      </button>
+  </form>
+
   </div>
 
   <!-- Main content -->
@@ -76,7 +81,7 @@
     <h1 class="page-title">User Management</h1>
 
     <div class="content-card">
-   <button class="add-btn" onclick="window.location.href='signup.html'">Add Employee</button>
+      <button class="add-btn" onclick="window.location.href='{% url 'signup' %}'">Add Employee</button>
 
       <table class="data-table" role="table">
         <thead>
@@ -115,14 +120,13 @@
               <button class="action-btn delete-btn">Delete</button>
             </td>
           </tr>
-          <!-- ... more rows ... -->
         </tbody>
       </table>
     </div>
   </div>
 
-  <!-- JS (base behavior then dark mode logic) -->
-  <script src="../assets/js/admin.js"></script>
-  <script src="../assets/js/darkcont.js"></script>
+  <!-- JS -->
+  <script src="{% static 'js/admin.js' %}"></script>
+  <script src="{% static 'js/darkcont.js' %}"></script>
 </body>
 </html>
