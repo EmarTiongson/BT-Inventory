@@ -1,18 +1,21 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Inventory System - Dashboard</title>
+  <title>{% block title %}Inventory System{% endblock %}</title>
 
+  <!-- Google Fonts & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
 
-  <!-- Base (light) styles then dark overrides -->
-  <link rel="stylesheet" href="../assets/css/admin.css">
-  <link rel="stylesheet" href="../assets/css/darkcont.css">
+  <!-- Static files -->
+  <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+  <link rel="stylesheet" href="{% static 'css/darkcont.css' %}">
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
 </head>
 
 <body>
@@ -23,7 +26,7 @@
       <span class="toggle-text">Collapse Menu</span>
     </button>
 
-    <a href="#" class="nav-item active">
+    <a href="{% url 'dashboard' %}" class="nav-item {% if request.path == '/dashboard/' %}active{% endif %}">
       <i class="bi bi-house-door-fill"></i>
       <span>Dashboard</span>
     </a>
@@ -48,36 +51,37 @@
       <span>Alert & Notification</span>
     </a>
 
-    <a href="#" class="nav-item">
-      <i class="bi bi-people"></i>
-      <span>User Management</span>
+   <a href="{% url 'admin_page' %}" class="nav-item">
+        <i class="bi bi-people"></i>
+        <span>User Management</span>
     </a>
 
-    <a href="#" class="nav-item signout">
-      <i class="bi bi-box-arrow-right"></i>
-      <span>Signout</span>
-    </a>
+    <form action="{% url 'logout' %}" method="post" class="nav-item signout" style="border: none; background: none; padding: 0;">
+        {% csrf_token %}
+        <button type="submit" style="all: unset; cursor: pointer; display: flex; align-items: center; gap: 8px; color: inherit; width: 100%;">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Sign out</span>
+        </button>
+    </form>
+
   </div>
 
-  <!-- Main content -->
+  <!-- Main content area -->
   <div class="main-content" id="mainContent">
     <div class="header">
-      <div class="search-bar">
-        <i class="bi bi-search"></i>
-        <input type="text" placeholder="Search here..." aria-label="Search">
-      </div>
-
       <!-- Dark mode toggle button -->
-      <button class="settings-btn" id="themeToggle" aria-pressed="false" title="Toggle dark mode">
+      <button class="settings-btn" id="themeToggle" aria-pressed="false" title="Toggle dark mode" style="margin-left: auto; margin-right: 0;">
         <i id="darkModeIcon" class="bi bi-moon-fill" aria-hidden="true"></i>
       </button>
     </div>
 
-    <h1 class="page-title">User Management</h1>
+    <!-- Page content block -->
+    {% block content %}
+    {% endblock %}
+  </div>
 
-    <div class="content-card">
-  <!-- JS (base behavior then dark mode logic) -->
-  <script src="../assets/js/admin.js"></script>
-  <script src="../assets/js/darkcont.js"></script>
+  <!-- Scripts -->
+  <script src="{% static 'js/admin.js' %}"></script>
+  <script src="{% static 'js/darkcont.js' %}"></script>
 </body>
 </html>

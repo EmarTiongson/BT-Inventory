@@ -1,0 +1,85 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account</title>
+
+  <link rel="stylesheet" href="{% static 'css/add_employee.css' %}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</head>
+<body>
+
+  <!-- Background Canvas for Abstract Lines -->
+  <canvas id="backgroundCanvas"></canvas>
+
+  <div class="container">
+    <h1>Create Account</h1>
+    <p class="subtitle">Please fill out the form to create your account</p>
+
+    <form method="POST" action="{% url 'signup' %}">
+      {% csrf_token %}
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="first_name">First Name</label>
+          <input type="text" id="first_name" name="first_name" required>
+        </div>
+        <div class="form-group">
+          <label for="middle_initial">Middle Initial</label>
+          <input type="text" id="middle_initial" name="middle_initial" maxlength="1">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="last_name">Last Name</label>
+          <input type="text" id="last_name" name="last_name" required>
+        </div>
+        <div class="form-group">
+          <label for="position">Position</label>
+          <input type="text" id="position" name="position">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" required>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="contact">Contact No.</label>
+          <input type="text" id="contact" name="contact_no">
+        </div>
+      </div>
+
+      <div class="form-row full-width">
+        <div class="form-group full-width">
+          <label for="password">Generated Password</label>
+          <div class="input-with-icon">
+            <input type="password" id="password" name="generated_password"
+                   placeholder="Generated password will appear here" readonly>
+            <button type="button" id="generatePassword" class="icon-btn" title="Generate password">
+              <i class="bi bi-shuffle"></i>
+            </button>
+            <button type="button" id="togglePassword" class="icon-btn eye-btn" title="Show/Hide password">
+              <i class="bi bi-eye"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="sign-in-btn">Create Account</button>
+    </form>
+  </div>
+  <script src="{% static 'js/add_employee.js' %}"></script>
+</body>
+</html>

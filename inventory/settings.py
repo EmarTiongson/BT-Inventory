@@ -120,3 +120,10 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'  # where collectstatic stores files
 # DEFAULTS
 # ---------------------------------------------------------
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+
+
+
+

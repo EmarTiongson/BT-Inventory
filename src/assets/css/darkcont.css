@@ -1,86 +1,38 @@
-/* dark.css - only dark-mode overrides (no base/light rules) */
+/* Default (light mode) already handled by admin.css or dashboard.css */
 
-/* Body / page background */
+/* Dark Mode Global Styles */
 body.dark-mode {
-  background: #1e2130;
-  color: #e8eaed;
+  background-color: #121212;
+  color: #f0f0f0;
 }
 
-/* Sidebar */
 body.dark-mode .sidebar {
-  background: #252836;
-  border-right-color: #33374d;
+  background-color: #1e1e1e;
+  color: #fff;
 }
+
 body.dark-mode .nav-item {
-  color: #b4b7c9;
+  color: #ddd;
 }
+
 body.dark-mode .nav-item:hover {
-  background: #2d3142;
-  color: #e8eaed;
-}
-body.dark-mode .nav-item.active {
-  background: rgba(109,213,237,0.08);
-  border-left-color: #6dd5ed;
-}
-body.dark-mode .nav-item.signout {
-  color: #ff6b81;
-}
-body.dark-mode .nav-item.signout:hover {
-  background: rgba(255,107,129,0.08);
+  background-color: #333;
 }
 
-/* Search input */
-body.dark-mode .search-bar input {
-  background: #252836;
-  border-color: #33374d;
-  color: #e8eaed;
-}
-body.dark-mode .search-bar input::placeholder {
-  color: #6c7293;
-}
-body.dark-mode .search-bar i {
-  color: #6c7293;
+body.dark-mode .main-content {
+  background-color: #181818;
 }
 
-/* Settings button */
-body.dark-mode .settings-btn {
-  background: #252836;
-  color: #e8eaed;
-}
-body.dark-mode .settings-btn:hover {
-  background: #2d3142;
-}
-
-/* Page title & content card */
-body.dark-mode .page-title {
-  color: #e8eaed;
-}
-body.dark-mode .content-card {
-  background: #252836;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.32);
+body.dark-mode button,
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+  background-color: #222;
+  color: #f0f0f0;
+  border-color: #444;
 }
 
-/* Table */
-body.dark-mode .data-table thead {
-  background: #2d3142;
-}
-body.dark-mode .data-table th {
-  color: #b4b7c9;
-  border-bottom-color: #33374d;
-}
+body.dark-mode .data-table th,
 body.dark-mode .data-table td {
-  color: #e8eaed;
-  border-bottom-color: #33374d;
+  color: #eee;
 }
-body.dark-mode .data-table tbody tr:hover {
-  background: #2d3142;
-}
-
-/* Buttons */
-body.dark-mode .add-btn { background: #6dd5ed; color: #1e2130; }
-body.dark-mode .update-btn { background: #33374d; color: #b4b7c9; }
-body.dark-mode .update-btn:hover { background: #3d4258; }
-body.dark-mode .delete-btn { background: #c82333; color: #fff; }
-
-/* Small tweaks */
-body.dark-mode .toggle-btn { color: #6dd5ed; }
