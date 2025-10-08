@@ -1,41 +1,232 @@
-/* Header */
-.navbar-header {
+/* base.css
+   Purpose: global layout for base.html (sidebar, header/logo, dark-mode, responsive)
+   Keep this file as the single source of truth for base layout & theme.
+*/
+
+:root{
+  --bg: #f4f6f9;
+  --panel: #ffffff;
+  --text: #0f1724;
+  --muted: #6b7280;
+  --accent: #0b63ff;
+  --accent-2: #0062d1;
+  --sidebar: #0f1724;
+  --sidebar-contrast: #0b2138;
+  --shadow: rgba(9,30,66,0.08);
+  --radius: 12px;
+  --glass: rgba(255,255,255,0.6);
+}
+
+/* Dark theme variables */
+body.dark-mode {
+  --bg: #0b1220;
+  --panel: #0f1724;
+  --text: #e6eef8;
+  --muted: #9aa6b2;
+  --accent: #4ea3ff;
+  --accent-2: #1e90ff;
+  --sidebar: #071026;
+  --sidebar-contrast: #081726;
+  --shadow: rgba(0,0,0,0.6);
+  --glass: rgba(255,255,255,0.02);
+}
+
+/* Base */
+* { box-sizing: border-box; }
+html,body { height: 100%; }
+body {
+  margin: 0;
+  font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* ---------- SIDEBAR ---------- */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 260px;                /* expanded */
+  background: linear-gradient(180deg,var(--sidebar),var(--sidebar-contrast));
+  color: #fff;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: var(--header-bg);
-  padding: 10px 20px;
-  border-bottom: 1px solid var(--border-color);
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 10px;
+  box-shadow: 0 8px 30px var(--shadow);
+  transition: width .25s ease, background .25s ease;
+  z-index: 30;
 }
 
-.logo-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
+/* collapsed state */
+.sidebar.collapsed { width: 84px; }
 
-.logo {
-  height: 45px;
-}
-
-.company-text {
-  font-size: 14px;
-  color: var(--text-color);
-}
-
-.theme-toggle {
-  background: var(--toggle-bg);
+/* toggle button (top of sidebar) */
+.toggle-btn, .toggle-btn:focus {
   border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: transparent;
+  color: #fff;
+  font-size: 16px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  cursor:pointer;
+  padding: 8px;
 }
 
-.theme-toggle i {
-  font-size: 1.2rem;
-  color: var(--icon-color);
+.toggle-text { font-weight:600; font-size:14px; }
+.sidebar.collapsed .toggle-text { display:none; }
+
+/* nav items */
+.nav-item {
+  display:flex;
+  gap:12px;
+  align-items:center;
+  padding:10px 12px;
+  text-decoration:none;
+  color: #e6eef8;
+  border-radius:10px;
+  font-weight:500;
+  cursor:pointer;
 }
+.nav-item i { font-size:18px; width: 20px; text-align:center; }
+
+/* hover / active */
+.nav-item:hover { background: rgba(255,255,255,0.04); }
+.nav-item.active { background: rgba(255,255,255,0.06); box-shadow: inset 0 1px 0 rgba(255,255,255,0.02); }
+
+/* push signout to bottom */
+.sidebar form.nav-item.signout,
+.sidebar .nav-item.signout {
+  margin-top: auto;
+  padding: 12px;
+  border-top: 1px solid rgba(255,255,255,0.04);
+}
+
+/* hide labels on collapse */
+.sidebar.collapsed .nav-item span { display:none; }
+.sidebar .nav-item span { display:inline-block; }
+
+/* ---------- MAIN CONTENT ---------- */
+.main-content {
+  margin-left: 260px;
+  min-height: 100vh;
+  transition: margin-left .25s ease, background .25s ease;
+  padding: 18px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* move when sidebar collapsed */
+.sidebar.collapsed + .main-content { margin-left:84px; }
+
+/* header area */
+/* .header {
+  display:flex;
+  align-items:center;
+  gap:16px;
+  padding:8px 0;
+} */
+
+/* Ensure header always appears above page content */
+.header {
+  position: relative;
+  z-index: 1000;
+}
+
+
+/* search-bar (optional) */
+.search-bar {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background: rgba(0,0,0,0.03);
+  padding:10px;
+  border-radius:10px;
+  min-width: 280px;
+}
+.search-bar input {
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--text);
+}
+
+/* settings (theme toggle) */
+.settings-btn, #themeToggle {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius: 8px;
+}
+.settings-btn i { font-size: 18px; }
+
+/* logo top (common header area) */
+.logo-top {
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.logo-top img { height:44px; width:auto; display:block; }
+
+/* content card pattern */
+.content-card {
+  background: var(--panel);
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: 0 6px 20px var(--shadow);
+}
+
+/* page title */
+.page-title {
+  margin: 6px 0 8px 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* action/add button */
+.add-btn {
+  background: linear-gradient(90deg,var(--accent),var(--accent-2));
+  color: white;
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight:600;
+  display:inline-flex;
+  gap:10px;
+  align-items:center;
+}
+
+/* data table basics (keeps admin styling) */
+.data-table {
+  width:100%;
+  border-collapse: collapse;
+  margin-top: 14px;
+}
+.data-table th, .data-table td {
+  text-align:left;
+  padding: 12px 10px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+body.dark-mode .data-table th, body.dark-mode .data-table td {
+  border-bottom-color: rgba(255,255,255,0.04);
+}
+
+/* small devices */
+@media (max-width: 900px) {
+  .sidebar { position: fixed; z-index:40; transform: translateX(-4px); }
+  .sidebar.collapsed { transform: translateX(-100%); } /* hide on small screens */
+  .sidebar + .main-content { margin-left: 0; }
+}
+
+/* small helpers */
+.hidden-xs { display: none; }

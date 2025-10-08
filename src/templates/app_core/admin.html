@@ -4,19 +4,17 @@
 {% block title %}User Management - Inventory System{% endblock %}
 
 {% block content %}
+
+  <h1 class="page-title">User Management</h1>
   <div class="header">
     <div class="search-bar">
       <i class="bi bi-search"></i>
       <input type="text" placeholder="Search here..." aria-label="Search">
     </div>
 
-    <!-- Dark mode toggle button -->
-    <button class="settings-btn" id="themeToggle" aria-pressed="false" title="Toggle dark mode">
-      <i id="darkModeIcon" class="bi bi-moon-fill" aria-hidden="true"></i>
-    </button>
   </div>
 
-  <h1 class="page-title">User Management</h1>
+
 
   <div class="content-card">
     <button class="add-btn" onclick="window.location.href='{% url 'signup' %}'">

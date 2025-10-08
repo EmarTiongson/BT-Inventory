@@ -11,12 +11,27 @@
 </head>
 <body>
 
-  <!-- Background Canvas for Abstract Lines -->
+  <!-- Background Canvas -->
   <canvas id="backgroundCanvas"></canvas>
+
+  <div class="back-btn-container">
+    <a href="{% url 'admin_page' %}" class="back-btn">
+      <i class="bi bi-arrow-left-circle"></i> Back to User Management
+    </a>
+  </div>
 
   <div class="container">
     <h1>Create Account</h1>
     <p class="subtitle">Please fill out the form to create your account</p>
+
+    <!-- ✅ Error Alert -->
+    {% if messages %}
+      {% for message in messages %}
+        <div id="errorAlert" class="error-alert {% if message.tags %}{{ message.tags }}{% endif %}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
 
     <form method="POST" action="{% url 'signup' %}">
       {% csrf_token %}
@@ -80,6 +95,7 @@
       <button type="submit" class="sign-in-btn">Create Account</button>
     </form>
   </div>
+
   <script src="{% static 'js/add_employee.js' %}"></script>
 </body>
 </html>
