@@ -235,6 +235,30 @@ body.dark-mode .back-btn:hover {
   background: linear-gradient(90deg, #0041a8, #002d73);
 }
 
+
+/* Dropdown field styling */
+select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+select:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.dark-mode select {
+  background-color: #1c1c1c;
+  color: #fff;
+  border-color: #333;
+}
+
+
 /* Responsive fix for small screens */
 @media (max-width: 600px) {
   .back-btn-container {

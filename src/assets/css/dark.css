@@ -1,78 +1,140 @@
-/* Dark Mode Background */
-body.dark-mode {
-  background: linear-gradient(135deg, #121212, #000);
+/* ... (Keep all existing 'admin.css' styles above this point) ... */
+
+/* Main content adjustments (to use existing styles) */
+/* Note: The main layout structure seems to be `sidebar` and `main-content` */
+/* The user-management container should be within `main-content` */
+
+.main-content {
+  /* ... (Keep existing main-content styles) ... */
+  margin-left: 250px; /* Base setting from your existing CSS */
+  flex: 1;
+  padding: 30px 40px;
+  transition: margin-left 0.28s ease;
+}
+
+/* User Management Box Styling (Leveraging .content-card) */
+.user-management-box {
+  /* No need for unique container styles, we use .content-card */
+  /* This ensures uniformity with other dashboard elements */
+  max-width: 100%; /* Ensure it fits in main-content */
+}
+
+/* Header for User Management */
+.user-management-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap; /* Allow wrapping on small screens */
+  gap: 15px;
+}
+
+.user-management-header h2 {
+  font-size: 1.6rem;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.controls-group {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+/* Specific Search Box Styling for User Management */
+.search-box {
+  position: relative;
+  width: 280px; /* Fixed width for desktop */
+}
+
+.search-box input {
+  width: 100%;
+  padding: 10px 16px 10px 42px; /* Adjusted padding for icon */
+  border: 1px solid #e0e0e0;
+  border-radius: 8px; /* Slightly smaller for a modern look */
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease;
+}
+
+.search-box input:focus {
+  border-color: #6c757d;
+  outline: none;
+}
+
+.search-box i {
+  position: absolute;
+  left: 14px; /* Icon placement */
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+  font-size: 1.0rem;
+}
+
+/* Specific Add Button Styling */
+.add-btn {
+  /* Re-use existing .add-btn but refine */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: #28a745; /* Green for 'Add' */
   color: #fff;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+  margin-bottom: 0; /* Remove existing margin-bottom */
+}
+.add-btn i { font-size: 1rem; }
+.add-btn:hover {
+  background: #218838;
+  transform: translateY(-1px);
 }
 
-/* Container */
-body.dark-mode .container {
-  background: rgba(20, 20, 20, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.5);
+/* Table Responsive Container */
+.table-responsive {
+  overflow-x: auto; /* Allows horizontal scrolling on small screens */
 }
 
-/* Subtitles */
-body.dark-mode .login-box .subtitle {
-  color: rgba(255, 255, 255, 0.8);
+/* Action Buttons (Using existing styles but ensuring they work) */
+.action-btn {
+  /* Reusing action-btn styles from your existing CSS */
+  padding: 7px 14px;
+  border-radius: 6px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  margin-right: 8px;
+  transition: background 0.2s ease;
 }
 
-/* Input fields */
-body.dark-mode .form-group input {
-  background: rgba(40, 40, 40, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #fff;
-}
-body.dark-mode .form-group input::placeholder {
-  color: #aaa;
-}
-body.dark-mode .form-group input:focus {
-  border-color: #ff7a00;
-  box-shadow: 0 0 8px 3px rgba(255, 140, 60, 0.4);
-}
+/* Re-styling update/delete to be more distinct */
+.update-btn { background: #ffc107; color: #212529; } /* Yellow/Warning */
+.update-btn:hover { background: #e0a800; }
+.delete-btn { background: #dc3545; color: #fff; } /* Red/Danger */
+.delete-btn:hover { background: #c82333; }
 
-/* Forgot password */
-body.dark-mode .forgot-password a {
-  color: #bbb;
-}
-body.dark-mode .forgot-password a:hover {
-  color: #fff;
-}
 
-/* Toggle password icon */
-body.dark-mode #togglePassword {
-  color: #ccc;
+/* Media Queries for Responsiveness */
+@media (max-width: 992px) {
+  .user-management-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .controls-group {
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+  .search-box {
+    width: 100%;
+    order: 2; /* Puts search below add button */
+  }
+  .add-btn {
+    width: 100%;
+    justify-content: center;
+    order: 1; /* Puts add button above search */
+  }
 }
-
-/* Sign in button */
-body.dark-mode .sign-in-btn {
-  background: linear-gradient(135deg, #0066cc, #0044aa);
-}
-body.dark-mode .sign-in-btn:hover {
-  background: linear-gradient(135deg, #3399ff, #0055cc);
-}
-
-/* Divider */
-body.dark-mode .divider::before,
-body.dark-mode .divider::after {
-  border-color: rgba(255, 255, 255, 0.2);
-}
-body.dark-mode .divider span {
-  color: rgba(255, 255, 255, 0.8);
-}
-
-/* Links */
-body.dark-mode .signup-text a {
-  color: #fff;
-}
-
-/* Footer */
-body.dark-mode .footer {
-  color: rgba(255, 255, 255, 0.7);
-}
-
-/* Toggle button */
-body.dark-mode .theme-toggle {
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #fff;
-}
+/* ... (Keep all existing media queries below this point) ... */

@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+
 
 @login_required
 def dashboard_view(request):
@@ -8,4 +10,10 @@ def dashboard_view(request):
 
 @login_required
 def admin_view(request):
-    return render(request, 'app_core/admin.html')
+        # Get all user accounts
+    users = User.objects.all().order_by('id')  # sorted by ID
+
+    context = {
+        'users': users
+    }
+    return render(request, 'app_core/admin.html', context)

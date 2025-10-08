@@ -1,31 +1,37 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load static %}
 
-{% block title %}User Management - Inventory System{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin.css' %}">
+{% endblock %}
 
 {% block content %}
+<h1 class="page-title">User Management</h1>
 
-  <h1 class="page-title">User Management</h1>
-  <div class="header">
-    <div class="search-bar">
-      <i class="bi bi-search"></i>
-      <input type="text" placeholder="Search here..." aria-label="Search">
-    </div>
-
+<div class="page-controls">
+   <div class="search-box">
+    <input 
+      type="text" 
+      id="searchInput" 
+      placeholder="Search by name, email, or username..." 
+      onkeyup="searchUser()" 
+    />
+    <i class="bi bi-search"></i>
   </div>
+  
+  <button class="add-btn modern-add-btn" onclick="window.location.href='{% url 'signup' %}'">
+    <i class="fas fa-user-plus"></i> Add Employee
+  </button>
+</div>
 
-
-
-  <div class="content-card">
-    <button class="add-btn" onclick="window.location.href='{% url 'signup' %}'">
-      Add Employee
-    </button>
-
-    <table class="data-table" role="table">
+<div class="user-management-box content-card">
+  <div class="table-responsive">
+    <table class="user-table data-table">
       <thead>
         <tr>
           <th>Account No.</th>
-          <th>Full name</th>
+          <th>Full Name</th>
           <th>Position</th>
           <th>Email Address</th>
           <th>Username</th>
@@ -33,32 +39,27 @@
           <th>Actions</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id="userTableBody">
+        {% for user in users %}
         <tr>
-          <td>201</td>
-          <td>Manuel Job Z. Nicolas</td>
-          <td>IT Analyst</td>
-          <td>nicolasjob21@gmail.com</td>
-          <td>brite.job</td>
-          <td>09123456789</td>
+          <td>{{ user.id }}</td>
+          <td>{{ user.get_full_name }}</td>
+          <td>—</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.username }}</td>
+          <td>—</td>
           <td>
-            <button class="action-btn update-btn">Update</button>
-            <button class="action-btn delete-btn">Delete</button>
+            <button class="update-btn action-btn">Update</button>
+            <button class="delete-btn action-btn">Delete</button>
           </td>
         </tr>
+        {% empty %}
         <tr>
-          <td>202</td>
-          <td>Sarah Jane M. Santos</td>
-          <td>HR Manager</td>
-          <td>sarah.santos@gmail.com</td>
-          <td>sarah.hr</td>
-          <td>09234567890</td>
-          <td>
-            <button class="action-btn update-btn">Update</button>
-            <button class="action-btn delete-btn">Delete</button>
-          </td>
+          <td colspan="7" class="no-data">No users found.</td>
         </tr>
+        {% endfor %}
       </tbody>
     </table>
   </div>
+</div>
 {% endblock %}

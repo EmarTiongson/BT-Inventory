@@ -5,9 +5,11 @@
   --bg-primary: #ffffff;
   --text-primary: #0a0a0a;
   --text-secondary: #333333;
-  --accent-color: #d4741f;
-  --orb-blue: #2a5c8a;
-  --orb-orange: #d4741f;
+  --accent-color: #134686;
+  --orb-blue: #134686;
+  --orb-orange: #1e5ba8;
+  --hero-bg-start: #b8c9db;
+  --hero-bg-end: #d6e3f0;
 }
 
 /* Override variables in dark mode */
@@ -15,18 +17,23 @@ body.dark-mode {
   --bg-primary: #0a0a0a;
   --text-primary: #ffffff;
   --text-secondary: #e0e0e0;
+  --accent-color: #D96F32;
+  --orb-blue: #0d1f3a;
+  --orb-orange: #D96F32;
+  --hero-bg-start: #0d1f3a;
+  --hero-bg-end: #D96F32;
 }
 
 /* =======================================
    HERO CONTAINER
    ======================================= */
 .hero-container {
+  /* ✅ 70% grey + 30% blue */
   background: linear-gradient(
     135deg,
-    var(--bg-primary) 0%,
-    #1a1a1a 40%,
-    #0d0d1a 70%,
-    #1a1a2e 100%
+    #d6d6d6 0%,         /* light grey start */
+    #bfbfbf 70%,        /* middle grey tone up to 70% */
+    #134686 100%        /* blue from 70% to 100% */
   );
   border-radius: 16px;
   padding: 60px 50px;
@@ -38,6 +45,16 @@ body.dark-mode {
   flex-direction: column;
   justify-content: space-between;
   min-width: 800px;
+}
+
+/* Dark mode specific gradient (unchanged) */
+body.dark-mode .hero-container {
+  background: linear-gradient(
+    135deg,
+    #0d1f3a 0%,
+    #0d1f3a 70%,
+    #D96F32 100%
+  );
 }
 
 /* Grainy texture overlay */

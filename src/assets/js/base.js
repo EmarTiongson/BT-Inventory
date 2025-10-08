@@ -41,44 +41,48 @@ document.addEventListener('DOMContentLoaded', function () {
 
   /* ---------- Theme persistence + toggle ---------- */
   try {
-  const themeKey = 'brite_theme';
-  const saved = localStorage.getItem(themeKey);
-  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const initialDark = (saved === 'dark') || (saved === null && prefersDark);
+    const themeKey = 'brite_theme';
+    const saved = localStorage.getItem(themeKey);
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialDark = (saved === 'dark') || (saved === null && prefersDark);
 
-  function setDarkMode(isDark) {
-    if (isDark) {
-      document.body.classList.add('dark-mode');
-      if (darkModeIcon) {
-        darkModeIcon.classList.remove('bi-moon-fill');
-        darkModeIcon.classList.add('bi-sun-fill');
-        darkModeIcon.style.color = 'white'; // ✅ make icon white in dark mode
+    function setDarkMode(isDark) {
+      if (isDark) {
+        // Dark mode: dark background, dark sidebar
+        document.body.classList.add('dark-mode');
+        if (darkModeIcon) {
+          darkModeIcon.classList.remove('bi-moon-fill');
+          darkModeIcon.classList.add('bi-sun-fill');
+          darkModeIcon.style.color = 'white';
+        }
+        if (themeToggle) themeToggle.setAttribute('aria-pressed', 'true');
+        localStorage.setItem(themeKey, 'dark');
+      } else {
+        // Light mode: light background, light grey sidebar
+        document.body.classList.remove('dark-mode');
+        if (darkModeIcon) {
+          darkModeIcon.classList.remove('bi-sun-fill');
+          darkModeIcon.classList.add('bi-moon-fill');
+          darkModeIcon.style.color = '';
+        }
+        if (themeToggle) themeToggle.setAttribute('aria-pressed', 'false');
+        localStorage.setItem(themeKey, 'light');
       }
-      if (themeToggle) themeToggle.setAttribute('aria-pressed', 'true');
-    } else {
-      document.body.classList.remove('dark-mode');
-      if (darkModeIcon) {
-        darkModeIcon.classList.remove('bi-sun-fill');
-        darkModeIcon.classList.add('bi-moon-fill');
-        darkModeIcon.style.color = ''; // ✅ reset to default color
-      }
-      if (themeToggle) themeToggle.setAttribute('aria-pressed', 'false');
     }
-    localStorage.setItem(themeKey, isDark ? 'dark' : 'light');
+
+    // Set initial theme
+    setDarkMode(initialDark);
+
+    // Toggle theme on button click
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        const isDark = !document.body.classList.contains('dark-mode');
+        setDarkMode(isDark);
+      });
+    }
+  } catch (err) {
+    console.warn('Theme toggle failed:', err);
   }
-
-  setDarkMode(initialDark);
-
-  if (themeToggle) {
-    themeToggle.addEventListener('click', () => {
-      const isDark = !document.body.classList.contains('dark-mode');
-      setDarkMode(isDark);
-    });
-  }
-} catch (err) {
-  console.warn('Theme toggle failed:', err);
-}
-
 
   /* ---------- Active nav highlighting ---------- */
   try {
@@ -100,6 +104,4 @@ document.addEventListener('DOMContentLoaded', function () {
   } catch (err) {
     console.warn('Active nav failed:', err);
   }
-
-  
 });

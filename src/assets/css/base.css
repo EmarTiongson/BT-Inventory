@@ -10,8 +10,8 @@
   --muted: #6b7280;
   --accent: #0b63ff;
   --accent-2: #0062d1;
-  --sidebar: #0f1724;
-  --sidebar-contrast: #0b2138;
+  --sidebar: #d1d5db;              /* Light grey sidebar */
+  --sidebar-contrast: #e5e7eb;     /* Slightly lighter grey for gradient */
   --shadow: rgba(9,30,66,0.08);
   --radius: 12px;
   --glass: rgba(255,255,255,0.6);
@@ -25,8 +25,8 @@ body.dark-mode {
   --muted: #9aa6b2;
   --accent: #4ea3ff;
   --accent-2: #1e90ff;
-  --sidebar: #071026;
-  --sidebar-contrast: #081726;
+  --sidebar: #0f1724;
+  --sidebar-contrast: #0b2138;
   --shadow: rgba(0,0,0,0.6);
   --glass: rgba(255,255,255,0.02);
 }
@@ -51,14 +51,20 @@ body {
   bottom: 0;
   width: 260px;                /* expanded */
   background: linear-gradient(180deg,var(--sidebar),var(--sidebar-contrast));
-  color: #fff;
+  color: #1f2937;              /* Dark grey text for light sidebar */
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 12px 10px;
+  gap: 2px;
+  padding: 16px 12px;
   box-shadow: 0 8px 30px var(--shadow);
-  transition: width .25s ease, background .25s ease;
+  transition: width 0.25s ease, background 0.25s ease, padding 0.25s ease;
   z-index: 30;
+  overflow: hidden;
+}
+
+/* Dark mode sidebar text color */
+body.dark-mode .sidebar {
+  color: #fff;  /* White text for dark sidebar */
 }
 
 /* collapsed state */
@@ -68,53 +74,166 @@ body {
 .toggle-btn, .toggle-btn:focus {
   border: none;
   background: transparent;
-  color: #fff;
+  color: #134686;              /* Blue color for light mode */
   font-size: 16px;
   display:flex;
   align-items:center;
-  gap:10px;
+  gap:14px;
   cursor:pointer;
-  padding: 8px;
+  padding: 14px 16px;
+  margin-bottom: 4px;
+  font-weight: 600;
+  transition: color 0.3s ease;
+  border-radius:10px;
 }
 
-.toggle-text { font-weight:600; font-size:14px; }
-.sidebar.collapsed .toggle-text { display:none; }
+.toggle-btn:hover {
+  background: rgba(0,0,0,0.08);
+}
+
+body.dark-mode .toggle-btn:hover {
+  background: rgba(255,255,255,0.04);
+}
+
+.toggle-btn i {
+  font-size:18px; 
+  width: 20px; 
+  text-align:center;
+}
+
+/* Dark mode toggle button color */
+body.dark-mode .toggle-btn,
+body.dark-mode .toggle-btn:focus {
+  color: #D96F32;              /* Orange color for dark mode */
+}
+
+.toggle-text { 
+  font-weight:700; 
+  font-size:14px;
+  font-family: "Poppins", sans-serif;
+  transition: opacity 0.25s ease;
+  white-space: nowrap;
+}
+.sidebar.collapsed .toggle-text { 
+  display:none; 
+  opacity: 0;
+}
 
 /* nav items */
 .nav-item {
   display:flex;
-  gap:12px;
+  gap:14px;
   align-items:center;
-  padding:10px 12px;
+  padding:14px 16px;
   text-decoration:none;
-  color: #e6eef8;
+  color: #1f2937;              /* Dark grey text for light sidebar */
   border-radius:10px;
   font-weight:500;
   cursor:pointer;
+  margin-bottom: 4px;
 }
+
+/* Dark mode nav items color */
+body.dark-mode .nav-item {
+  color: #e6eef8;  /* Light text for dark sidebar */
+}
+
 .nav-item i { font-size:18px; width: 20px; text-align:center; }
 
-/* hover / active */
-.nav-item:hover { background: rgba(255,255,255,0.04); }
-.nav-item.active { background: rgba(255,255,255,0.06); box-shadow: inset 0 1px 0 rgba(255,255,255,0.02); }
+/* hover / active - light mode */
+.nav-item:hover { background: rgba(0,0,0,0.08); }
+.nav-item.active { background: rgba(0,0,0,0.12); box-shadow: inset 0 1px 0 rgba(0,0,0,0.04); }
+
+/* hover / active - dark mode */
+body.dark-mode .nav-item:hover { background: rgba(255,255,255,0.04); }
+body.dark-mode .nav-item.active { 
+  background: rgba(255,255,255,0.06); 
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.02); 
+}
 
 /* push signout to bottom */
 .sidebar form.nav-item.signout,
 .sidebar .nav-item.signout {
   margin-top: auto;
-  padding: 12px;
-  border-top: 1px solid rgba(255,255,255,0.04);
+  padding: 0 !important;
+  border: none !important;
+  margin-bottom: 0;
+  background: none !important;
+}
+
+.sidebar form.nav-item.signout button,
+.sidebar .nav-item.signout button {
+  all: unset;
+  box-sizing: border-box;
+  width: 100%;
+  display: flex !important;
+  gap: 14px;
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: 10px;
+  margin-bottom: 4px;
+  background: #134686 !important;
+  color: white !important;
+  transition: background 0.3s ease;
+  font-weight: 700;
+  font-family: "Poppins", sans-serif;
+  cursor: pointer;
+}
+
+.sidebar form.nav-item.signout button i {
+  font-size: 18px;
+  width: 20px;
+  text-align: center;
+}
+
+.sidebar form.nav-item.signout button:hover {
+  background: #D96F32 !important;
+}
+
+body.dark-mode .sidebar form.nav-item.signout button {
+  background: #D96F32 !important;
+}
+
+.sidebar form.nav-item.signout button i {
+  font-size: 18px;
+  width: 20px;
+  text-align: center;
+}
+
+.sidebar form.nav-item.signout button:hover {
+  background: #D96F32;
+}
+
+body.dark-mode .sidebar form.nav-item.signout button {
+  background: #ef4444;
+}
+
+body.dark-mode .sidebar form.nav-item.signout button:hover {
+  background: #dc2626;
+}
+
+/* Dark mode signout border */
+body.dark-mode .sidebar form.nav-item.signout,
+body.dark-mode .sidebar .nav-item.signout {
+  border: none;
 }
 
 /* hide labels on collapse */
-.sidebar.collapsed .nav-item span { display:none; }
-.sidebar .nav-item span { display:inline-block; }
+.sidebar.collapsed .nav-item span { 
+  display:none; 
+  opacity: 0;
+}
+.sidebar .nav-item span { 
+  display:inline-block;
+  transition: opacity 0.25s ease;
+  white-space: nowrap;
+}
 
 /* ---------- MAIN CONTENT ---------- */
 .main-content {
   margin-left: 260px;
   min-height: 100vh;
-  transition: margin-left .25s ease, background .25s ease;
+  transition: margin-left 0.25s ease, background 0.25s ease;
   padding: 18px 22px;
   display: flex;
   flex-direction: column;
@@ -175,7 +294,7 @@ body {
   align-items:center;
   gap:10px;
 }
-.logo-top img { height:44px; width:auto; display:block; }
+.logo-top img { height:44px; width:auto; display:block; padding-top: 25px;}
 
 /* content card pattern */
 .content-card {
@@ -218,7 +337,7 @@ body {
   border-bottom: 1px solid rgba(0,0,0,0.06);
 }
 body.dark-mode .data-table th, body.dark-mode .data-table td {
-  border-bottom-color: rgba(255,255,255,0.04);
+  border-border-color: rgba(255,255,255,0.04);
 }
 
 /* small devices */

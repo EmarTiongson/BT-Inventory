@@ -57,9 +57,9 @@
         <span>User Management</span>
     </a>
 
-    <form action="{% url 'logout' %}" method="post" class="nav-item signout" style="border: none; background: none; padding: 0;">
+    <form action="{% url 'logout' %}" method="post" class="nav-item signout">
         {% csrf_token %}
-        <button type="submit" style="all: unset; cursor: pointer; display: flex; align-items: center; gap: 8px; color: inherit; width: 100%;">
+        <button type="submit">
             <i class="bi bi-box-arrow-right"></i>
             <span>Sign out</span>
         </button>
