@@ -87,6 +87,7 @@ DATABASES = {
 # ---------------------------------------------------------
 # AUTH & REDIRECTS
 # ---------------------------------------------------------
+AUTH_USER_MODEL = 'accounts.CustomUser'
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
@@ -94,6 +95,7 @@ LOGOUT_REDIRECT_URL = '/accounts/login/'
 # ---------------------------------------------------------
 # PASSWORD VALIDATION
 # ---------------------------------------------------------
+
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
