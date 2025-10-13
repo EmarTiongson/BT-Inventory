@@ -32,6 +32,6 @@ class CustomUserCreationForm(UserCreationForm):
         if commit:
             user.save()
 
-        # ✅ Return both user and generated password so you can show it later
+        # ✅ Return both user and generated password 
         user.generated_password = random_password
         return user

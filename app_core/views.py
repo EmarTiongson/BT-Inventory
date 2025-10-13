@@ -12,12 +12,16 @@ def dashboard_view(request):
 
 @login_required
 def admin_view(request):
-        # Get all user accounts
-    users = User.objects.all().order_by('id')  # sorted by ID
+    user = request.user
 
-    context = {
-        'users': users
-    }
-    return render(request, 'app_core/admin.html', context)
+    # ✅ Block unauthorized access
+    if user.role not in ["admin", "superadmin"]:
+        messages.error(request, "You do not have permission to view this page.")
+        return redirect("dashboard")
+
+    # ✅ Only visible to admin/superadmin
+    users = User.objects.all().order_by("id")
+    context = {"users": users}
+    return render(request, "app_core/admin.html", context)
 
 

@@ -6,7 +6,6 @@ class ForcePasswordChangeMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        print("🧩 Middleware active:", request.path)
 
         user = getattr(request, "user", None)
 
@@ -33,7 +32,6 @@ class ForcePasswordChangeMiddleware:
 
         # ✅ Redirect first-time users to change password
         if getattr(user, "first_login", False):
-            print("🚨 Redirecting user to password change page")
             return redirect("first_login_password")
 
         # ✅ Otherwise, continue as normal

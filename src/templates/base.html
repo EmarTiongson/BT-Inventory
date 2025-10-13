@@ -52,10 +52,13 @@
       <span>Alert & Notification</span>
     </a>
 
-   <a href="{% url 'admin_page' %}" class="nav-item">
+    {% if request.user.role == "superadmin" or request.user.role == "admin" %}
+      <a href="{% url 'admin_page' %}" class="nav-item">
         <i class="bi bi-people"></i>
         <span>User Management</span>
-    </a>
+      </a>
+    {% endif %}
+
 
     <form action="{% url 'logout' %}" method="post" class="nav-item signout">
         {% csrf_token %}

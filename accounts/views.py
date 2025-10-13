@@ -1,4 +1,4 @@
-from django.http import JsonResponse, HttpResponseNotAllowed
+from django.http import JsonResponse, HttpResponseNotAllowed, HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib import messages
@@ -95,6 +95,18 @@ def signup_view(request):
 
 def update_user_view(request, user_id):
     user = get_object_or_404(User, id=user_id)
+    current_user = request.user
+
+
+    if current_user.role == "admin" and user.role == "superadmin":
+        messages.error(request, "Admins cannot edit Superadmin accounts.")
+        return redirect("admin_page")
+
+    elif current_user.role not in ["admin", "superadmin"]:
+        messages.error(request, "You do not have permission to edit user accounts.")
+        return redirect("admin_page")
+
+
 
     if request.method == 'POST':
         first_name = request.POST.get('first_name')
@@ -105,6 +117,11 @@ def update_user_view(request, user_id):
         username = request.POST.get('username')
         contact_no = request.POST.get('contact_no')
         role = request.POST.get('role')
+
+
+        if current_user.role == "admin" and role == "superadmin":
+            messages.error(request, "Admins cannot assign the Superadmin role.")
+            return redirect("update_user", user_id=user.id)
 
         # Clean and validate contact number
         if contact_no:
@@ -142,14 +159,34 @@ def update_user_view(request, user_id):
 
 
 def delete_user(request, user_id):
-    if request.method == 'DELETE':
-        try:
-            user = User.objects.get(id=user_id)
-            user.delete()
-            return JsonResponse({'success': True})
-        except User.DoesNotExist:
-            return JsonResponse({'success': False, 'error': 'User not found'}, status=404)
-    return HttpResponseNotAllowed(['DELETE'])
+    if request.method != 'DELETE':
+        return HttpResponseNotAllowed(['DELETE'])
+
+    try:
+        target_user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'User not found'}, status=404)
+
+    current_user = request.user
+
+    # ✅ Prevent self-deletion
+    if current_user.id == target_user.id:
+        return JsonResponse({'success': False, 'error': 'You cannot delete your own account.'}, status=403)
+
+    # ✅ Role-based rules
+    if current_user.role == 'superadmin':
+        # Superadmin can delete anyone
+        target_user.delete()
+        return JsonResponse({'success': True, 'message': f'{target_user.username} deleted successfully.'})
+
+    elif current_user.role == 'admin':
+        # Admin cannot delete superadmins
+        if target_user.role == 'superadmin':
+            return JsonResponse({'success': False, 'error': 'Admins cannot delete Superadmin accounts.'}, status=403)
+        else:
+            target_user.delete()
+            return JsonResponse({'success': True, 'message': f'{target_user.username} deleted successfully.'})
+
 
 
 
@@ -180,6 +217,6 @@ def first_login_password(request):
 
 
         messages.success(request, "Your password has been successfully updated.")
-        return redirect('dashboard')  # change to your desired page
+        return redirect('dashboard') 
 
     return render(request, 'accounts/confirm_pass.html')
