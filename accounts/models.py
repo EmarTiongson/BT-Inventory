@@ -26,6 +26,7 @@ class CustomUser(AbstractUser):
         ('viewer', 'Viewer')
     ]
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+    first_login = models.BooleanField(default=True)
 
 
     def get_full_name(self):

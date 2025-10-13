@@ -3,19 +3,18 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/admin.css' %}">
-
 {% endblock %}
 
 {% block content %}
 <h1 class="page-title">User Management</h1>
 
 <div class="page-controls">
+  
   <div class="search-box">
     <input 
       type="text" 
       id="searchInput" 
       placeholder="Search by name, email, or username..." 
-      onkeyup="searchUser()" 
     />
     <i class="bi bi-search"></i>
   </div>

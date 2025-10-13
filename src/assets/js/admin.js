@@ -4,9 +4,81 @@ document.addEventListener('DOMContentLoaded', function () {
   const confirmDeleteBtn = document.getElementById('confirmDelete');
   const cancelDeleteBtn = document.getElementById('cancelDelete');
   const deleteMessage = document.getElementById('deleteMessage');
+  const searchInput = document.getElementById('searchInput');
   
   let currentUserId = null;
   let currentButton = null;
+
+  // ===========================
+  // SEARCH FUNCTIONALITY
+  // ===========================
+  
+  function searchUser() {
+    const filter = searchInput.value.toLowerCase().trim();
+    const tbody = document.getElementById('userTableBody');
+    const rows = tbody.getElementsByTagName('tr');
+    let visibleCount = 0;
+
+    console.log('Searching for:', filter); // Debug
+
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      
+      // Skip the "no data" row and "no results" row
+      if (row.querySelector('.no-data') || row.classList.contains('no-results-row')) {
+        continue;
+      }
+
+      const cells = row.getElementsByTagName('td');
+      let found = false;
+
+      // Search in: Full Name (1), Position (2), Email (3), Username (4), Contact (5), Role (6)
+      const searchableIndices = [1, 2, 3, 4, 5, 6];
+      
+      for (let index of searchableIndices) {
+        if (cells[index]) {
+          const cellText = cells[index].textContent.toLowerCase().trim();
+          if (cellText.includes(filter)) {
+            found = true;
+            console.log('Match found in row', i, 'column', index, ':', cellText); // Debug
+            break;
+          }
+        }
+      }
+
+      if (found || filter === '') {
+        row.style.display = '';
+        visibleCount++;
+      } else {
+        row.style.display = 'none';
+        console.log('Hiding row', i); // Debug
+      }
+    }
+
+    // Show "no results" message if no rows are visible
+    const noResultsRow = tbody.querySelector('.no-results-row');
+    if (visibleCount === 0 && filter !== '') {
+      if (!noResultsRow) {
+        const newRow = document.createElement('tr');
+        newRow.className = 'no-results-row';
+        newRow.innerHTML = '<td colspan="8" class="no-data">No matching users found.</td>';
+        tbody.appendChild(newRow);
+      }
+    } else if (noResultsRow) {
+      noResultsRow.remove();
+    }
+  }
+
+  // Attach search event listeners
+  if (searchInput) {
+    searchInput.addEventListener('keyup', searchUser);
+    searchInput.addEventListener('input', searchUser);
+    searchInput.addEventListener('search', searchUser);
+  }
+
+  // ===========================
+  // DELETE MODAL FUNCTIONALITY
+  // ===========================
 
   // Open modal when delete button is clicked
   deleteButtons.forEach(button => {
@@ -97,6 +169,10 @@ document.addEventListener('DOMContentLoaded', function () {
         currentButton = null;
       });
   });
+
+  // ===========================
+  // HELPER FUNCTIONS
+  // ===========================
 
   // Helper function to get CSRF token
   function getCookie(name) {

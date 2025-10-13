@@ -19,3 +19,5 @@ def admin_view(request):
         'users': users
     }
     return render(request, 'app_core/admin.html', context)
+
+

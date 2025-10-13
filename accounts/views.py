@@ -6,9 +6,34 @@ from django.db import IntegrityError
 from django.contrib.auth import get_user_model
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth import authenticate, login
+from django.contrib.auth import logout as auth_logout
 import re
 
 User = get_user_model()
+
+
+def login_view(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+
+            # Check if this is the user's first login
+            if getattr(user, "first_login", False):
+                return redirect('first_login_password')
+
+            # Otherwise go to dashboard or whatever main page
+            return redirect('dashboard')
+        else:
+            messages.error(request, "Invalid username or password.")
+            return redirect('login')
+
+    return render(request, "accounts/login.html")
 
 def signup_view(request):
     if request.method == 'POST':
@@ -48,6 +73,9 @@ def signup_view(request):
                 generated_password=generated_password,
                 role=role
             )
+
+            user.first_login = True
+            user.save()
             messages.success(request, f"Account for {username} created successfully.")
             return render(request, 'accounts/user_created.html', {
                 'username': username,
@@ -122,3 +150,36 @@ def delete_user(request, user_id):
         except User.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'User not found'}, status=404)
     return HttpResponseNotAllowed(['DELETE'])
+
+
+
+
+@login_required
+def first_login_password(request):
+    if request.method == "POST":
+        new_password = request.POST.get("new_password")
+        confirm_password = request.POST.get("confirm_password")
+
+        if not new_password or not confirm_password:
+            messages.error(request, "Please fill in both password fields.")
+            return redirect('first_login_password')
+
+        if new_password != confirm_password:
+            messages.error(request, "Passwords do not match.")
+            return redirect('first_login_password')
+
+
+        # Update password securely
+        user = request.user
+        user.set_password(new_password)
+        user.first_login = False
+        user.save()
+
+        # Keep user logged in after password change
+        update_session_auth_hash(request, user)
+
+
+        messages.success(request, "Your password has been successfully updated.")
+        return redirect('dashboard')  # change to your desired page
+
+    return render(request, 'accounts/confirm_pass.html')
