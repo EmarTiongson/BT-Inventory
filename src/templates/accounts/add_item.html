@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/add_item.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="add-item-container">
+  <h1 class="page-title">Add New Item</h1>
+
+  <div class="inventory-card">
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      
+      <!-- Image Upload Section -->
+      <div class="upload-box">
+        <label for="image" class="upload-label">
+          <i class="bi bi-upload"></i> Upload Image
+          <input type="file" id="image" name="image" accept="image/*" style="display: none;" required>
+        </label>
+      </div>
+
+      <!-- Form Fields Below Image Upload -->
+      <div class="form-grid">
+        <input type="date" name="date" placeholder="dd/mm/yyyy" required>
+        <input type="text" name="item" placeholder="Item Name" required>
+        <input type="text" name="description" placeholder="Description" required>
+        
+        <input type="number" name="total_stock" placeholder="Total Stock" required>
+        <input type="number" name="quantity" placeholder="Quantity" required>
+        <input type="number" name="allocated_quantity" placeholder="Allocated Quantity" required>
+        
+        <input type="text" name="part_no" placeholder="Part No." required>
+        <input type="text" name="serial_no" placeholder="Serial No." required>
+
+        <!-- IN and OUT Fields -->
+        <div class="btn-pair">
+          <input type="text" name="in" placeholder="IN">
+          <input type="text" name="out" placeholder="OUT">
+        </div>
+
+        <input type="text" name="location" placeholder="Location" required>
+        <input type="text" name="remarks" placeholder="Remarks">
+      </div>
+
+      <!-- Submit Section -->
+      <div class="submit-section">
+        <button type="submit" class="add-btn">
+          <i class="bi bi-plus-square"></i> Add to List
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

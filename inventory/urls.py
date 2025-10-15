@@ -20,6 +20,7 @@ from app_core import views as core_views
 from django.views.generic import RedirectView
 
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('app_core.urls')),

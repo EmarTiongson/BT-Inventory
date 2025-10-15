@@ -58,7 +58,7 @@ def signup_view(request):
 
         if not all([first_name, last_name, username, email, generated_password, role]):
             messages.error(request, "Please fill out all required fields.")
-            return redirect('sginup')
+            return redirect('signup')
 
         try:
             user = User.objects.create_user(
@@ -100,10 +100,6 @@ def update_user_view(request, user_id):
 
     if current_user.role == "admin" and user.role == "superadmin":
         messages.error(request, "Admins cannot edit Superadmin accounts.")
-        return redirect("admin_page")
-
-    elif current_user.role not in ["admin", "superadmin"]:
-        messages.error(request, "You do not have permission to edit user accounts.")
         return redirect("admin_page")
 
 
@@ -220,3 +216,16 @@ def first_login_password(request):
         return redirect('dashboard') 
 
     return render(request, 'accounts/confirm_pass.html')
+
+
+@login_required
+
+def inventory_view(request):
+
+    return render(request, 'app_core/inventory.html')
+
+
+
+
+
+

@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/add_item.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="add-item-container">
+  <h1 class="page-title">Update Item</h1>
+
+  <div class="inventory-card">
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <!-- Image Upload Section -->
+      <div class="upload-box">
+        {% if item.image_url %}
+          <img src="{{ item.image_url }}" alt="Current Item Image" style="max-width: 100%; max-height: 100%; border-radius: 10px;">
+        {% else %}
+          <span class="upload-label" style="color: #aaa;">No Image Available</span>
+        {% endif %}
+      </div>
+
+      <!-- Form Fields Below Image Upload -->
+      <div class="form-grid">
+        <input type="text" name="date" value="{{ item.date }}" readonly style="cursor: not-allowed; background: #333333;" placeholder="Date">
+
+        <input type="text" name="item" value="{{ item.name }}" readonly style="cursor: not-allowed; background: #333333;" placeholder="Item Name">
+
+        <input type="text" name="description" value="{{ item.description }}" readonly style="cursor: not-allowed; background: #333333;" placeholder="Description">
+
+        <input type="text" name="part_no" value="{{ item.part_no }}" placeholder="Part No.">
+        <input type="text" name="serial_no" value="{{ item.serial_no }}" placeholder="Serial No.">
+
+        <div class="btn-pair">
+          <input type="number" name="in" placeholder="IN" value="{{ item.in_count }}">
+          <input type="number" name="out" placeholder="OUT" value="{{ item.out_count }}">
+        </div>
+
+        <input type="text" name="location" value="{{ item.location }}" placeholder="Location">
+        <input type="text" name="po_supplier" value="{{ item.po_supplier }}" placeholder="P.O From Supplier">
+        <input type="text" name="po_client" value="{{ item.po_client }}" placeholder="P.O To Client">
+        <input type="text" name="dr_no" value="{{ item.dr_no }}" placeholder="DR No.">
+
+        <input type="text" name="user" value="{{ item.updated_by_user }}" readonly style="cursor: not-allowed; background: #333333;" placeholder="User">
+
+        <input type="text" name="remarks" value="{{ item.remarks }}" placeholder="Remarks">
+      </div>
+
+      <!-- Submit Section -->
+      <div class="submit-section">
+        <button type="submit" class="add-btn" style="background-color: #f1c40f; color: #1e1e1e;">
+          <i class="bi bi-arrow-up-circle"></i> Update Item
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
