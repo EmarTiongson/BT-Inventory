@@ -1,6 +1,7 @@
 from django.core.validators import RegexValidator
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils import timezone
 
 class CustomUser(AbstractUser):
     middle_initial = models.CharField(max_length=1, blank=True, null=True)
@@ -38,3 +39,7 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.username
+
+
+
+

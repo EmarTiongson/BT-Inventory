@@ -33,7 +33,7 @@ def login_view(request):
             messages.error(request, "Invalid username or password.")
             return redirect('login')
 
-    return render(request, "accounts/login.html")
+    return render(request, "registration/login.html")
 
 def signup_view(request):
     if request.method == 'POST':
@@ -216,13 +216,6 @@ def first_login_password(request):
         return redirect('dashboard') 
 
     return render(request, 'accounts/confirm_pass.html')
-
-
-@login_required
-
-def inventory_view(request):
-
-    return render(request, 'app_core/inventory.html')
 
 
 

@@ -18,14 +18,22 @@ from django.contrib import admin
 from django.urls import path, include
 from app_core import views as core_views
 from django.views.generic import RedirectView
+from . import views
+
 
 
 
 urlpatterns = [
+     # Default landing page
+    path('', views.inventory_view, name='inventory'),
+    # Inventory item management
+    path('item/<int:item_id>/', views.item_detail, name='item_detail'),
+    path('add/', views.additem_view, name='add_item'),
+    path('update/<int:item_id>/', views.updateitem_view, name='update_item'),
+    # Include URLs from other apps
+    path('accounts/', include('accounts.urls')),   
+    path('', include('app_core.urls')),   
+
+     # Django admin
     path('admin/', admin.site.urls),
-    path('', include('app_core.urls')),
-    path('', include('accounts.urls')),
-    path('accounts/', include('accounts.urls')),
-    path('dashboard/', core_views.dashboard_view, name='dashboard'),
-    path('', RedirectView.as_view(url='/accounts/login/', permanent=False))
 ]

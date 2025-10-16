@@ -151,7 +151,11 @@ body.dark-mode .nav-item.active {
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.02); 
 }
 
-/* push signout to bottom */
+/* ==============================
+   SIGN OUT BUTTON STYLES
+   ============================== */
+
+/* Push signout to bottom */
 .sidebar form.nav-item.signout,
 .sidebar .nav-item.signout {
   margin-top: auto;
@@ -161,6 +165,7 @@ body.dark-mode .nav-item.active {
   background: none !important;
 }
 
+/* Base signout button (light mode) */
 .sidebar form.nav-item.signout button,
 .sidebar .nav-item.signout button {
   all: unset;
@@ -172,45 +177,58 @@ body.dark-mode .nav-item.active {
   padding: 14px 16px;
   border-radius: 10px;
   margin-bottom: 4px;
-  background: #134686 !important;
+  background: #134686; /* Light mode base color */
   color: white !important;
-  transition: background 0.3s ease;
+  transition: background 0.3s ease, transform 0.2s ease;
   font-weight: 700;
   font-family: "Poppins", sans-serif;
   cursor: pointer;
 }
 
-.sidebar form.nav-item.signout button i {
+.sidebar form.nav-item.signout button:hover,
+.sidebar .nav-item.signout button:hover {
+  background: #D96F32; /* Light mode hover */
+  transform: scale(1.03);
+}
+
+/* Dark mode signout button */
+body.dark-mode .sidebar form.nav-item.signout button,
+body.dark-mode .sidebar .nav-item.signout button {
+  background: #D96F32; /* Dark mode base color */
+}
+
+body.dark-mode .sidebar form.nav-item.signout button:hover,
+body.dark-mode .sidebar .nav-item.signout button:hover {
+  background:#134686; /* Light mode base color */
+; /* Darker hover color for dark mode */
+  transform: scale(1.03);
+}
+
+/* Icon styling */
+.sidebar form.nav-item.signout button i,
+.sidebar .nav-item.signout button i {
   font-size: 18px;
   width: 20px;
   text-align: center;
 }
 
-.sidebar form.nav-item.signout button:hover {
-  background: #D96F32 !important;
+/* Dark mode signout border */
+body.dark-mode .sidebar form.nav-item.signout,
+body.dark-mode .sidebar .nav-item.signout {
+  border: none;
 }
 
-body.dark-mode .sidebar form.nav-item.signout button {
-  background: #D96F32 !important;
+/* Hide labels on collapse */
+.sidebar.collapsed .nav-item span { 
+  display: none; 
+  opacity: 0;
+}
+.sidebar .nav-item span { 
+  display: inline-block;
+  transition: opacity 0.25s ease;
+  white-space: nowrap;
 }
 
-.sidebar form.nav-item.signout button i {
-  font-size: 18px;
-  width: 20px;
-  text-align: center;
-}
-
-.sidebar form.nav-item.signout button:hover {
-  background: #D96F32;
-}
-
-body.dark-mode .sidebar form.nav-item.signout button {
-  background: #ef4444;
-}
-
-body.dark-mode .sidebar form.nav-item.signout button:hover {
-  background: #dc2626;
-}
 
 /* Dark mode signout border */
 body.dark-mode .sidebar form.nav-item.signout,
@@ -313,7 +331,7 @@ body.dark-mode .sidebar .nav-item.signout {
 
 /* action/add button */
 .add-btn {
-  background: linear-gradient(90deg,var(--accent),var(--accent-2));
+  background: #134686;
   color: white;
   padding: 8px 14px;
   border-radius: 10px;
@@ -340,6 +358,63 @@ body.dark-mode .data-table th, body.dark-mode .data-table td {
   border-border-color: rgba(255,255,255,0.04);
 }
 
+/* ---------- ADD ITEM & UPDATE ITEM CONTAINER STYLES ---------- */
+/* Container - Light Mode (Default) - Match sidebar color */
+.add-item-container,
+.update-item-container {
+  background: linear-gradient(180deg, #d1d5db, #e5e7eb) !important; /* Same as light mode sidebar */
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  color: #1f2937 !important;
+  box-shadow: 0 8px 30px rgba(9,30,66,0.08) !important;
+  transition: background 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* Container - Dark Mode - Match sidebar color */
+body.dark-mode .add-item-container,
+body.dark-mode .update-item-container {
+  background: linear-gradient(180deg, #0f1724, #0b2138) !important; /* Same as dark mode sidebar */
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  color: #e6eef8 !important;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6) !important;
+}
+
+/* Add/Update Button - Light Mode (Blue) */
+.add-item-container .add-btn,
+.update-item-container .add-btn {
+  background: #134686 !important;
+  color: #fff !important;
+}
+
+.add-item-container .add-btn:hover,
+.update-item-container .add-btn:hover {
+  background: #0062d1 !important;
+  box-shadow: 0 4px 12px rgba(11, 99, 255, 0.3) !important;
+}
+
+/* Add/Update Button - Dark Mode (Orange) */
+body.dark-mode .add-item-container .add-btn,
+body.dark-mode .update-item-container .add-btn {
+  background: #D96F32 !important;
+}
+
+body.dark-mode .add-item-container .add-btn:hover,
+body.dark-mode .update-item-container .add-btn:hover {
+  background: #c25f28 !important;
+  box-shadow: 0 4px 12px rgba(217, 111, 50, 0.3) !important;
+}
+
+/* Page Title - Light Mode */
+.add-item-container .page-title,
+.update-item-container .page-title {
+  color: #1f2937 !important;
+}
+
+/* Page Title - Dark Mode */
+body.dark-mode .add-item-container .page-title,
+body.dark-mode .update-item-container .page-title {
+  color: #fff !important;
+}
+
 /* small devices */
 @media (max-width: 900px) {
   .sidebar { position: fixed; z-index:40; transform: translateX(-4px); }
@@ -349,3 +424,67 @@ body.dark-mode .data-table th, body.dark-mode .data-table td {
 
 /* small helpers */
 .hidden-xs { display: none; }
+
+/* ===========================
+   FIXED RETURN BUTTON (Bottom Right)
+   =========================== */
+.return-btn-fixed {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 15px;
+  cursor: pointer;
+  background: #134686;
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(25, 55, 107, 0.3);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.return-btn-fixed:hover {
+  background: #134686;;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(11, 99, 255, 0.4);
+}
+
+/* Dark Mode */
+body.dark-mode .return-btn-fixed {
+  background: #D96F32;
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(217, 111, 50, 0.3);
+}
+
+body.dark-mode .return-btn-fixed:hover {
+  background: #D96F32;
+  box-shadow: 0 6px 14px rgba(217, 111, 50, 0.4);
+  transform: translateY(-2px);
+}
+
+/* ==============================
+   Input Focus (Hover/Click Colors)
+   ============================== */
+
+/* Light Mode Input Focus */
+body:not(.dark-mode) input:focus,
+body:not(.dark-mode) select:focus,
+body:not(.dark-mode) textarea:focus {
+  border-color: #134686 !important;
+  box-shadow: 0 0 0 3px rgba(19, 70, 134, 0.2); /* Subtle blue glow */
+  outline: none;
+}
+
+/* Dark Mode Input Focus */
+body.dark-mode input:focus,
+body.dark-mode select:focus,
+body.dark-mode textarea:focus {
+  border-color: #D96F32 !important;
+  box-shadow: 0 0 0 3px rgba(217, 111, 50, 0.3); /* Subtle orange glow */
+  outline: none;
+}

@@ -22,12 +22,9 @@
         {% endif %}
       </div>
 
-      <!-- Form Fields Below Image Upload -->
       <div class="form-grid">
         <input type="text" name="date" value="{{ item.date }}" readonly style="cursor: not-allowed; background: #333333;" placeholder="Date">
-
         <input type="text" name="item" value="{{ item.name }}" readonly style="cursor: not-allowed; background: #333333;" placeholder="Item Name">
-
         <input type="text" name="description" value="{{ item.description }}" readonly style="cursor: not-allowed; background: #333333;" placeholder="Description">
 
         <input type="text" name="part_no" value="{{ item.part_no }}" placeholder="Part No.">
@@ -44,11 +41,9 @@
         <input type="text" name="dr_no" value="{{ item.dr_no }}" placeholder="DR No.">
 
         <input type="text" name="user" value="{{ item.updated_by_user }}" readonly style="cursor: not-allowed; background: #333333;" placeholder="User">
-
         <input type="text" name="remarks" value="{{ item.remarks }}" placeholder="Remarks">
       </div>
 
-      <!-- Submit Section -->
       <div class="submit-section">
         <button type="submit" class="add-btn" style="background-color: #f1c40f; color: #1e1e1e;">
           <i class="bi bi-arrow-up-circle"></i> Update Item
@@ -57,4 +52,9 @@
     </form>
   </div>
 </div>
+
+<!-- ✅ Fixed Return Button (outside the container) -->
+<a href="#" class="return-btn-fixed" onclick="history.back(); return false;">
+  <i class="bi bi-arrow-left-circle"></i> Back to Overview
+</a>
 {% endblock %}

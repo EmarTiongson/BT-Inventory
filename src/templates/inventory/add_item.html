@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/add_item.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="add-item-container">
+  <h1 class="page-title">Add New Item</h1>
+
+  <div class="inventory-card">
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      
+      <!-- Image Upload Section -->
+      <div class="upload-box">
+        <label for="image" class="upload-label">
+          <i class="bi bi-upload"></i> Upload Image
+          <input type="file" id="image" name="image" accept="image/*" style="display: none;" required>
+        </label>
+      </div>
+
+      <!-- Form Fields -->
+      <div class="form-grid">
+        <input type="date" name="date" placeholder="dd/mm/yyyy" required>
+        <input type="text" name="item" placeholder="Item Name" required>
+        <input type="text" name="description" placeholder="Description" required>
+
+        <input type="number" name="total_stock" placeholder="Total Stock" required>
+        <input type="number" name="quantity" placeholder="Quantity" required>
+        <input type="number" name="allocated_quantity" placeholder="Allocated Quantity" required>
+
+        <select name="unit_of_quantity" required>
+          <option value="" disabled selected>Unit of Quantity</option>
+          <option value="pieces">Pieces</option>
+          <option value="rolls">Rolls</option>
+          <option value="meters">Meters</option>
+        </select>
+
+        <input type="text" name="part_no" placeholder="Part No." required>
+
+        <!-- IN and OUT Fields -->
+        <div class="btn-pair">
+          <input type="number" id="inField" name="in" placeholder="IN">
+          <input type="number" name="out" placeholder="OUT">
+        </div>
+
+        <input type="text" name="location" placeholder="Location" required>
+        <input type="text" name="remarks" placeholder="Remarks">
+      </div>
+
+      <!-- ✅ Serial Numbers Section (with modal trigger) -->
+      <div class="serial-section">
+        <div class="serial-header">
+          <label>Serial Numbers</label>
+          <button type="button" class="serial-btn" id="openSerialModal">+</button>
+        </div>
+        <!-- Hidden field to store serialized serial numbers -->
+        <input type="hidden" id="serialHiddenInput" name="serial_numbers">
+      </div>
+
+      <!-- ✅ Modal for Serial Numbers -->
+      <div id="serialModal" class="modal">
+        <div class="modal-content">
+          <h2>Serial Numbers</h2>
+          <div id="serialFieldsContainer"></div>
+          <div class="modal-actions">
+            <button type="button" id="closeSerialModal" class="cancel-btn">Cancel</button>
+            <button type="button" id="saveSerialNumbers" class="save-btn">Save</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Section -->
+      <div class="submit-section">
+        <button type="submit" class="add-btn">
+          <i class="bi bi-plus-square"></i> Add to List
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ✅ Fixed Return Button -->
+<a href="#" class="return-btn-fixed" onclick="history.back(); return false;">
+  <i class="bi bi-arrow-left-circle"></i> Back to Overview
+</a>
+
+<!-- ✅ JS for Modal Serial Numbers -->
+<script>
+  const openModalBtn = document.getElementById("openSerialModal");
+  const serialModal = document.getElementById("serialModal");
+  const closeModalBtn = document.getElementById("closeSerialModal");
+  const saveSerialBtn = document.getElementById("saveSerialNumbers");
+  const serialFieldsContainer = document.getElementById("serialFieldsContainer");
+  const inField = document.getElementById("inField");
+  const hiddenSerialInput = document.getElementById("serialHiddenInput");
+
+  let serialNumbers = [];
+
+  // ✅ Open Modal and Generate Fields
+  openModalBtn.addEventListener("click", () => {
+    const inQty = parseInt(inField.value);
+
+    if (!inQty || inQty <= 0) {
+      alert("Please enter a valid IN Quantity before adding serial numbers.");
+      return;
+    }
+
+    serialFieldsContainer.innerHTML = "";
+
+    for (let i = 1; i <= inQty; i++) {
+      const input = document.createElement("input");
+      input.type = "text";
+      input.placeholder = `Serial Number ${i}`;
+      input.classList.add("serial-field");
+      serialFieldsContainer.appendChild(input);
+    }
+
+    serialModal.style.display = "flex";
+  });
+
+  // ✅ Close Modal
+  closeModalBtn.addEventListener("click", () => {
+    serialModal.style.display = "none";
+  });
+
+  // ✅ Save Serial Numbers
+  saveSerialBtn.addEventListener("click", () => {
+    const inputs = document.querySelectorAll(".serial-field");
+    serialNumbers = Array.from(inputs).map((input) => input.value.trim()).filter(Boolean);
+
+    if (serialNumbers.length === 0) {
+      alert("Please fill in at least one serial number.");
+      return;
+    }
+
+    // Store in hidden input (comma-separated)
+    hiddenSerialInput.value = serialNumbers.join(",");
+
+    serialModal.style.display = "none";
+  });
+
+  // ✅ Close Modal on Outside Click
+  window.addEventListener("click", (e) => {
+    if (e.target === serialModal) serialModal.style.display = "none";
+  });
+</script>
+{% endblock %}

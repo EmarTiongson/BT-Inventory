@@ -27,35 +27,3 @@ def admin_view(request):
     return render(request, "app_core/admin.html", context)
 
 
-@login_required
-def inventory_view(request):
-    users = []  # Empty for now, will show dummy data from template
-    context = {
-        'users': users,
-    }
-    return render(request, 'inventory.html', context)
-
-
-@login_required
-#item_id
-def item_detail(request):
-    # context = {
-    #     'item_id': item_id,
-    # }
-    return render(request, 'accounts/item.html')
-
-@login_required
-#item_id
-def additem_view(request):
-    # context = {
-    #     'item_id': item_id,
-    # }
-    return render(request, 'accounts/add_item.html')
-
-@login_required
-#item_id
-def updateitem_view(request):
-    # context = {
-    #     'item_id': item_id,
-    # }
-    return render(request, 'accounts/update_item.html')
