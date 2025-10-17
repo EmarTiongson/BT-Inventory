@@ -29,6 +29,7 @@
       <thead>
         <tr>
           <th>DATE LAST MODIFIED</th>
+          <th>ITEM ID</th>
           <th>ITEM</th>
           <th>IMAGE</th>
           <th>DESCRIPTION</th>
@@ -36,7 +37,9 @@
           <th>QUANTITY</th>
           <th>ALLOCATED QUANTITY</th>
           <th>UNIT</th>
+          <th>Part Number</th>
           <th>SERIAL NUMBERS</th>
+          <th>User</th>
           <th style="text-align: center;">ACTIONS</th>
         </tr>
       </thead>
@@ -44,37 +47,54 @@
         {% for item in items %}
         <tr id="item-row-{{ item.id }}" style="transition: opacity 0.3s ease;">
           <td>{{ item.date_last_modified|date:"F d, Y" }}</td>
+          {% if item.id %}
+            <td>{{ item.id }}</td>
+            {%else%}
+            <td>-</td>
+          {%endif%}
           <td><a class="item-link">{{ item.item_name }}</a></td>
           <td>
             {% if item.image %}
-            <img src="{{ item.image.url }}" alt="{{ item.item_name }}" 
-                 style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; background: #fff; padding: 5px;">
-            {% else %}
-            <img src="{% static 'images/default-placeholder.png' %}" alt="No Image"
-                 style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; background: #fff; padding: 5px;">
-            {% endif %}
+                  <img src="{{ item.image.url }}" 
+                      alt="{{ item.name }}" 
+                      class="thumbnail"
+                      onclick="showImagePopup('{{ item.image.url }}')" />
+                {% else %}
+                  <span class="text-gray-400">No image</span>
+                {% endif %}
           </td>
           <td>{{ item.description|default:"—" }}</td>
           <td>{{ item.total_stock }}</td>
           <td>{{ item.quantity }}</td>
           <td>{{ item.allocated_quantity }}</td>
           <td>{{ item.get_unit_of_quantity_display }}</td>
-          <td>
-            {% if item.serial_numbers.all %}
-              <button class="toggle-serials-btn" onclick="toggleSerials({{ item.id }})">
-                View Serials ({{ item.available_serials|length }})
-              </button>
-              <ul id="serials-{{ item.id }}" class="serials-list hidden">
-                {% for serial in item.available_serials %}
-                  <li>{{ serial }}</li>
-                {% empty %}
-                  <li><em>No serial numbers</em></li>
-                {% endfor %}
-              </ul>
-            {% else %}
-              <em>—</em>
-            {% endif %}
-          </td>
+          <td>{{ item.part_no|default:"—" }}</td>
+         <td>
+              {% if item.serial_numbers.all %}
+                <button class="toggle-serials-btn" onclick="toggleSerials({{ item.id }})">
+                  View Serials ({{ item.available_serials|length }})
+                </button>
+
+                <div id="serials-{{ item.id }}" class="serials-list-container hidden">
+                  <input 
+                    type="text" 
+                    class="serial-search" 
+                    placeholder="Search serials..." 
+                    onkeyup="filterSerials({{ item.id }})"
+                  >
+                  <ul class="serials-list">
+                    {% for serial in item.available_serials %}
+                      <li>{{ serial }}</li>
+                    {% empty %}
+                      <li><em>No serial numbers</em></li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              {% else %}
+                <em>—</em>
+              {% endif %}
+        </td>
+          <td>{{ item.user }}</td>
           <td style="text-align: center;">
             <button class="update-btn action-btn" onclick="window.location.href='{% url 'update_item' item.id %}'">
               Update
@@ -103,10 +123,129 @@
   </div>
 </div>
 
+
+<div id="imageModal" class="image-modal" onclick="closeImagePopup()">
+  <span class="close">&times;</span>
+  <img class="modal-content" id="popupImage">
+</div>
+
 <script>
 function toggleSerials(itemId) {
   const list = document.getElementById(`serials-${itemId}`);
   if (list) list.classList.toggle("hidden");
+}
+
+
+
+function showImagePopup(src) {
+  const modal = document.getElementById('imageModal');
+  const modalImg = document.getElementById('popupImage');
+  modal.style.display = "block";
+  modalImg.src = src;
+}
+
+function closeImagePopup() {
+  document.getElementById('imageModal').style.display = "none";
+}
+
+const deleteModal = document.getElementById('deleteModal');
+const confirmDeleteBtn = document.getElementById('confirmDelete');
+const cancelDeleteBtn = document.getElementById('cancelDelete');
+
+let itemIdToDelete = null;
+
+// Open modal
+document.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        itemIdToDelete = btn.dataset.itemId;
+        deleteModal.style.display = 'block';
+    });
+});
+
+// Cancel deletion
+cancelDeleteBtn.addEventListener('click', () => {
+    itemIdToDelete = null;
+    deleteModal.style.display = 'none';
+});
+
+// Confirm deletion
+confirmDeleteBtn.addEventListener('click', () => {
+    if (!itemIdToDelete) return;
+
+    const deleteUrlTemplate = "{% url 'delete_item' 0 %}";
+    const deleteUrl = deleteUrlTemplate.replace('0', itemIdToDelete);
+
+    fetch(deleteUrl, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json'
+        },
+    })
+    .then(res => {
+        if (!res.ok) throw new Error('Network response not OK');
+        return res.json();
+    })
+    .then(data => {
+        if (data.success) {
+            // Smoothly fade out and remove the row
+            const row = document.getElementById(`item-row-${itemIdToDelete}`);
+            if (row) {
+                row.style.transition = 'opacity 0.5s';
+                row.style.opacity = 0;
+                setTimeout(() => row.remove(), 500);
+            }
+        }
+        // Hide modal and reset selection
+        deleteModal.style.display = 'none';
+        itemIdToDelete = null;
+    })
+    .catch(err => {
+        // Log errors silently, no alert shown
+        console.error('Error deleting item:', err);
+        deleteModal.style.display = 'none';
+        itemIdToDelete = null;
+    });
+});
+
+// Utility function to get CSRF token from cookie
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let c of cookies) {
+            const cookie = c.trim();
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Close modal if clicked outside
+window.addEventListener('click', (e) => {
+    if (e.target === deleteModal) {
+        deleteModal.style.display = 'none';
+        itemIdToDelete = null;
+    }
+});
+
+function filterSerials(itemId) {
+  const input = document.querySelector(`#serials-${itemId} .serial-search`);
+  const filter = input.value.toLowerCase();
+  const list = document.querySelectorAll(`#serials-${itemId} .serials-list li`);
+
+  list.forEach(li => {
+    const text = li.textContent.toLowerCase();
+    li.style.display = text.includes(filter) ? '' : 'none';
+  });
+}
+
+function toggleSerials(itemId) {
+  const container = document.getElementById(`serials-${itemId}`);
+  if (container) container.classList.toggle("hidden");
 }
 </script>
 

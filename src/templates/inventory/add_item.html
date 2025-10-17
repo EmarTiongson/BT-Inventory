@@ -15,15 +15,15 @@
       
       <!-- Image Upload Section -->
       <div class="upload-box">
-        <label for="image" class="upload-label">
+        <label for="image" class="upload-label" id="uploadLabel">
           <i class="bi bi-upload"></i> Upload Image
           <input type="file" id="image" name="image" accept="image/*" style="display: none;" required>
         </label>
+        <img id="imagePreview" src="#" alt="Selected Image" style="display:none; max-width:150px; margin-top:10px; border-radius:8px;" />
       </div>
 
       <!-- Form Fields -->
       <div class="form-grid">
-        <input type="date" name="date" placeholder="dd/mm/yyyy" required>
         <input type="text" name="item" placeholder="Item Name" required>
         <input type="text" name="description" placeholder="Description" required>
 
@@ -37,17 +37,8 @@
           <option value="rolls">Rolls</option>
           <option value="meters">Meters</option>
         </select>
+        <input type="text" name="part_no" placeholder="Part No.">
 
-        <input type="text" name="part_no" placeholder="Part No." required>
-
-        <!-- IN and OUT Fields -->
-        <div class="btn-pair">
-          <input type="number" id="inField" name="in" placeholder="IN">
-          <input type="number" name="out" placeholder="OUT">
-        </div>
-
-        <input type="text" name="location" placeholder="Location" required>
-        <input type="text" name="remarks" placeholder="Remarks">
       </div>
 
       <!-- ✅ Serial Numbers Section (with modal trigger) -->
@@ -88,63 +79,96 @@
 </a>
 
 <!-- ✅ JS for Modal Serial Numbers -->
+<!-- ✅ JS for Modal Serial Numbers -->
 <script>
-  const openModalBtn = document.getElementById("openSerialModal");
-  const serialModal = document.getElementById("serialModal");
-  const closeModalBtn = document.getElementById("closeSerialModal");
-  const saveSerialBtn = document.getElementById("saveSerialNumbers");
-  const serialFieldsContainer = document.getElementById("serialFieldsContainer");
-  const inField = document.getElementById("inField");
-  const hiddenSerialInput = document.getElementById("serialHiddenInput");
+const openModalBtn = document.getElementById("openSerialModal");
+const serialModal = document.getElementById("serialModal");
+const closeModalBtn = document.getElementById("closeSerialModal");
+const saveSerialBtn = document.getElementById("saveSerialNumbers");
+const serialFieldsContainer = document.getElementById("serialFieldsContainer");
+const quantityField = document.querySelector("input[name='quantity']");
+const hiddenSerialInput = document.getElementById("serialHiddenInput");
 
-  let serialNumbers = [];
+let serialNumbers = [];
 
-  // ✅ Open Modal and Generate Fields
-  openModalBtn.addEventListener("click", () => {
-    const inQty = parseInt(inField.value);
+// ✅ Open modal and generate serial fields based on quantity
+openModalBtn.addEventListener("click", (e) => {
+  e.preventDefault(); // stop form submission or focus events
 
-    if (!inQty || inQty <= 0) {
-      alert("Please enter a valid IN Quantity before adding serial numbers.");
-      return;
-    }
+  const qty = parseInt(quantityField.value);
+  if (!qty || qty <= 0) {
+    alert("Please enter a valid Quantity before adding serial numbers.");
+    return;
+  }
 
-    serialFieldsContainer.innerHTML = "";
+  // clear old fields
+  serialFieldsContainer.innerHTML = "";
 
-    for (let i = 1; i <= inQty; i++) {
-      const input = document.createElement("input");
-      input.type = "text";
-      input.placeholder = `Serial Number ${i}`;
-      input.classList.add("serial-field");
-      serialFieldsContainer.appendChild(input);
-    }
+  // create fields
+  for (let i = 1; i <= qty; i++) {
+    const input = document.createElement("input");
+    input.type = "text";
+    input.placeholder = `Serial Number ${i} (optional)`;
+    input.classList.add("serial-field");
+    if (serialNumbers[i - 1]) input.value = serialNumbers[i - 1];
+    serialFieldsContainer.appendChild(input);
+  }
 
-    serialModal.style.display = "flex";
-  });
+  serialModal.style.display = "flex";
+});
 
-  // ✅ Close Modal
-  closeModalBtn.addEventListener("click", () => {
+// ✅ Close modal
+closeModalBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+  serialModal.style.display = "none";
+});
+
+// ✅ Save serial numbers
+saveSerialBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+
+  const inputs = document.querySelectorAll(".serial-field");
+  serialNumbers = Array.from(inputs)
+    .map((input) => input.value.trim())
+    .filter(Boolean);
+
+  hiddenSerialInput.value = serialNumbers.join(",");
+  serialModal.style.display = "none";
+});
+
+// ✅ Improved outside-click handler (does NOT close immediately)
+serialModal.addEventListener("mousedown", (e) => {
+  if (e.target === serialModal) {
     serialModal.style.display = "none";
-  });
+  }
+});
 
-  // ✅ Save Serial Numbers
-  saveSerialBtn.addEventListener("click", () => {
-    const inputs = document.querySelectorAll(".serial-field");
-    serialNumbers = Array.from(inputs).map((input) => input.value.trim()).filter(Boolean);
 
-    if (serialNumbers.length === 0) {
-      alert("Please fill in at least one serial number.");
-      return;
+
+const imageInput = document.getElementById('image');
+const imagePreview = document.getElementById('imagePreview');
+const uploadLabel = document.getElementById('uploadLabel');
+
+imageInput.addEventListener('change', function() {
+    const file = this.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            imagePreview.src = e.target.result;
+            imagePreview.style.display = 'block'; // show preview
+            uploadLabel.style.display = 'none';   // hide initial upload logo/text
+        }
+        reader.readAsDataURL(file);
+    } else {
+        imagePreview.src = '#';
+        imagePreview.style.display = 'none';
+        uploadLabel.style.display = 'inline-flex'; // show upload logo/text if no file
     }
+});
 
-    // Store in hidden input (comma-separated)
-    hiddenSerialInput.value = serialNumbers.join(",");
-
-    serialModal.style.display = "none";
-  });
-
-  // ✅ Close Modal on Outside Click
-  window.addEventListener("click", (e) => {
-    if (e.target === serialModal) serialModal.style.display = "none";
-  });
+// Clicking the preview allows changing the image
+imagePreview.addEventListener('click', function() {
+    imageInput.click();
+});
 </script>
 {% endblock %}

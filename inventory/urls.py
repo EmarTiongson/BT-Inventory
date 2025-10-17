@@ -19,21 +19,26 @@ from django.urls import path, include
 from app_core import views as core_views
 from django.views.generic import RedirectView
 from . import views
-
-
-
+from django.shortcuts import redirect
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
      # Default landing page
-    path('', views.inventory_view, name='inventory'),
+    path('inventory/', views.inventory_view, name='inventory'),
     # Inventory item management
     path('item/<int:item_id>/', views.item_detail, name='item_detail'),
-    path('add/', views.additem_view, name='add_item'),
+    path('add-item/', views.add_item, name='add_item'),
     path('update/<int:item_id>/', views.updateitem_view, name='update_item'),
+    path('delete-item/<int:item_id>/', views.delete_item, name='delete_item'),
     # Include URLs from other apps
     path('accounts/', include('accounts.urls')),   
     path('', include('app_core.urls')),   
 
      # Django admin
     path('admin/', admin.site.urls),
+    path('', lambda request: redirect('login')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

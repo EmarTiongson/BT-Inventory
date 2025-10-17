@@ -13,39 +13,60 @@
     <form method="POST" enctype="multipart/form-data">
       {% csrf_token %}
 
-      <!-- Image Upload Section -->
+      <!-- Image -->
       <div class="upload-box">
-        {% if item.image_url %}
-          <img src="{{ item.image_url }}" alt="Current Item Image" style="max-width: 100%; max-height: 100%; border-radius: 10px;">
+        {% if item.image %}
+          <img src="{{ item.image.url }}" alt="Item Image" style="max-width: 100%; max-height: 100%; border-radius: 10px;">
         {% else %}
           <span class="upload-label" style="color: #aaa;">No Image Available</span>
         {% endif %}
       </div>
 
       <div class="form-grid">
-        <input type="text" name="date" value="{{ item.date }}" readonly style="cursor: not-allowed; background: #333333;" placeholder="Date">
-        <input type="text" name="item" value="{{ item.name }}" readonly style="cursor: not-allowed; background: #333333;" placeholder="Item Name">
-        <input type="text" name="description" value="{{ item.description }}" readonly style="cursor: not-allowed; background: #333333;" placeholder="Description">
+        <input type="text" name="date" value="{{ item.date|date:'Y-m-d' }}" readonly style="cursor:not-allowed;background:#333333;" placeholder="Date">
+        <input type="text" name="item" value="{{ item.item_name }}" readonly style="cursor:not-allowed;background:#333333;" placeholder="Item Name">
+        <input type="text" name="description" value="{{ item.description }}" readonly style="cursor:not-allowed;background:#333333;" placeholder="Description">
 
+        <input type="text" name="user" value="{{ request.user.username }}" readonly style="cursor:not-allowed;background:#333333;" placeholder="User">
+        <input type="text" name="location" value="{{ item.location }}" placeholder="Location">
         <input type="text" name="part_no" value="{{ item.part_no }}" placeholder="Part No.">
-        <input type="text" name="serial_no" value="{{ item.serial_no }}" placeholder="Serial No.">
+        <input type="text" name="remarks" value="{{ item.remarks }}" placeholder="Remarks">
 
         <div class="btn-pair">
-          <input type="number" name="in" placeholder="IN" value="{{ item.in_count }}">
-          <input type="number" name="out" placeholder="OUT" value="{{ item.out_count }}">
+          <input type="number" name="in" id="inField" placeholder="IN" value="">
+          <input type="number" name="out" id="outField" placeholder="OUT" value="">
         </div>
 
-        <input type="text" name="location" value="{{ item.location }}" placeholder="Location">
-        <input type="text" name="po_supplier" value="{{ item.po_supplier }}" placeholder="P.O From Supplier">
-        <input type="text" name="po_client" value="{{ item.po_client }}" placeholder="P.O To Client">
-        <input type="text" name="dr_no" value="{{ item.dr_no }}" placeholder="DR No.">
+        <div id="drField">
+          <input type="text" name="dr_no" id="drInput" placeholder="DR No." value="{{ item.dr_no }}" disabled>
+        </div>
 
-        <input type="text" name="user" value="{{ item.updated_by_user }}" readonly style="cursor: not-allowed; background: #333333;" placeholder="User">
-        <input type="text" name="remarks" value="{{ item.remarks }}" placeholder="Remarks">
+        <input type="text" name="po_supplier" id="poSupplierField" value="{{ item.po_from_supplier }}" placeholder="P.O From Supplier">
+        <input type="text" name="po_client" id="poClientField" value="{{ item.po_to_client }}" placeholder="P.O To Client">
+      </div>
+
+      <!-- Serial Numbers Modal Trigger -->
+      <div class="serial-number-section" style="margin-top: 10px;">
+        <button type="button" id="openSerialsBtn" class="add-btn" style="background-color: #444; color: #fff;">
+          <i class="bi bi-plus-circle"></i> Manage Serials
+        </button>
+        <input type="hidden" name="serial_numbers" id="serialNumbersField">
+      </div>
+
+      <!-- Modal -->
+      <div id="serialModal" class="modal" style="display:none;">
+        <div class="modal-content" style="max-width:500px;">
+          <h3 id="serialModalTitle">Manage Serials</h3>
+          <div id="serialInputsContainer" style="max-height:300px;overflow-y:auto;"></div>
+          <div style="margin-top:15px;text-align:right;">
+            <button type="button" id="closeSerialsBtn" class="cancel">Cancel</button>
+            <button type="button" id="saveSerialsBtn" class="confirm">Save Serials</button>
+          </div>
+        </div>
       </div>
 
       <div class="submit-section">
-        <button type="submit" class="add-btn" style="background-color: #f1c40f; color: #1e1e1e;">
+        <button type="submit" class="add-btn" style="background-color:#f1c40f;color:#1e1e1e;">
           <i class="bi bi-arrow-up-circle"></i> Update Item
         </button>
       </div>
@@ -53,8 +74,155 @@
   </div>
 </div>
 
-<!-- ✅ Fixed Return Button (outside the container) -->
-<a href="#" class="return-btn-fixed" onclick="history.back(); return false;">
+<a href="#" class="return-btn-fixed" onclick="history.back();return false;">
   <i class="bi bi-arrow-left-circle"></i> Back to Overview
 </a>
+
+<!-- ========== JS Logic ========== -->
+<script>
+const inField = document.getElementById('inField');
+const outField = document.getElementById('outField');
+const poSupplier = document.getElementById('poSupplierField');
+const poClient = document.getElementById('poClientField');
+const drInput = document.getElementById('drInput');
+
+function resetFields() {
+  inField.disabled = false;
+  outField.disabled = false;
+  poSupplier.disabled = false;
+  poClient.disabled = false;
+  drInput.disabled = true;
+}
+
+function handleInputChange() {
+  const hasIn = inField.value.trim() !== '';
+  const hasOut = outField.value.trim() !== '';
+  const hasSupplier = poSupplier.value.trim() !== '';
+  const hasClient = poClient.value.trim() !== '';
+
+  if (hasIn || hasSupplier) {
+    outField.disabled = true;
+    poClient.disabled = true;
+    drInput.disabled = true;
+    inField.disabled = false;
+    poSupplier.disabled = false;
+  } else if (hasOut || hasClient) {
+    inField.disabled = true;
+    poSupplier.disabled = true;
+    poClient.disabled = false;
+    drInput.disabled = false;
+  } else {
+    resetFields();
+  }
+}
+
+[inField, outField, poSupplier, poClient].forEach(field => {
+  field.addEventListener('input', handleInputChange);
+});
+
+resetFields();
+
+/* ============ SERIAL MODAL ============ */
+const serialModal = document.getElementById('serialModal');
+const openSerialsBtn = document.getElementById('openSerialsBtn');
+const closeSerialsBtn = document.getElementById('closeSerialsBtn');
+const saveSerialsBtn = document.getElementById('saveSerialsBtn');
+const serialInputsContainer = document.getElementById('serialInputsContainer');
+const serialNumbersField = document.getElementById('serialNumbersField');
+const serialModalTitle = document.getElementById('serialModalTitle');
+
+// available_serials from Django context
+const availableSerials = {{ available_serials|safe }};
+
+openSerialsBtn.addEventListener('click', () => {
+  const inVal = parseInt(inField.value) || 0;
+  const outVal = parseInt(outField.value) || 0;
+
+  serialInputsContainer.innerHTML = '';
+
+  // --- IN MODE ---
+  if (inVal > 0 && outVal === 0) {
+    serialModalTitle.textContent = `Add ${inVal} New Serial Numbers`;
+    for (let i = 1; i <= inVal; i++) {
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.placeholder = `Serial #${i}`;
+      input.className = 'serial-input';
+      input.style.marginBottom = '8px';
+      input.style.width = '100%';
+      serialInputsContainer.appendChild(input);
+    }
+    serialModal.style.display = 'block';
+    return;
+  }
+
+  // --- OUT MODE ---
+  if (outVal > 0 && inVal === 0) {
+    if (availableSerials.length === 0) {
+      alert("No available serial numbers for this item.");
+      return;
+    }
+
+    if (outVal > availableSerials.length) {
+      alert(`Only ${availableSerials.length} serial numbers are available — you requested ${outVal}.`);
+      return;
+    }
+
+    serialModalTitle.textContent = `Select ${outVal} Serial Numbers`;
+    availableSerials.forEach(serial => {
+      const label = document.createElement('label');
+      label.style.display = 'block';
+      label.style.marginBottom = '5px';
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.value = serial;
+      checkbox.style.marginRight = '8px';
+      label.appendChild(checkbox);
+      label.appendChild(document.createTextNode(serial));
+      serialInputsContainer.appendChild(label);
+    });
+    serialModal.style.display = 'block';
+    return;
+  }
+
+  alert("Please enter a valid IN or OUT quantity.");
+});
+
+closeSerialsBtn.addEventListener('click', () => serialModal.style.display = 'none');
+
+saveSerialsBtn.addEventListener('click', () => {
+  let serials = [];
+  const inVal = parseInt(inField.value) || 0;
+  const outVal = parseInt(outField.value) || 0;
+
+  // IN MODE: collect inputs
+  if (inVal > 0 && outVal === 0) {
+    serials = Array.from(serialInputsContainer.querySelectorAll('input'))
+      .map(i => i.value.trim())
+      .filter(v => v !== '');
+
+    if (serials.length !== inVal) {
+      alert(`Please enter exactly ${inVal} serial numbers.`);
+      return;
+    }
+
+  // OUT MODE: collect checked boxes
+  } else if (outVal > 0 && inVal === 0) {
+    const checked = Array.from(serialInputsContainer.querySelectorAll('input[type="checkbox"]:checked'))
+      .map(cb => cb.value);
+    if (checked.length !== outVal) {
+      alert(`Please select exactly ${outVal} serial numbers.`);
+      return;
+    }
+    serials = checked;
+  }
+
+  serialNumbersField.value = serials.join(',');
+  serialModal.style.display = 'none';
+});
+
+window.addEventListener('click', e => {
+  if (e.target === serialModal) serialModal.style.display = 'none';
+});
+</script>
 {% endblock %}
