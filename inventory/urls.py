@@ -27,7 +27,7 @@ urlpatterns = [
      # Default landing page
     path('inventory/', views.inventory_view, name='inventory'),
     # Inventory item management
-    path('item/<int:item_id>/', views.item_detail, name='item_detail'),
+    path('item/<int:item_id>/history/', views.item_history, name='item_history'),
     path('add-item/', views.add_item, name='add_item'),
     path('update/<int:item_id>/', views.updateitem_view, name='update_item'),
     path('delete-item/<int:item_id>/', views.delete_item, name='delete_item'),

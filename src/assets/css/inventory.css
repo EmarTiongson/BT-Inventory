@@ -1,604 +1,612 @@
-/* Header Container
+/* ==========================================================
+ * BASE STYLES & LAYOUT
+ * ========================================================== */
+
+.add-item-container {
+    width: 95%;
+    max-width: 1600px;
+    margin: 40px auto;
+    padding: 40px;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+}
+
+.inventory-card {
+    background: transparent !important;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.inventory-card form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: transparent !important;
+}
+
 .header-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
-/* Page Title - REMOVED HARD-CODED COLOR */
 .page-title {
-  margin: -20px 0 0 0;
-  padding: 0;
-  line-height: 1;
-  /* REMOVED: color: #fff; */
+    margin: -20px 0 0 0;
+    padding: 0;
+    line-height: 1;
 }
 
-/* Page Controls */
 .page-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  gap: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 15px;
 }
 
-/* Search Box */
-.search-box {
-  position: relative;
-  flex: 1;
-  max-width: 400px;
-}
-
-/* Search Input - REMOVED HARD-CODED COLORS */
-.search-box input {
-  width: 100%;
-  padding: 10px 40px 10px 15px;
-  border: 1px solid #3a3a3a;
-  border-radius: 8px;
-  font-size: 14px;
-  /* REMOVED: background: #2a2a2a; */
-  /* REMOVED: color: #fff; */
-  transition: all 0.3s ease;
-}
-
-.search-box input::placeholder {
-  color: #888;
-}
-
-.search-box input:focus {
-  outline: none;
-  border-color: #4CAF50;
-  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
-}
-
-.search-box i {
-  position: absolute;
-  right: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #888;
-}
-
-/* Add Product Button */
-.modern-add-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  background: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-}
-
-.modern-add-btn:hover {
-  background: #45a049;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
-}
-
-.modern-add-btn i {
-  font-size: 16px;
-}
-
-/* Content Card - REMOVED HARD-CODED COLOR */
 .content-card {
-  background: transparent;
-  border-radius: 12px;
-  padding: 0;
+    background: transparent;
+    border-radius: 12px;
+    padding: 0;
 }
 
 .user-management-box {
-  background: transparent;
+    background: transparent;
 }
 
-/* Table Responsive */
-.table-responsive {
-  overflow-x: auto;
-}
-
-/* Data Table - REMOVED HARD-CODED COLOR */
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-  background: transparent;
-}
-
-.data-table thead {
-  background: transparent;
-  /* REMOVED: border-bottom: 1px solid #3a3a3a; */
-}
-
-body.dark-mode .data-table thead {
-  border-bottom: 1px solid #3a3a3a; /* Dark mode border */
-}
-
-body.light-mode .data-table thead {
-  border-bottom: 1px solid #cccccc; /* Light mode border */
-}
-
-/* Data Table Header - REMOVED HARD-CODED COLOR */
-.data-table th {
-  padding: 12px 15px;
-  text-align: left;
-  font-weight: 600;
-  /* REMOVED: color: #888; */
-  text-transform: uppercase;
-  font-size: 11px;
-  letter-spacing: 0.5px;
-  background: transparent;
-}
-
-.data-table tbody tr {
-  /* REMOVED: border-bottom: 1px solid #2a2a2a; */
-  transition: background-color 0.2s ease;
-  background: transparent;
-}
-
-body.dark-mode .data-table tbody tr {
-  border-bottom: 1px solid #2a2a2a; /* Dark mode border */
-}
-
-body.light-mode .data-table tbody tr {
-  border-bottom: 1px solid #eeeeee; /* Light mode border */
-}
-
-.data-table tbody tr:hover {
-  background-color: rgba(255, 255, 255, 0.05); /* This can stay as it's a light overlay */
-}
-
-/* Data Table Cell - REMOVED HARD-CODED COLOR */
-.data-table td {
-  padding: 12px 15px;
-  vertical-align: middle;
-  /* REMOVED: color: #e0e0e0; */
-  background: transparent;
-}
-
-.data-table td img {
-  display: block;
-}
-
-/* Item Link Styles - REMOVED HARD-CODED COLOR */
-.item-link {
-  /* REMOVED: color: #e0e0e0; */
-  text-decoration: none;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  display: inline-block;
-}
-
-.item-link:hover {
-  color: #4CAF50;
-  font-weight: 700;
-  transform: translateX(3px);
-}
-
-/* No Data Message - REMOVED HARD-CODED COLOR */
-.no-data {
-  text-align: center;
-  color: #888; /* This is fine for a muted color in both modes */
-  padding: 40px 20px !important;
-  font-style: italic;
-}
-
-/* Action Buttons */
-.action-btn {
-  padding: 6px 16px;
-  border: none;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-right: 8px;
-}
-
-.update-btn {
-  background: #2196F3;
-  color: white;
-}
-
-.update-btn:hover {
-  background: #1976D2;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
-}
-
-.delete-btn {
-  background: #f44336;
-  color: white;
-  padding: 6px 16px;
-  border: none;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.delete-btn:hover {
-  background: #d32f2f;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
-}
-
-/* Modal Styles */
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 1000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(4px);
-}
-
-/* Modal Content - REMOVED HARD-CODED COLOR */
-.modal-content {
-  /* REMOVED: background-color: #2a2a2a; */
-  margin: 15% auto;
-  padding: 30px;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 400px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  animation: slideIn 0.3s ease;
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateY(-50px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-/* Modal Heading - REMOVED HARD-CODED COLOR */
-.modal-content h3 {
-  margin: 0 0 20px 0;
-  /* REMOVED: color: #e0e0e0; */
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.modal-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-  margin-top: 25px;
-}
-
-.modal-actions button {
-  padding: 10px 24px;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-/* Modal Cancel Button - REMOVED HARD-CODED COLOR */
-.modal-actions .cancel {
-  /* REMOVED: background: #3a3a3a; */
-  /* REMOVED: color: #e0e0e0; */
-}
-
-.modal-actions .cancel:hover {
-  background: #4a4a4a;
-}
-
-.modal-actions .confirm {
-  background: #f44336;
-  color: white;
-}
-
-.modal-actions .confirm:hover {
-  background: #d32f2f;
-  box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
-}
-
-/* Breadcrumb Navigation */
 .breadcrumb-nav {
-  margin-bottom: 20px;
+    margin-bottom: 20px;
 }
 
 .back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: #4CAF50;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #4CAF50;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
 }
 
 .back-link:hover {
-  color: #45a049;
-  transform: translateX(-3px);
+    color: #45a049;
+    transform: translateX(-3px);
 }
 
 .back-link i {
-  font-size: 14px;
+    font-size: 14px;
 }
 
-/* Item Detail Page Styles */
 .item-summary {
-  display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 20px;
-  margin-bottom: 30px;
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 20px;
+    margin-bottom: 30px;
 }
 
-/* Summary Card - REMOVED HARD-CODED COLOR */
 .summary-card {
-  /* REMOVED: background: rgba(255, 255, 255, 0.05); */
-  border-radius: 12px;
-  padding: 20px;
-  /* REMOVED: border: 1px solid #3a3a3a; */
+    border-radius: 12px;
+    padding: 20px;
 }
 
-/* Summary Card Heading - REMOVED HARD-CODED COLOR */
 .summary-card h3 {
-  margin: 0 0 15px 0;
-  /* REMOVED: color: #fff; */
-  font-size: 18px;
-  font-weight: 600;
+    margin: 0 0 15px 0;
+    font-size: 18px;
+    font-weight: 600;
 }
 
-/* Summary Card Paragraph - REMOVED HARD-CODED COLOR */
 .summary-card p {
-  margin: 10px 0;
-  /* REMOVED: color: #e0e0e0; */
-  font-size: 14px;
-  line-height: 1.6;
+    margin: 10px 0;
+    font-size: 14px;
+    line-height: 1.6;
 }
 
-/* Summary Card Strong Text - REMOVED HARD-CODED COLOR */
 .summary-card p strong {
-  color: #888;
-  font-weight: 600;
-  display: inline-block;
-  min-width: 150px;
+    color: #888;
+    font-weight: 600;
+    display: inline-block;
+    min-width: 150px;
 }
 
-/* Section Title - REMOVED HARD-CODED COLOR */
 .section-title {
-  /* REMOVED: color: #fff; */
-  font-size: 20px;
-  font-weight: 600;
-  margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .item-summary {
-    grid-template-columns: 1fr;
-  }
 
-  .page-controls {
-    flex-direction: column;
-    align-items: stretch;
-  }
+/* ==========================================================
+ * INPUTS & BUTTONS (BASE STYLES)
+ * ========================================================== */
 
-  .search-box {
-    max-width: 100%;
-  }
+.search-box {
+    position: relative;
+    flex: 1;
+    max-width: 400px;
 }
 
-/* Item Link - REMOVED HARD-CODED COLOR */
+.search-box input {
+    width: 100%;
+    padding: 10px 40px 10px 15px;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.search-box input::placeholder {
+    color: #888;
+}
+
+.search-box i {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+}
+
+.modern-add-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.modern-add-btn:hover {
+    background: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.modern-add-btn i {
+    font-size: 16px;
+}
+
+.action-btn {
+    padding: 6px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-right: 8px;
+}
+
+.update-btn {
+    background: #2196F3;
+    color: white;
+}
+
+.update-btn:hover {
+    background: #1976D2;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+}
+
+.delete-btn {
+    background: #f44336;
+    color: white;
+}
+
+.delete-btn:hover {
+    background: #d32f2f;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
+}
+
+.btn-pair {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+}
+
+.btn-pair input {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+
+/* ==========================================================
+ * DATA TABLE STYLES
+ * ========================================================== */
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    background: transparent;
+}
+
+.data-table thead {
+    background: transparent;
+}
+
+.data-table th {
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    background: transparent;
+}
+
+.data-table tbody tr {
+    transition: background-color 0.2s ease;
+    background: transparent;
+}
+
+.data-table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.data-table td {
+    padding: 12px 15px;
+    vertical-align: middle;
+    background: transparent;
+}
+
+.data-table td img {
+    display: block;
+}
+
 .item-link {
-  /* REMOVED: color: #e0e0e0; */
-  text-decoration: none;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  display: inline-block;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-block;
 }
 
 .item-link:hover {
-  color: #4CAF50;
-  font-weight: 700;
-  transform: translateX(3px);
+    color: #4CAF50;
+    font-weight: 700;
+    transform: translateX(3px);
 }
 
-/* ========================================================== */
-/* --- DYNAMIC THEME OVERRIDES (CRITICAL FIX) --- */
-/* ========================================================== */
+.no-data {
+    text-align: center;
+    color: #888;
+    padding: 40px 20px !important;
+    font-style: italic;
+}
 
-/* --- DARK MODE (Sets colors using explicit classes for specificity) --- */
+
+/* ==========================================================
+ * UPLOAD/THUMBNAIL STYLES
+ * ========================================================== */
+
+.upload-box {
+    width: 150px;
+    height: 150px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+    margin-bottom: 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.upload-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #bbb;
+    font-size: 14px;
+    cursor: pointer;
+    width: 100%; 
+    height: 100%;
+    justify-content: center;
+    border-radius: 8px;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.upload-label i {
+    font-size: 24px;
+    margin-bottom: 8px;
+    color: #ffffff;
+}
+
+.image-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.image-preview:hover {
+    transform: scale(1.05);
+}
+
+.thumbnail {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.thumbnail:hover {
+    transform: scale(1.05);
+}
+
+
+/* ==========================================================
+ * MODAL STYLES
+ * ========================================================== */
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    margin: 15% auto;
+    padding: 30px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.3s ease;
+}
+
+.modal-content h3 {
+    margin: 0 0 20px 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 25px;
+}
+
+.modal-actions button {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.modal-actions .confirm {
+    background: #f44336;
+    color: white;
+}
+
+.modal-actions .confirm:hover {
+    background: #d32f2f;
+    box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
+}
+
+.image-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    padding-top: 60px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+.image-modal img {
+    margin: auto;
+    display: block;
+    max-width: 80%;
+    max-height: 80%;
+    border-radius: 10px;
+}
+
+.image-modal .close {
+    position: absolute;
+    top: 30px;
+    right: 45px;
+    color: white;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+
+/* ==========================================================
+ * DYNAMIC THEME OVERRIDES (LIGHT MODE - Inventory)
+ * ========================================================== */
+
+body.light-mode {
+    --text-dark: #1f2937;
+    --border-light: #cccccc;
+    --input-bg-light: #ffffff;
+}
+
+body.light-mode .page-title,
+body.light-mode .modal-content h3,
+body.light-mode .section-title,
+body.light-mode .summary-card h3,
+body.light-mode .data-table td,
+body.light-mode .data-table th,
+body.light-mode .item-link,
+body.light-mode .summary-card p {
+    color: var(--text-dark) !important;
+}
+
+body.light-mode input,
+body.light-mode select,
+body.light-mode textarea {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 1px solid #ccc !important;
+}
+
+body.light-mode .search-box input {
+    background: var(--input-bg-light);
+    color: var(--text-dark);
+    border-color: var(--border-light);
+}
+
+body.light-mode .search-box input:focus {
+    outline: none;
+    border-color: #134686;
+    box-shadow: 0 0 0 3px rgba(19, 70, 134, 0.15);
+}
+
+body.light-mode .data-table thead {
+    border-bottom: 1px solid #cccccc;
+}
+
+body.light-mode .data-table tbody tr {
+    border-bottom: 1px solid #eeeeee;
+}
+
+body.light-mode .modal-content {
+    background-color: var(--input-bg-light);
+}
+
+body.light-mode .modal-actions .cancel {
+    background: #e0e0e0;
+    color: var(--text-dark);
+}
+
+body.light-mode .upload-box {
+    background: rgba(255, 255, 255, 0.18);
+    border: 2px dashed rgba(255, 255, 255, 0.4);
+}
+
+body.light-mode .upload-label i {
+    color: #1f2937;
+}
+
+
+/* ==========================================================
+ * DYNAMIC THEME OVERRIDES (DARK MODE - Inventory)
+ * ========================================================== */
+
 body.dark-mode .page-title,
 body.dark-mode .modal-content h3,
 body.dark-mode .section-title,
 body.dark-mode .summary-card h3 {
-  color: #fff;
+    color: #fff;
+}
+
+/* IMPORTANT: These base styles are needed here so serial.css can override them specifically */
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+    background-color: #2d2d2d !important;
+    color: #ffffff !important;
+    border: 1px solid #555 !important;
+}
+
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder {
+    color: #bbbbbb;
 }
 
 body.dark-mode .search-box input {
-  background: #2a2a2a;
-  color: #fff;
-  border-color: #3a3a3a;
+    background: #2a2a2a;
+    color: #fff;
+    border-color: #3a3a3a;
+}
+
+body.dark-mode .search-box input:focus {
+    outline: none;
+    border-color: #D96F32;
+    box-shadow: 0 0 0 3px rgba(217, 111, 50, 0.2);
+}
+
+body.dark-mode .data-table thead {
+    border-bottom: 1px solid #3a3a3a;
 }
 
 body.dark-mode .data-table th {
-  color: #888;
+    color: #888;
+}
+
+body.dark-mode .data-table tbody tr {
+    border-bottom: 1px solid #2a2a2a;
 }
 
 body.dark-mode .data-table td,
 body.dark-mode .item-link,
 body.dark-mode .summary-card p {
-  color: #e0e0e0;
+    color: #e0e0e0;
 }
 
 body.dark-mode .modal-content {
-  background-color: #2a2a2a;
+    background-color: #2a2a2a;
 }
 
 body.dark-mode .modal-actions .cancel {
-  background: #3a3a3a;
-  color: #e0e0e0;
+    background: #3a3a3a;
+    color: #e0e0e0;
 }
 
-/* --- LIGHT MODE (Forces text black and backgrounds/borders light) --- */
-body.light-mode {
-  /* Define variables locally if needed, but rely on base.css variables primarily */
-  --text-dark: #1f2937; /* Defining a primary dark text color */
-  --border-light: #cccccc;
-  --input-bg-light: #ffffff;
+body.dark-mode .upload-box {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px dashed rgba(255, 255, 255, 0.15);
 }
 
-body.light-mode .page-title,
-body.light-mode .data-table td,
-body.light-mode .data-table th,
-body.light-mode .item-link,
-body.light-mode .modal-content h3,
-body.light-mode .section-title,
-body.light-mode .summary-card h3,
-body.light-mode .summary-card p {
-  /* **THIS IS THE CRITICAL FIX: FORCES TEXT TO BLACK** */
-  color: var(--text-dark) !important;
+body.dark-mode .upload-box:hover {
+    border-color: #D96F32;
+    background: rgba(217, 111, 50, 0.1);
 }
 
-body.light-mode .search-box input {
-  background: var(--input-bg-light);
-  color: var(--text-dark);
-  border-color: var(--border-light);
-}
-
-body.light-mode .modal-content {
-  background-color: var(--input-bg-light); /* White background for modal */
-}
-
-body.light-mode .modal-actions .cancel {
-  background: #e0e0e0;
-  color: var(--text-dark);
-} */
-
-
-.serials-list {
-  list-style: none;
-  margin-top: 8px;
-  padding-left: 0;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 8px;
-  padding: 10px;
-  color: var(--text-color, #e0e0e0);
-  font-size: 13px;
-  display: none;
-}
-
-.serials-list li {
-  padding: 4px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.serials-list li:last-child {
-  border-bottom: none;
-}
-
-.toggle-serials-btn {
-  background: none;
-  color: var(--accent-color, #8ef0a1);
-  border: none;
-  cursor: pointer;
-  font-size: 13px;
-  text-decoration: underline;
-  transition: color 0.3s ease;
-}
-
-.toggle-serials-btn:hover {
-  color: var(--accent-hover, #aef6ba);
-}
-
-.hidden {
-  display: none;
-}
-
-
-.thumbnail {
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.thumbnail:hover {
-  transform: scale(1.05);
-}
-
-/* Modal styling */
-.image-modal {
-  display: none;
-  position: fixed;
-  z-index: 9999;
-  padding-top: 60px;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.9);
-}
-
-.image-modal img {
-  margin: auto;
-  display: block;
-  max-width: 80%;
-  max-height: 80%;
-  border-radius: 10px;
-}
-
-.image-modal .close {
-  position: absolute;
-  top: 30px;
-  right: 45px;
-  color: white;
-  font-size: 40px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-
-.serials-list-container {
-  margin-top: 5px;
-  padding: 10px;
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  max-height: 200px;
-  overflow-y: auto;
-}
-
-.serials-list-container .serial-search {
-  width: 100%;
-  padding: 5px 8px;
-  margin-bottom: 8px;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  font-size: 0.9rem;
-}
-
-.serials-list li {
-  padding: 3px 0;
-  list-style-type: none;
-  border-bottom: 1px solid #eee;
-}
-
-.serials-list li:last-child {
-  border-bottom: none;
+body.dark-mode .upload-label i {
+    color: #ffffff;
 }

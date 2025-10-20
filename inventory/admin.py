@@ -6,15 +6,23 @@ from .models import Item, ItemSerial, ItemUpdate
 class ItemSerialInline(admin.TabularInline):
     model = ItemSerial
     extra = 0  # no blank rows by default
-    readonly_fields = ('date_added',)
-    fields = ('serial_no', 'is_available', 'date_added')
+    fields = ('serial_no', 'is_available')
+    readonly_fields = ('is_available',)
+    can_delete = False
 
 
 # Item admin view
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
-    list_display = ('item_name', 'quantity', 'allocated_quantity', 'unit_of_quantity', 'part_no', 'date_last_modified')
-    search_fields = ('item_name', 'item_id',  'part_no')
+    list_display = (
+        'item_name',
+        'total_stock',
+        'allocated_quantity',
+        'unit_of_quantity',
+        'part_no',
+        'date_last_modified',
+    )
+    search_fields = ('item_name', 'part_no', 'id')
     list_filter = ('unit_of_quantity',)
     inlines = [ItemSerialInline]
     readonly_fields = ('date_last_modified',)
@@ -26,6 +34,6 @@ class ItemAdmin(admin.ModelAdmin):
 class ItemUpdateAdmin(admin.ModelAdmin):
     list_display = ('item', 'transaction_type', 'quantity', 'date', 'user')
     list_filter = ('transaction_type', 'date')
-    search_fields = ('item__item_name', 'part_no', 'location', 'remarks')
+    search_fields = ('item__item_name', 'location', 'remarks', 'po_supplier', 'po_client', 'dr_no')
     readonly_fields = ('date',)
     ordering = ('-date',)

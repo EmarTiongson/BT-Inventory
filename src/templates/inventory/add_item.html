@@ -10,7 +10,7 @@
   <h1 class="page-title">Add New Item</h1>
 
   <div class="inventory-card">
-    <form method="POST" enctype="multipart/form-data">
+    <form method="POST" enctype="multipart/form-data" action="{% url 'add_item' %}">
       {% csrf_token %}
       
       <!-- Image Upload Section -->
@@ -28,7 +28,6 @@
         <input type="text" name="description" placeholder="Description" required>
 
         <input type="number" name="total_stock" placeholder="Total Stock" required>
-        <input type="number" name="quantity" placeholder="Quantity" required>
         <input type="number" name="allocated_quantity" placeholder="Allocated Quantity" required>
 
         <select name="unit_of_quantity" required>
@@ -86,26 +85,27 @@ const serialModal = document.getElementById("serialModal");
 const closeModalBtn = document.getElementById("closeSerialModal");
 const saveSerialBtn = document.getElementById("saveSerialNumbers");
 const serialFieldsContainer = document.getElementById("serialFieldsContainer");
-const quantityField = document.querySelector("input[name='quantity']");
 const hiddenSerialInput = document.getElementById("serialHiddenInput");
+
+const totalStockField = document.querySelector("input[name='total_stock']");
 
 let serialNumbers = [];
 
-// ✅ Open modal and generate serial fields based on quantity
+// ✅ Open modal and generate serial fields based on total stock
 openModalBtn.addEventListener("click", (e) => {
-  e.preventDefault(); // stop form submission or focus events
+  e.preventDefault();
 
-  const qty = parseInt(quantityField.value);
-  if (!qty || qty <= 0) {
-    alert("Please enter a valid Quantity before adding serial numbers.");
+  const totalStock = parseInt(totalStockField.value);
+  if (!totalStock || totalStock <= 0) {
+    alert("Please enter a valid Total Stock before adding serial numbers.");
     return;
   }
 
-  // clear old fields
+  // Clear old fields
   serialFieldsContainer.innerHTML = "";
 
-  // create fields
-  for (let i = 1; i <= qty; i++) {
+  // Create input fields
+  for (let i = 1; i <= totalStock; i++) {
     const input = document.createElement("input");
     input.type = "text";
     input.placeholder = `Serial Number ${i} (optional)`;
@@ -118,15 +118,12 @@ openModalBtn.addEventListener("click", (e) => {
 });
 
 // ✅ Close modal
-closeModalBtn.addEventListener("click", (e) => {
-  e.preventDefault();
+closeModalBtn.addEventListener("click", () => {
   serialModal.style.display = "none";
 });
 
-// ✅ Save serial numbers
-saveSerialBtn.addEventListener("click", (e) => {
-  e.preventDefault();
-
+// ✅ Save serial numbers to hidden input
+saveSerialBtn.addEventListener("click", () => {
   const inputs = document.querySelectorAll(".serial-field");
   serialNumbers = Array.from(inputs)
     .map((input) => input.value.trim())
@@ -136,15 +133,14 @@ saveSerialBtn.addEventListener("click", (e) => {
   serialModal.style.display = "none";
 });
 
-// ✅ Improved outside-click handler (does NOT close immediately)
+// ✅ Click outside to close modal
 serialModal.addEventListener("mousedown", (e) => {
   if (e.target === serialModal) {
     serialModal.style.display = "none";
   }
 });
 
-
-
+// ✅ Image preview handling
 const imageInput = document.getElementById('image');
 const imagePreview = document.getElementById('imagePreview');
 const uploadLabel = document.getElementById('uploadLabel');
@@ -155,20 +151,21 @@ imageInput.addEventListener('change', function() {
         const reader = new FileReader();
         reader.onload = function(e) {
             imagePreview.src = e.target.result;
-            imagePreview.style.display = 'block'; // show preview
-            uploadLabel.style.display = 'none';   // hide initial upload logo/text
+            imagePreview.style.display = 'block';
+            uploadLabel.style.display = 'none';
         }
         reader.readAsDataURL(file);
     } else {
         imagePreview.src = '#';
         imagePreview.style.display = 'none';
-        uploadLabel.style.display = 'inline-flex'; // show upload logo/text if no file
+        uploadLabel.style.display = 'inline-flex';
     }
 });
 
-// Clicking the preview allows changing the image
+// ✅ Clicking the preview allows re-upload
 imagePreview.addEventListener('click', function() {
     imageInput.click();
 });
 </script>
+
 {% endblock %}

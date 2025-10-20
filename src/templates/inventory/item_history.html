@@ -1,0 +1,59 @@
+//item_history.html
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/item_history.css' %}">
+{% endblock %}
+
+{% block content %}
+<h1>Item History: {{ item.item_name }}</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Date & Time</th>
+      <th>Type</th>
+      <th>Quantity</th>
+      <th>Total Stock</th>
+      <th>Location</th>
+      <th>P.O From Supplier</th>
+      <th>P.O To Client</th>
+      <th>DR No.</th>
+      <th>Remarks</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for update in item.updates.all %}
+    <tr>
+      <td>{{ update.date|date:"Y-m-d H:i:s" }}</td>
+      <td>{{ update.transaction_type }}</td>
+      <td>
+        {% if update.transaction_type == "IN" %}
+          +{{ update.quantity }}
+        {% elif update.transaction_type == "OUT" %}
+          -{{ update.quantity }}
+        {% else %}
+          {{ update.quantity }}
+        {% endif %}
+      </td>
+      <td>{{ update.stock_after_transaction }}</td>
+      <td>{{ update.location|default:"-" }}</td>
+      <td>{{ update.po_supplier|default:"-" }}</td>
+      <td>{{ update.po_client|default:"-" }}</td>
+      <td>{{ update.dr_no|default:"-" }}</td>
+      <td>{{ update.remarks|default:"-" }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="9">No history available for this item.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<a href="#" class="return-btn-fixed" onclick="history.back(); return false;">
+  <i class="bi bi-arrow-left-circle"></i> Back to Overview
+</a>
+
+{% endblock %}

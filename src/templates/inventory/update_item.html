@@ -10,7 +10,7 @@
   <h1 class="page-title">Update Item</h1>
 
   <div class="inventory-card">
-    <form method="POST" enctype="multipart/form-data">
+    <form method="POST" enctype="multipart/form-data" action="{% url 'update_item' item.id %}">
       {% csrf_token %}
 
       <!-- Image -->
@@ -86,6 +86,7 @@ const poSupplier = document.getElementById('poSupplierField');
 const poClient = document.getElementById('poClientField');
 const drInput = document.getElementById('drInput');
 
+// Reset everything to editable
 function resetFields() {
   inField.disabled = false;
   outField.disabled = false;
@@ -94,35 +95,58 @@ function resetFields() {
   drInput.disabled = true;
 }
 
-function handleInputChange() {
-  const hasIn = inField.value.trim() !== '';
-  const hasOut = outField.value.trim() !== '';
-  const hasSupplier = poSupplier.value.trim() !== '';
-  const hasClient = poClient.value.trim() !== '';
+// Handle mutual exclusivity of IN and OUT
+function handleTransactionType() {
+  const hasIn = inField.value.trim() !== "";
+  const hasOut = outField.value.trim() !== "";
 
-  if (hasIn || hasSupplier) {
+  // If IN has value, disable OUT and its related fields
+  if (hasIn && !hasOut) {
+    outField.value = ""; // clear OUT if previously entered
     outField.disabled = true;
+    poClient.value = ""; // clear client P.O
     poClient.disabled = true;
+    drInput.value = "";
     drInput.disabled = true;
-    inField.disabled = false;
-    poSupplier.disabled = false;
-  } else if (hasOut || hasClient) {
+    poSupplier.disabled = false; // supplier still enabled
+  }
+
+  // If OUT has value, disable IN and its related fields
+  else if (hasOut && !hasIn) {
+    inField.value = ""; // clear IN if previously entered
     inField.disabled = true;
+    poSupplier.value = ""; // clear supplier P.O
     poSupplier.disabled = true;
     poClient.disabled = false;
     drInput.disabled = false;
-  } else {
+  }
+
+  // If both fields are filled manually (invalid)
+  else if (hasIn && hasOut) {
+    alert("You can only enter either IN or OUT — not both.");
+    outField.value = "";
+    handleTransactionType(); // recheck after clearing
+    return;
+  }
+
+  // If both are empty
+  else {
     resetFields();
   }
 }
 
-[inField, outField, poSupplier, poClient].forEach(field => {
-  field.addEventListener('input', handleInputChange);
+// Bind input events
+[inField, outField].forEach(field => {
+  field.addEventListener('input', handleTransactionType);
 });
 
+// Initialize correct state
 resetFields();
+handleTransactionType();
 
-/* ============ SERIAL MODAL ============ */
+/* ==============================
+   SERIAL MODAL LOGIC
+============================== */
 const serialModal = document.getElementById('serialModal');
 const openSerialsBtn = document.getElementById('openSerialsBtn');
 const closeSerialsBtn = document.getElementById('closeSerialsBtn');
@@ -132,15 +156,14 @@ const serialNumbersField = document.getElementById('serialNumbersField');
 const serialModalTitle = document.getElementById('serialModalTitle');
 
 // available_serials from Django context
-const availableSerials = {{ available_serials|safe }};
+const availableSerials = {{ available_serials|default:"[]"|safe }};
 
 openSerialsBtn.addEventListener('click', () => {
   const inVal = parseInt(inField.value) || 0;
   const outVal = parseInt(outField.value) || 0;
-
   serialInputsContainer.innerHTML = '';
 
-  // --- IN MODE ---
+  // IN Mode
   if (inVal > 0 && outVal === 0) {
     serialModalTitle.textContent = `Add ${inVal} New Serial Numbers`;
     for (let i = 1; i <= inVal; i++) {
@@ -156,13 +179,12 @@ openSerialsBtn.addEventListener('click', () => {
     return;
   }
 
-  // --- OUT MODE ---
+  // OUT Mode
   if (outVal > 0 && inVal === 0) {
     if (availableSerials.length === 0) {
       alert("No available serial numbers for this item.");
       return;
     }
-
     if (outVal > availableSerials.length) {
       alert(`Only ${availableSerials.length} serial numbers are available — you requested ${outVal}.`);
       return;
@@ -195,19 +217,19 @@ saveSerialsBtn.addEventListener('click', () => {
   const inVal = parseInt(inField.value) || 0;
   const outVal = parseInt(outField.value) || 0;
 
-  // IN MODE: collect inputs
+  // IN Mode
   if (inVal > 0 && outVal === 0) {
     serials = Array.from(serialInputsContainer.querySelectorAll('input'))
       .map(i => i.value.trim())
       .filter(v => v !== '');
-
     if (serials.length !== inVal) {
       alert(`Please enter exactly ${inVal} serial numbers.`);
       return;
     }
+  }
 
-  // OUT MODE: collect checked boxes
-  } else if (outVal > 0 && inVal === 0) {
+  // OUT Mode
+  else if (outVal > 0 && inVal === 0) {
     const checked = Array.from(serialInputsContainer.querySelectorAll('input[type="checkbox"]:checked'))
       .map(cb => cb.value);
     if (checked.length !== outVal) {
@@ -224,5 +246,15 @@ saveSerialsBtn.addEventListener('click', () => {
 window.addEventListener('click', e => {
   if (e.target === serialModal) serialModal.style.display = 'none';
 });
+
+
+document.querySelector('form').addEventListener('submit', (e) => {
+  // Optional: show a quick “updating” message before redirect
+  const btn = e.target.querySelector('button[type="submit"]');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Updating...';
+});
 </script>
+
+
 {% endblock %}
