@@ -1,76 +1,208 @@
+<think>
+First, the user said: "re type this code." It seems like a typo, probably meaning "retype this code" or "rewrite this code." But looking closely, it's "re type this code." Maybe "re-type" as in retype it, or perhaps "rewrite" but it's "re type". Anyway, the task is to retype or rewrite the provided Django template code.
+
+
+## Interpreting user request  
+- The user wrote "re type this code," likely meaning "retype this code" due to the context.  
+- It could also be interpreted as "rewrite this code," but the phrasing suggests a focus on retyping.  
+- The task involves retyping or rewriting provided Django template code, based on the user's intent.
+</think>```django
 {% extends 'base.html' %}
 {% load static %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/add_item.css' %}">
+<style>
+/* ==================== OVERLAY & CONTAINERS ==================== */
+.update-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
+  z-index: 999;
+}
+
+body.dark-mode .update-overlay {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.base-container {
+  width: 100%;
+  max-width: 900px;
+  border-radius: 20px;
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 1000;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+body.dark-mode .base-container {
+  background: rgba(15, 23, 36, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ==================== VIEW STATES ==================== */
+.hide-view {
+  display: none !important;
+  opacity: 0;
+  transform: scale(0.95);
+  pointer-events: none;
+}
+
+.show-view {
+  display: block !important;
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ==================== SERIAL MODAL ==================== */
+.serial-modal-container h3 {
+  margin-bottom: 15px;
+  font-size: 26px;
+  text-align: center;
+  color: #1a1a1a;
+}
+body.dark-mode .serial-modal-container h3 {
+  color: #ffffff;
+}
+
+/* 🔍 Search Bar (OUT only) */
+.serial-search-box {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.serial-search-box input {
+  padding: 10px 14px;
+  width: 80%;
+  max-width: 500px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  outline: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
+}
+.serial-search-box input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+}
+
+/* Serial input fields (IN only) */
+.serial-input {
+  padding: 10px 14px;
+  width: 80%;
+  max-width: 500px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  margin: 8px auto;
+  display: block;
+  outline: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
+}
+.serial-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+}
+
+/* Serial List Grid */
+#serialInputsContainer {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px 30px;
+  margin-top: 20px;
+}
+#serialInputsContainer label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.serial-modal-actions {
+  text-align: center;
+  margin-top: 25px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+</style>
 {% endblock %}
 
 {% block content %}
-<div class="add-item-container">
-  <h1 class="page-title">Update Item</h1>
+<div class="update-overlay">
+  <div class="base-container update-container show-view" id="updateContainer">
+    <h1 class="page-title">Update Item</h1>
 
-  <div class="inventory-card">
-    <form method="POST" enctype="multipart/form-data" action="{% url 'update_item' item.id %}">
-      {% csrf_token %}
-
-      <!-- Image -->
-      <div class="upload-box">
-        {% if item.image %}
-          <img src="{{ item.image.url }}" alt="Item Image" style="max-width: 100%; max-height: 100%; border-radius: 10px;">
-        {% else %}
-          <span class="upload-label" style="color: #aaa;">No Image Available</span>
-        {% endif %}
-      </div>
-
-      <div class="form-grid">
-        <input type="text" name="date" value="{{ item.date|date:'Y-m-d' }}" readonly style="cursor:not-allowed;background:#333333;" placeholder="Date">
-        <input type="text" name="item" value="{{ item.item_name }}" readonly style="cursor:not-allowed;background:#333333;" placeholder="Item Name">
-        <input type="text" name="description" value="{{ item.description }}" readonly style="cursor:not-allowed;background:#333333;" placeholder="Description">
-
-        <input type="text" name="user" value="{{ request.user.username }}" readonly style="cursor:not-allowed;background:#333333;" placeholder="User">
-        <input type="text" name="location" value="{{ item.location }}" placeholder="Location">
-        <input type="text" name="part_no" value="{{ item.part_no }}" placeholder="Part No.">
-        <input type="text" name="remarks" value="{{ item.remarks }}" placeholder="Remarks">
-
-        <div class="btn-pair">
-          <input type="number" name="in" id="inField" placeholder="IN" value="">
-          <input type="number" name="out" id="outField" placeholder="OUT" value="">
+    <div class="inventory-card">
+      <form method="POST" enctype="multipart/form-data" action="{% url 'update_item' item.id %}">
+        {% csrf_token %}
+        <div class="upload-box">
+          {% if item.image %}
+            <img src="{{ item.image.url }}" alt="Item Image" class="image-preview">
+          {% else %}
+            <span class="upload-label" style="color: #aaa;">No Image Available</span>
+          {% endif %}
         </div>
 
-        <div id="drField">
-          <input type="text" name="dr_no" id="drInput" placeholder="DR No." value="{{ item.dr_no }}" disabled>
-        </div>
+        <div class="form-grid">
+          <input type="text" name="date" value="{{ item.date|date:'Y-m-d' }}" readonly>
+          <input type="text" name="item" value="{{ item.item_name }}" readonly>
+          <input type="text" name="description" value="{{ item.description }}" readonly>
+          <input type="text" name="user" value="{{ request.user.username }}" readonly>
+          <input type="text" name="location" value="{{ item.location }}" placeholder="Location">
+          <input type="text" name="part_no" value="{{ item.part_no }}" placeholder="Part No.">
+          <input type="text" name="remarks" value="{{ item.remarks }}" placeholder="Remarks">
 
-        <input type="text" name="po_supplier" id="poSupplierField" value="{{ item.po_from_supplier }}" placeholder="P.O From Supplier">
-        <input type="text" name="po_client" id="poClientField" value="{{ item.po_to_client }}" placeholder="P.O To Client">
-      </div>
-
-      <!-- Serial Numbers Modal Trigger -->
-      <div class="serial-number-section" style="margin-top: 10px;">
-        <button type="button" id="openSerialsBtn" class="add-btn" style="background-color: #444; color: #fff;">
-          <i class="bi bi-plus-circle"></i> Manage Serials
-        </button>
-        <input type="hidden" name="serial_numbers" id="serialNumbersField">
-      </div>
-
-      <!-- Modal -->
-      <div id="serialModal" class="modal" style="display:none;">
-        <div class="modal-content" style="max-width:500px;">
-          <h3 id="serialModalTitle">Manage Serials</h3>
-          <div id="serialInputsContainer" style="max-height:300px;overflow-y:auto;"></div>
-          <div style="margin-top:15px;text-align:right;">
-            <button type="button" id="closeSerialsBtn" class="cancel">Cancel</button>
-            <button type="button" id="saveSerialsBtn" class="confirm">Save Serials</button>
+          <div class="btn-pair">
+            <input type="number" name="in" id="inField" placeholder="IN" min="0">
+            <input type="number" name="out" id="outField" placeholder="OUT" min="0">
           </div>
-        </div>
-      </div>
 
-      <div class="submit-section">
-        <button type="submit" class="add-btn" style="background-color:#f1c40f;color:#1e1e1e;">
-          <i class="bi bi-arrow-up-circle"></i> Update Item
-        </button>
-      </div>
-    </form>
+          <input type="text" name="dr_no" id="drInput" placeholder="DR No." value="{{ item.dr_no }}" disabled>
+
+          <input type="text" name="po_supplier" id="poSupplierField" value="{{ item.po_from_supplier }}" placeholder="P.O From Supplier">
+          <input type="text" name="po_client" id="poClientField" value="{{ item.po_to_client }}" placeholder="P.O To Client">
+        </div>
+        
+        <div class="serial-number-section" style="margin-top: 10px;">
+          <button type="button" id="openSerialsBtn" class="add-btn secondary-btn">
+            <i class="bi bi-plus-circle"></i> Manage Serials
+          </button>
+          <input type="hidden" name="serial_numbers" id="serialNumbersField">
+        </div>
+
+        <div class="submit-section">
+          <button type="submit" class="add-btn update-submit-btn">
+            <i class="bi bi-arrow-up-circle"></i> Update Item
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="base-container serial-modal-container hide-view" id="serialModal">
+    <h3 id="serialModalTitle">Manage Serials</h3>
+
+    <div class="serial-search-box" id="serialSearchBox">
+      <input type="text" id="serialSearch" placeholder="Search serial number...">
+    </div>
+
+    <div id="serialInputsContainer"></div>
+
+    <div class="modal-actions serial-modal-actions">
+      <button type="button" id="closeSerialsBtn" class="add-btn cancel">Cancel</button>
+      <button type="button" id="saveSerialsBtn" class="add-btn confirm">Save Serials</button>
+    </div>
   </div>
 </div>
 
@@ -78,183 +210,220 @@
   <i class="bi bi-arrow-left-circle"></i> Back to Overview
 </a>
 
-<!-- ========== JS Logic ========== -->
 <script>
+const updateContainer = document.getElementById('updateContainer');
+const serialModal = document.getElementById('serialModal');
+const serialInputsContainer = document.getElementById('serialInputsContainer');
+const serialSearchBox = document.getElementById('serialSearchBox');
+const serialSearch = document.getElementById('serialSearch');
 const inField = document.getElementById('inField');
 const outField = document.getElementById('outField');
 const poSupplier = document.getElementById('poSupplierField');
 const poClient = document.getElementById('poClientField');
 const drInput = document.getElementById('drInput');
+const openSerialsBtn = document.getElementById('openSerialsBtn');
+const closeSerialsBtn = document.getElementById('closeSerialsBtn');
+const saveSerialsBtn = document.getElementById('saveSerialsBtn');
+const serialNumbersField = document.getElementById('serialNumbersField');
+const serialModalTitle = document.getElementById('serialModalTitle');
 
-// Reset everything to editable
+// Note: Ensure the Django variable available_serials is defined in your view context
+let availableSerials = {{ available_serials|default:"[]"|safe }};
+
+// Serial sorting logic
+if (Array.isArray(availableSerials)) {
+  availableSerials = availableSerials.sort((a, b) => {
+    // Improved sorting by replacing non-digits to ensure proper numeric sort for SN-0001, SN-0010, etc.
+    const numA = parseInt(a.replace(/\D/g, ''), 10);
+    const numB = parseInt(b.replace(/\D/g, ''), 10);
+    return numA - numB;
+  });
+}
+
 function resetFields() {
   inField.disabled = false;
   outField.disabled = false;
   poSupplier.disabled = false;
   poClient.disabled = false;
   drInput.disabled = true;
+  drInput.value = "";
+  poClient.value = "";
+  poSupplier.value = "";
 }
 
-// Handle mutual exclusivity of IN and OUT
 function handleTransactionType() {
-  const hasIn = inField.value.trim() !== "";
-  const hasOut = outField.value.trim() !== "";
+  const inVal = inField.value.trim();
+  const outVal = outField.value.trim();
+  const hasIn = inVal !== "" && parseInt(inVal) > 0;
+  const hasOut = outVal !== "" && parseInt(outVal) > 0;
 
-  // If IN has value, disable OUT and its related fields
-  if (hasIn && !hasOut) {
-    outField.value = ""; // clear OUT if previously entered
-    outField.disabled = true;
-    poClient.value = ""; // clear client P.O
-    poClient.disabled = true;
-    drInput.value = "";
-    drInput.disabled = true;
-    poSupplier.disabled = false; // supplier still enabled
-  }
-
-  // If OUT has value, disable IN and its related fields
-  else if (hasOut && !hasIn) {
-    inField.value = ""; // clear IN if previously entered
-    inField.disabled = true;
-    poSupplier.value = ""; // clear supplier P.O
-    poSupplier.disabled = true;
-    poClient.disabled = false;
-    drInput.disabled = false;
-  }
-
-  // If both fields are filled manually (invalid)
-  else if (hasIn && hasOut) {
+  if (hasIn && hasOut) {
     alert("You can only enter either IN or OUT — not both.");
-    outField.value = "";
-    handleTransactionType(); // recheck after clearing
+    if (outField === document.activeElement) outField.value = "";
+    else if (inField === document.activeElement) inField.value = "";
+    handleTransactionType();
     return;
   }
 
-  // If both are empty
-  else {
+  if (hasIn) {
+    outField.disabled = true;
+    poClient.disabled = true;
+    drInput.disabled = true;
+    poSupplier.disabled = false;
+  } else if (hasOut) {
+    inField.disabled = true;
+    poSupplier.disabled = true;
+    poClient.disabled = false;
+    drInput.disabled = false;
+  } else {
     resetFields();
   }
 }
-
-// Bind input events
-[inField, outField].forEach(field => {
-  field.addEventListener('input', handleTransactionType);
-});
-
-// Initialize correct state
+[inField, outField].forEach(f => f.addEventListener('input', handleTransactionType));
 resetFields();
 handleTransactionType();
 
-/* ==============================
-   SERIAL MODAL LOGIC
-============================== */
-const serialModal = document.getElementById('serialModal');
-const openSerialsBtn = document.getElementById('openSerialsBtn');
-const closeSerialsBtn = document.getElementById('closeSerialsBtn');
-const saveSerialsBtn = document.getElementById('saveSerialsBtn');
-const serialInputsContainer = document.getElementById('serialInputsContainer');
-const serialNumbersField = document.getElementById('serialNumbersField');
-const serialModalTitle = document.getElementById('serialModalTitle');
+function showSerialView() {
+  updateContainer.classList.replace('show-view', 'hide-view');
+  serialModal.classList.replace('hide-view', 'show-view');
+}
+function showUpdateView() {
+  serialModal.classList.replace('show-view', 'hide-view');
+  updateContainer.classList.replace('hide-view', 'show-view');
+}
 
-// available_serials from Django context
-const availableSerials = {{ available_serials|default:"[]"|safe }};
+function renderSerialCheckboxes(serialList) {
+  serialInputsContainer.innerHTML = "";
+  serialInputsContainer.style.display = 'grid'; // Default grid style for inputs/checkboxes
+
+  // Logic for 3-column split (for OUT/checkbox view)
+  const totalSerials = serialList.length;
+  const numColumns = 3;
+  const baseSize = Math.floor(totalSerials / numColumns);
+  const remainder = totalSerials % numColumns; 
+  
+  const columnSizes = [];
+  for (let i = 0; i < numColumns; i++) {
+      columnSizes.push(baseSize + (i < remainder ? 1 : 0));
+  }
+
+  // Override to flex for vertical columns only when OUT and there are serials
+  if (totalSerials > 0) {
+      serialInputsContainer.style.display = 'flex';
+      serialInputsContainer.style.flexDirection = 'row';
+      serialInputsContainer.style.flexWrap = 'nowrap';
+      serialInputsContainer.style.justifyContent = 'space-between';
+      serialInputsContainer.style.gap = '30px'; // Gap between columns
+  } else {
+      serialInputsContainer.style.display = 'grid'; // Fallback for IN or no serials
+  }
+
+
+  let serialIndex = 0;
+  columnSizes.forEach(size => {
+      const columnDiv = document.createElement('div');
+      columnDiv.style.display = 'flex';
+      columnDiv.style.flexDirection = 'column';
+      columnDiv.style.flexGrow = '1';
+      columnDiv.style.gap = '5px'; // Gap between items in a column
+
+      for (let i = 0; i < size; i++) {
+          const serial = serialList[serialIndex];
+          
+          const label = document.createElement('label');
+          label.style.display = 'flex';
+          label.style.alignItems = 'center';
+          
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.value = serial;
+          checkbox.style.marginRight = '10px';
+          
+          label.appendChild(checkbox);
+          label.appendChild(document.createTextNode(serial));
+          
+          columnDiv.appendChild(label);
+          serialIndex++;
+      }
+      
+      serialInputsContainer.appendChild(columnDiv);
+  });
+}
 
 openSerialsBtn.addEventListener('click', () => {
   const inVal = parseInt(inField.value) || 0;
   const outVal = parseInt(outField.value) || 0;
   serialInputsContainer.innerHTML = '';
+  serialSearch.value = '';
 
-  // IN Mode
+  if (inVal === 0 && outVal === 0) {
+    alert("Please enter a valid IN or OUT quantity before managing serials.");
+    return;
+  }
+
   if (inVal > 0 && outVal === 0) {
     serialModalTitle.textContent = `Add ${inVal} New Serial Numbers`;
+    serialSearchBox.style.display = "none";
+    // Reset to grid flow for input fields (3 columns wide)
+    serialInputsContainer.style.display = 'grid';
+    serialInputsContainer.style.gridTemplateColumns = 'repeat(3, 1fr)'; 
+    serialInputsContainer.style.gap = '10px 30px'; 
+    
     for (let i = 1; i <= inVal; i++) {
       const input = document.createElement('input');
       input.type = 'text';
       input.placeholder = `Serial #${i}`;
       input.className = 'serial-input';
-      input.style.marginBottom = '8px';
-      input.style.width = '100%';
       serialInputsContainer.appendChild(input);
     }
-    serialModal.style.display = 'block';
+    showSerialView();
     return;
   }
 
-  // OUT Mode
   if (outVal > 0 && inVal === 0) {
-    if (availableSerials.length === 0) {
-      alert("No available serial numbers for this item.");
-      return;
-    }
     if (outVal > availableSerials.length) {
       alert(`Only ${availableSerials.length} serial numbers are available — you requested ${outVal}.`);
       return;
     }
-
     serialModalTitle.textContent = `Select ${outVal} Serial Numbers`;
-    availableSerials.forEach(serial => {
-      const label = document.createElement('label');
-      label.style.display = 'block';
-      label.style.marginBottom = '5px';
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
-      checkbox.value = serial;
-      checkbox.style.marginRight = '8px';
-      label.appendChild(checkbox);
-      label.appendChild(document.createTextNode(serial));
-      serialInputsContainer.appendChild(label);
-    });
-    serialModal.style.display = 'block';
-    return;
+    serialSearchBox.style.display = "block";
+    renderSerialCheckboxes(availableSerials);
+    showSerialView();
   }
-
-  alert("Please enter a valid IN or OUT quantity.");
 });
 
-closeSerialsBtn.addEventListener('click', () => serialModal.style.display = 'none');
+serialSearch.addEventListener('input', () => {
+  const query = serialSearch.value.toLowerCase();
+  const filtered = availableSerials.filter(s => s.toLowerCase().includes(query));
+  renderSerialCheckboxes(filtered);
+});
+
+closeSerialsBtn.addEventListener('click', showUpdateView);
 
 saveSerialsBtn.addEventListener('click', () => {
   let serials = [];
   const inVal = parseInt(inField.value) || 0;
   const outVal = parseInt(outField.value) || 0;
 
-  // IN Mode
-  if (inVal > 0 && outVal === 0) {
-    serials = Array.from(serialInputsContainer.querySelectorAll('input'))
-      .map(i => i.value.trim())
-      .filter(v => v !== '');
+  if (inVal > 0) {
+    serials = Array.from(serialInputsContainer.querySelectorAll('.serial-input'))
+      .map(i => i.value.trim()).filter(Boolean);
     if (serials.length !== inVal) {
       alert(`Please enter exactly ${inVal} serial numbers.`);
       return;
     }
-  }
-
-  // OUT Mode
-  else if (outVal > 0 && inVal === 0) {
-    const checked = Array.from(serialInputsContainer.querySelectorAll('input[type="checkbox"]:checked'))
+  } else if (outVal > 0) {
+    serials = Array.from(serialInputsContainer.querySelectorAll('input[type="checkbox"]:checked'))
       .map(cb => cb.value);
-    if (checked.length !== outVal) {
+    if (serials.length !== outVal) {
       alert(`Please select exactly ${outVal} serial numbers.`);
       return;
     }
-    serials = checked;
   }
 
   serialNumbersField.value = serials.join(',');
-  serialModal.style.display = 'none';
-});
-
-window.addEventListener('click', e => {
-  if (e.target === serialModal) serialModal.style.display = 'none';
-});
-
-
-document.querySelector('form').addEventListener('submit', (e) => {
-  // Optional: show a quick “updating” message before redirect
-  const btn = e.target.querySelector('button[type="submit"]');
-  btn.disabled = true;
-  btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Updating...';
+  showUpdateView();
 });
 </script>
-
-
 {% endblock %}
+```

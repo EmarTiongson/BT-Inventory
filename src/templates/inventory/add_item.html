@@ -37,13 +37,12 @@
           <option value="meters">Meters</option>
         </select>
         <input type="text" name="part_no" placeholder="Part No.">
-
       </div>
 
       <!-- ✅ Serial Numbers Section (with modal trigger) -->
       <div class="serial-section">
         <div class="serial-header">
-          <label>Serial Numbers</label>
+          <label>Add Serial Numbers</label>
           <button type="button" class="serial-btn" id="openSerialModal">+</button>
         </div>
         <!-- Hidden field to store serialized serial numbers -->
@@ -65,7 +64,7 @@
       <!-- Submit Section -->
       <div class="submit-section">
         <button type="submit" class="add-btn">
-          <i class="bi bi-plus-square"></i> Add to List
+          <i class="bi bi-plus-square"></i> Add to Inventory
         </button>
       </div>
     </form>
@@ -78,7 +77,6 @@
 </a>
 
 <!-- ✅ JS for Modal Serial Numbers -->
-<!-- ✅ JS for Modal Serial Numbers -->
 <script>
 const openModalBtn = document.getElementById("openSerialModal");
 const serialModal = document.getElementById("serialModal");
@@ -86,7 +84,6 @@ const closeModalBtn = document.getElementById("closeSerialModal");
 const saveSerialBtn = document.getElementById("saveSerialNumbers");
 const serialFieldsContainer = document.getElementById("serialFieldsContainer");
 const hiddenSerialInput = document.getElementById("serialHiddenInput");
-
 const totalStockField = document.querySelector("input[name='total_stock']");
 
 let serialNumbers = [];
@@ -146,25 +143,25 @@ const imagePreview = document.getElementById('imagePreview');
 const uploadLabel = document.getElementById('uploadLabel');
 
 imageInput.addEventListener('change', function() {
-    const file = this.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            imagePreview.src = e.target.result;
-            imagePreview.style.display = 'block';
-            uploadLabel.style.display = 'none';
-        }
-        reader.readAsDataURL(file);
-    } else {
-        imagePreview.src = '#';
-        imagePreview.style.display = 'none';
-        uploadLabel.style.display = 'inline-flex';
-    }
+  const file = this.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      imagePreview.src = e.target.result;
+      imagePreview.style.display = 'block';
+      uploadLabel.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  } else {
+    imagePreview.src = '#';
+    imagePreview.style.display = 'none';
+    uploadLabel.style.display = 'inline-flex';
+  }
 });
 
 // ✅ Clicking the preview allows re-upload
 imagePreview.addEventListener('click', function() {
-    imageInput.click();
+  imageInput.click();
 });
 </script>
 

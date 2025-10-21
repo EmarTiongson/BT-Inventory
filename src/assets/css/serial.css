@@ -1,128 +1,180 @@
-/* ========================================================== */
-/* --- SERIAL LIST STYLES (serial.css) --- */
-/* ========================================================== */
+/* --- Dropdown Styling for Serials --- */
+.serials-cell {
+  position: relative;
+  text-align: center;
+}
 
-/* SERIAL LIST CONTAINER - BASE STYLES */
+.serials-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
 .serials-list-container {
-    margin-top: 5px;
-    padding: 10px;
-    border-radius: 6px;
-    max-height: 200px;
-    overflow-y: auto;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  width: 180px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  padding: 8px;
+  display: none;
+  z-index: 9999;
+  margin-top: 5px;
+  max-height: 200px;
+  overflow: hidden;
 }
 
-/* Serial Search Input */
-.serials-list-container .serial-search {
-    width: 100%;
-    padding: 10px 14px;
-    margin-bottom: 8px;
-    border-radius: 8px;
-    font-size: 14px;
-    transition: all 0.3s ease;
+.serials-list-container.show {
+  display: block;
 }
 
-/* Serial List Base */
+.serial-search {
+  width: 100%;
+  padding: 5px 8px;
+  font-size: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 5px;
+  margin-bottom: 6px;
+  background: #f8fafc;
+}
+
 .serials-list {
-    list-style: none;
-    margin-top: 8px;
-    padding-left: 0;
-    padding: 10px;
-    font-size: 13px;
-    /* Note: The JS handles the hidden/shown state of the parent container */
-    transition: color 0.3s ease;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 140px;
+  overflow-y: auto;
 }
 
 .serials-list li {
-    padding: 4px 0;
-    list-style-type: none;
-    border-bottom: 1px solid transparent; 
+  font-size: 12px;
+  padding: 5px;
+  text-align: center;
+  border-bottom: 1px solid #e2e8f0;
+  color: #1e293b;
 }
 
 .serials-list li:last-child {
-    border-bottom: none !important;
+  border-bottom: none;
 }
 
-/* Toggle Button */
-.toggle-serials-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 13px;
-    text-decoration: underline;
-    transition: color 0.3s ease;
+.view-serials-link {
+  color: green;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 13px;
 }
 
-/* ========================================================== */
-/* --- SERIAL LIST CONTAINER (LIGHT MODE) --- */
-/* ========================================================== */
-
-body.light-mode .serials-list-container {
-    background: #f9fafb !important;
-    border: 1px solid #e5e7eb !important;
+.view-serials-link:hover {
+  text-decoration: underline;
 }
 
-body.light-mode .serials-list-container .serial-search {
-    background: #ffffff !important;
-    color: #1f2937 !important;
-    border: 1px solid #d1d5db !important;
-}
-
-body.light-mode .serials-list-container .serial-search::placeholder {
-    color: #6b7280 !important;
-}
-
-body.light-mode .serials-list {
-    color: #1f2937 !important;
-}
-
-body.light-mode .serials-list li {
-    border-bottom: 1px solid #e5e7eb !important;
-    color: #1f2937 !important;
-}
-
-body.light-mode .toggle-serials-btn {
-    color: #059669 !important;
-}
-
-body.light-mode .toggle-serials-btn:hover {
-    color: #047857 !important;
-}
-
-/* ========================================================== */
-/* --- SERIAL LIST CONTAINER (DARK MODE) --- */
-/* ========================================================== */
-
+/* Dark mode styles for serial dropdown */
 body.dark-mode .serials-list-container {
-    /* Critical dark mode background and border for the container */
-    background: #1e293b !important;
-    border: 1px solid #334155 !important;
+  background: #2a2a2a;
+  border-color: #3a3a3a;
 }
 
-body.dark-mode .serials-list-container .serial-search {
-    /* Critical dark mode background, text, and border for the input */
-    background: #0f172a !important;
-    color: #e0e0e0 !important;
-    border: 1px solid #334155 !important;
-}
-
-body.dark-mode .serials-list-container .serial-search::placeholder {
-    color: #64748b !important;
-}
-
-body.dark-mode .serials-list {
-    color: #cbd5e1 !important;
+body.dark-mode .serial-search {
+  background: #1a1a1a;
+  border-color: #3a3a3a;
+  color: #e0e0e0;
 }
 
 body.dark-mode .serials-list li {
-    border-bottom: 1px solid #334155 !important;
-    color: #cbd5e1 !important;
+  border-bottom-color: #3a3a3a;
+  color: #e0e0e0;
 }
 
-body.dark-mode .toggle-serials-btn {
-    color: #4ade80 !important;
+/* --- Dropdown Styling for Serials --- */
+.serials-cell {
+  position: relative;
+  text-align: center;
 }
 
-body.dark-mode .toggle-serials-btn:hover {
-    color: #86efac !important;
+.serials-wrapper {
+  position: relative;
+  display: inline-block;
 }
+
+.serials-list-container {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  width: 180px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  padding: 8px;
+  display: none;
+  z-index: 9999;
+  margin-top: 5px;
+}
+
+.serials-list-container.show {
+  display: block;
+  overflow-y: auto;
+  max-height: 200px;
+}
+
+.serial-search {
+  width: 100%;
+  padding: 5px 8px;
+  font-size: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 5px;
+  margin-bottom: 6px;
+  background: #f8fafc;
+}
+
+.serials-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.serials-list li {
+  font-size: 12px;
+  padding: 5px;
+  text-align: center;
+  border-bottom: 1px solid #e2e8f0;
+  color: #1e293b;
+}
+
+.serials-list li:last-child {
+  border-bottom: none;
+}
+
+.view-serials-link {
+  color: green;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.view-serials-link:hover {
+  text-decoration: underline;
+}
+
+/* Dark mode styles for serial dropdown */
+body.dark-mode .serials-list-container {
+  background: #2a2a2a;
+  border-color: #3a3a3a;
+}
+
+body.dark-mode .serial-search {
+  background: #1a1a1a;
+  border-color: #3a3a3a;
+  color: #e0e0e0;
+}
+
+body.dark-mode .serials-list li {
+  border-bottom-color: #3a3a3a;
+  color: #e0e0e0;
+}
+

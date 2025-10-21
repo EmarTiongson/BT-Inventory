@@ -2,34 +2,6 @@
  * BASE STYLES & LAYOUT
  * ========================================================== */
 
-.add-item-container {
-    width: 95%;
-    max-width: 1600px;
-    margin: 40px auto;
-    padding: 40px;
-    border-radius: 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 40px;
-}
-
-.inventory-card {
-    background: transparent !important;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.inventory-card form {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: transparent !important;
-}
-
 .header-container {
     display: flex;
     justify-content: space-between;
@@ -38,9 +10,10 @@
 }
 
 .page-title {
-    margin: -20px 0 0 0;
+    margin: 0 0 20px 0;
     padding: 0;
     line-height: 1;
+    font-size: 28px;
 }
 
 .page-controls {
@@ -49,16 +22,7 @@
     align-items: center;
     margin-bottom: 20px;
     gap: 15px;
-}
-
-.content-card {
-    background: transparent;
-    border-radius: 12px;
-    padding: 0;
-}
-
-.user-management-box {
-    background: transparent;
+    width: 100%;
 }
 
 .breadcrumb-nav {
@@ -228,8 +192,26 @@
  * DATA TABLE STYLES
  * ========================================================== */
 
+.inventory-card {
+    background: transparent;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.content-card {
+    background: transparent;
+    border-radius: 12px;
+    padding: 0;
+    width: 100%;
+    margin: 0;
+}
+
 .table-responsive {
     overflow-x: auto;
+    width: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 .data-table {
@@ -237,6 +219,7 @@
     border-collapse: collapse;
     font-size: 14px;
     background: transparent;
+    min-width: 1300px;
 }
 
 .data-table thead {
@@ -297,6 +280,15 @@
  * UPLOAD/THUMBNAIL STYLES
  * ========================================================== */
 
+.add-item-container {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
 .upload-box {
     width: 150px;
     height: 150px;
@@ -307,8 +299,7 @@
     align-items: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    margin-top: 20px;
-    margin-bottom: 40px;
+    margin: 20px auto 40px;
     text-align: center;
     position: relative;
     overflow: hidden;
@@ -348,8 +339,8 @@
 }
 
 .thumbnail {
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: px;
     object-fit: cover;
     border-radius: 8px;
     cursor: pointer;
@@ -375,12 +366,13 @@
     height: 100%;
     background-color: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(4px);
-    justify-content: center;
+    display: none; 
     align-items: center;
+    justify-content: center;
 }
 
 .modal-content {
-    margin: 15% auto;
+    margin: auto;
     padding: 30px;
     border-radius: 12px;
     width: 90%;
@@ -422,36 +414,50 @@
     box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
 }
 
+/* === IMAGE MODAL STYLES START === */
 .image-modal {
     display: none;
     position: fixed;
     z-index: 9999;
-    padding-top: 60px;
+    padding: 20px;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
     overflow: auto;
     background-color: rgba(0, 0, 0, 0.9);
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
 }
 
-.image-modal img {
-    margin: auto;
+.image-modal .modal-content {
+    all: unset;
     display: block;
-    max-width: 80%;
-    max-height: 80%;
-    border-radius: 10px;
+    margin: auto;
+    max-width: 70vw;
+    max-height: 70vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
 }
 
 .image-modal .close {
     position: absolute;
-    top: 30px;
-    right: 45px;
+    top: 20px;
+    right: 35px;
     color: white;
     font-size: 40px;
     font-weight: bold;
     cursor: pointer;
+    transition: color 0.3s ease;
 }
+
+.image-modal .close:hover {
+    color: #ddd;
+}
+/* === IMAGE MODAL STYLES END === */
 
 @keyframes slideIn {
     from {
@@ -514,7 +520,7 @@ body.light-mode .data-table tbody tr {
     border-bottom: 1px solid #eeeeee;
 }
 
-body.light-mode .modal-content {
+body.light-mode .modal:not(.image-modal) .modal-content {
     background-color: var(--input-bg-light);
 }
 
@@ -544,7 +550,6 @@ body.dark-mode .summary-card h3 {
     color: #fff;
 }
 
-/* IMPORTANT: These base styles are needed here so serial.css can override them specifically */
 body.dark-mode input,
 body.dark-mode select,
 body.dark-mode textarea {
@@ -588,7 +593,7 @@ body.dark-mode .summary-card p {
     color: #e0e0e0;
 }
 
-body.dark-mode .modal-content {
+body.dark-mode .modal:not(.image-modal) .modal-content {
     background-color: #2a2a2a;
 }
 
@@ -609,4 +614,34 @@ body.dark-mode .upload-box:hover {
 
 body.dark-mode .upload-label i {
     color: #ffffff;
+}
+
+/* ==========================================================
+ * CRITICAL FIX: Override base.css main-content padding
+ * ========================================================== */
+
+#mainContent.main-content,
+body .main-content {
+    padding: 20px 15px !important;
+}
+
+.inventory-card,
+.content-card,
+.add-item-container {
+    max-width: none !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.page-controls {
+    max-width: none !important;
+    width: 100% !important;
+}
+
+.table-responsive {
+    max-width: none !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
 }

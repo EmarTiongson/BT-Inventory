@@ -7,205 +7,245 @@
 {% endblock %}
 
 {% block content %}
-<h1 class="page-title">Inventory Management</h1>
+<h1 class="page-title">Inventory Overview</h1>
 
 <div class="page-controls">
-    <div class="search-box">
-        <input type="text" id="searchInput" placeholder="Search here..."/>
-        <i class="bi bi-search"></i>
-    </div>
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="Search here..." />
+    <i class="bi bi-search"></i>
+  </div>
 
-    <button class="add-btn modern-add-btn" onclick="window.location.href='{% url 'add_item' %}'">
-        <i class="fas fa-plus"></i> Add Product
-    </button>
+  <button class="add-btn modern-add-btn" onclick="window.location.href='{% url 'add_item' %}'">
+    <i class="fas fa-plus"></i> Add Product
+  </button>
 </div>
 
 <div class="inventory-card content-card">
-    <div class="table-responsive">
-        <table class="inventory-table data-table">
-            <thead>
-                <tr>
-                    <th>DATE LAST MODIFIED</th>
-                    <th>ITEM ID</th>
-                    <th>ITEM</th>
-                    <th>IMAGE</th>
-                    <th>DESCRIPTION</th>
-                    <th>TOTAL STOCK</th>
-                    <th>ALLOCATED QUANTITY</th>
-                    <th>UNIT</th>
-                    <th>Part Number</th>
-                    <th>SERIAL NUMBERS</th>
-                    <th>User</th>
-                    <th style="text-align: center;">ACTIONS</th>
-                </tr>
-            </thead>
-            <tbody id="inventoryTableBody">
-                {% for item in items %}
-                <tr id="item-row-{{ item.id }}" style="transition: opacity 0.3s ease;">
-                    <td>{{ item.date_last_modified|date:"F d, Y" }}</td>
-                    <td>{% if item.id %}{{ item.id }}{% else %}-{% endif %}</td>
-                    <td><a href="{% url 'item_history' item.id %}" class="item-link">{{ item.item_name }}</a></td>
-                    <td>
-                        {% if item.image %}
-                        <img src="{{ item.image.url }}" alt="{{ item.name }}" class="thumbnail" onclick="showImagePopup('{{ item.image.url }}')" />
-                        {% else %}
-                        <span class="text-gray-400">No image</span>
-                        {% endif %}
-                    </td>
-                    <td>{{ item.description|default:"—" }}</td>
-                    <td>{{ item.total_stock }}</td>
-                    <td>{{ item.allocated_quantity }}</td>
-                    <td>{{ item.get_unit_of_quantity_display }}</td>
-                    <td>{{ item.part_no|default:"—" }}</td>
-                    <td>
-                        {% if item.serial_numbers.all %}
-                        <button class="toggle-serials-btn" onclick="toggleSerials({{ item.id }})">
-                            View Serials ({{ item.available_serials|length }})
-                        </button>
-                        <div id="serials-{{ item.id }}" class="serials-list-container hidden">
-                            <input type="text" class="serial-search" placeholder="Search serials..." onkeyup="filterSerials({{ item.id }})">
-                            <ul class="serials-list">
-                                {% for serial in item.available_serials %}
-                                <li>{{ serial }}</li>
-                                {% empty %}
-                                <li><em>No serial numbers</em></li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                        {% else %}
-                        <em>—</em>
-                        {% endif %}
-                    </td>
-                    <td>{{ item.user }}</td>
-                    <td style="text-align: center;">
-                        <button class="update-btn action-btn" onclick="window.location.href='{% url 'update_item' item.id %}'">Update</button>
-                        <button class="delete-btn action-btn" data-item-id="{{ item.id }}">Delete</button>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="12" style="text-align: center; padding: 20px;">No items found</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+  <div class="table-responsive">
+    <table class="inventory-table data-table">
+      <thead>
+        <tr>
+          <th>DATE LAST MODIFIED</th>
+          <th>ITEM ID</th>
+          <th>ITEM</th>
+          <th>IMAGE</th>
+          <th>DESCRIPTION</th>
+          <th>TOTAL STOCK</th>
+          <th>ALLOCATED QUANTITY</th>
+          <th>UNIT</th>
+          <th>Part Number</th>
+          <th>SERIAL NUMBERS</th>
+          <th>User</th>
+          <th style="text-align: center;">ACTIONS</th>
+        </tr>
+      </thead>
+      <tbody id="inventoryTableBody">
+        {% for item in items %}
+        <tr id="item-row-{{ item.id }}" style="transition: opacity 0.3s ease;">
+          <td>{{ item.date_last_modified|date:"F d, Y" }}</td>
+          <td>{% if item.id %}{{ item.id }}{% else %}-{% endif %}</td>
+          <td><a href="{% url 'item_history' item.id %}" class="item-link">{{ item.item_name }}</a></td>
+          <td>
+            {% if item.image %}
+            <img src="{{ item.image.url }}" alt="{{ item.name }}" class="thumbnail"
+              onclick="showImagePopup('{{ item.image.url }}')" />
+            {% else %}
+            <span class="text-gray-400">No image</span>
+            {% endif %}
+          </td>
+          <td>{{ item.description|default:"—" }}</td>
+          <td>{{ item.total_stock }}</td>
+          <td>{{ item.allocated_quantity }}</td>
+          <td>{{ item.get_unit_of_quantity_display }}</td>
+          <td>{{ item.part_no|default:"—" }}</td>
+          <td class="serials-cell">
+            {% if item.serial_numbers.all %}
+            <div class="serials-wrapper">
+              <a href="javascript:void(0)" onclick="toggleSerials({{ item.id }})" class="view-serials-link">
+                View Serials ({{ item.available_serials|length }})
+              </a>
+              <div id="serials-{{ item.id }}" class="serials-list-container">
+                <input type="text" class="serial-search" placeholder="Search serials..."
+                  onkeyup="filterSerials({{ item.id }})">
+                <ul class="serials-list">
+                  {% for serial in item.available_serials %}
+                  <li>{{ serial }}</li>
+                  {% empty %}
+                  <li><em>No serial numbers</em></li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+            {% else %}
+            <em>—</em>
+            {% endif %}
+          </td>
+          <td>{{ item.user }}</td>
+          <td style="text-align: center;">
+            <button class="update-btn action-btn"
+              onclick="window.location.href='{% url 'update_item' item.id %}'">Update</button>
+            <button class="delete-btn action-btn" data-item-id="{{ item.id }}">Delete</button>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="12" style="text-align: center; padding: 20px;">No items found</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
 
+<!-- Delete Modal -->
 <div id="deleteModal" class="modal">
-    <div class="modal-content">
-        <h3 id="deleteMessage">Are you sure you want to delete this product?</h3>
-        <div class="modal-actions">
-            <button id="cancelDelete" class="cancel">Cancel</button>
-            <button id="confirmDelete" class="confirm">Yes, delete</button>
-        </div>
+  <div class="modal-content">
+    <h3 id="deleteMessage">Are you sure you want to delete this product?</h3>
+    <div class="modal-actions">
+      <button id="cancelDelete" class="cancel">Cancel</button>
+      <button id="confirmDelete" class="confirm">Yes, delete</button>
     </div>
+  </div>
 </div>
 
+<!-- Image Modal -->
 <div id="imageModal" class="image-modal" onclick="closeImagePopup()">
-    <span class="close">&times;</span>
-    <img class="modal-content" id="popupImage">
+  <span class="close">&times;</span>
+  <!-- The image tag now uses 'modal-content' class again -->
+  <img class="modal-content" id="popupImage">
 </div>
 
+<!-- ==================== CORE SCRIPT ==================== -->
 <script>
-function toggleSerials(itemId) {
-    const container = document.getElementById(`serials-${itemId}`);
-    if (container) container.classList.toggle("hidden");
-}
-
 function showImagePopup(src) {
-    const modal = document.getElementById('imageModal');
-    const modalImg = document.getElementById('popupImage');
-    modal.style.display = "block";
-    modalImg.src = src;
+  const modal = document.getElementById('imageModal');
+  const modalImg = document.getElementById('popupImage');
+  modal.style.display = "flex"; /* Changed from 'block' to 'flex' to enable centering */
+  modalImg.src = src;
 }
 
 function closeImagePopup() {
-    document.getElementById('imageModal').style.display = "none";
+  document.getElementById('imageModal').style.display = "none";
 }
 
+// Delete item logic
 const deleteModal = document.getElementById('deleteModal');
 const confirmDeleteBtn = document.getElementById('confirmDelete');
 const cancelDeleteBtn = document.getElementById('cancelDelete');
 let itemIdToDelete = null;
 
-// Open delete modal
 document.querySelectorAll('.delete-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        itemIdToDelete = btn.dataset.itemId;
-        deleteModal.style.display = 'block';
-    });
+  btn.addEventListener('click', () => {
+    itemIdToDelete = btn.dataset.itemId;
+    deleteModal.style.display = 'block';
+  });
 });
 
-// Cancel deletion
 cancelDeleteBtn.addEventListener('click', () => {
-    itemIdToDelete = null;
-    deleteModal.style.display = 'none';
+  itemIdToDelete = null;
+  deleteModal.style.display = 'none';
 });
 
-// Confirm deletion
 confirmDeleteBtn.addEventListener('click', () => {
-    if (!itemIdToDelete) return;
+  if (!itemIdToDelete) return;
+  const deleteUrlTemplate = "{% url 'delete_item' 0 %}";
+  const deleteUrl = deleteUrlTemplate.replace('0', itemIdToDelete);
 
-    const deleteUrlTemplate = "{% url 'delete_item' 0 %}";
-    const deleteUrl = deleteUrlTemplate.replace('0', itemIdToDelete);
-
-    fetch(deleteUrl, {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': getCookie('csrftoken'),
-            'Content-Type': 'application/json'
-        },
+  fetch(deleteUrl, {
+    method: 'POST',
+    headers: {
+      'X-CSRFToken': getCookie('csrftoken'),
+      'Content-Type': 'application/json'
+    },
+  })
+    .then(res => {
+      if (!res.ok) throw new Error('Network response not OK');
+      return res.json();
     })
-    .then(res => { if (!res.ok) throw new Error('Network response not OK'); return res.json(); })
     .then(data => {
-        if (data.success) {
-            const row = document.getElementById(`item-row-${itemIdToDelete}`);
-            if (row) {
-                row.style.transition = 'opacity 0.5s';
-                row.style.opacity = 0;
-                setTimeout(() => row.remove(), 500);
-            }
+      if (data.success) {
+        const row = document.getElementById(`item-row-${itemIdToDelete}`);
+        if (row) {
+          row.style.transition = 'opacity 0.5s';
+          row.style.opacity = 0;
+          setTimeout(() => row.remove(), 500);
         }
-        deleteModal.style.display = 'none';
-        itemIdToDelete = null;
+      }
+      deleteModal.style.display = 'none';
+      itemIdToDelete = null;
     })
     .catch(err => {
-        console.error('Error deleting item:', err);
-        deleteModal.style.display = 'none';
-        itemIdToDelete = null;
+      console.error('Error deleting item:', err);
+      deleteModal.style.display = 'none';
+      itemIdToDelete = null;
     });
 });
 
-// Get CSRF token from cookie
 function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        document.cookie.split(';').forEach(cookie => {
-            cookie = cookie.trim();
-            if (cookie.startsWith(name + '=')) cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-        });
-    }
-    return cookieValue;
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    document.cookie.split(';').forEach(cookie => {
+      cookie = cookie.trim();
+      if (cookie.startsWith(name + '=')) cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+    });
+  }
+  return cookieValue;
 }
 
-// Close modal if clicked outside
 window.addEventListener('click', e => {
-    if (e.target === deleteModal) {
-        deleteModal.style.display = 'none';
-        itemIdToDelete = null;
-    }
+  if (e.target === deleteModal) {
+    deleteModal.style.display = 'none';
+    itemIdToDelete = null;
+  }
 });
 
-// Filter serial numbers
-function filterSerials(itemId) {
-    const input = document.querySelector(`#serials-${itemId} .serial-search`);
+// --- Serial Dropdown Logic ---
+document.addEventListener("DOMContentLoaded", () => {
+  const allDropdowns = document.querySelectorAll(".serials-list-container");
+
+  window.toggleSerials = function (id) {
+    const dropdown = document.getElementById(`serials-${id}`);
+    if (dropdown.classList.contains("show")) {
+      dropdown.classList.remove("show");
+      return;
+    }
+    allDropdowns.forEach(el => el.classList.remove("show"));
+    dropdown.classList.add("show");
+  };
+
+  window.filterSerials = function (id) {
+    const input = document.querySelector(`#serials-${id} .serial-search`);
     const filter = input.value.toLowerCase();
-    document.querySelectorAll(`#serials-${itemId} .serials-list li`).forEach(li => {
-        li.style.display = li.textContent.toLowerCase().includes(filter) ? '' : 'none';
+    const items = document.querySelectorAll(`#serials-${id} .serials-list li`);
+    items.forEach(li => {
+      li.style.display = li.textContent.toLowerCase().includes(filter) ? "" : "none";
     });
-}
+  };
+
+  document.addEventListener("click", (e) => {
+    const inside = e.target.closest(".serials-wrapper");
+    if (!inside) {
+      allDropdowns.forEach(el => el.classList.remove("show"));
+    }
+  });
+});
+
+// ======== MAIN TABLE SEARCH BAR ========
+document.addEventListener("DOMContentLoaded", () => {
+  const searchInput = document.getElementById("searchInput");
+  const tableRows = document.querySelectorAll("#inventoryTableBody tr");
+
+  searchInput.addEventListener("keyup", () => {
+    const filter = searchInput.value.toLowerCase();
+
+    tableRows.forEach(row => {
+      const text = row.textContent.toLowerCase();
+      row.style.display = text.includes(filter) ? "" : "none";
+    });
+  });
+});
 </script>
 
 <script src="{% static 'js/admin.js' %}"></script>
+<script src="{% static 'js/serial.js' %}"></script>
 {% endblock %}
