@@ -86,9 +86,8 @@
     margin: 0;
 }
 
-
 /* ==========================================================
- * INPUTS & BUTTONS (BASE STYLES)
+ * INPUTS & BUTTONS (FIXED)
  * ========================================================== */
 
 .search-box {
@@ -176,6 +175,17 @@
     box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
 }
 
+#red-btn {
+    background: #f44336;
+    color: white;
+}
+
+#red-btn:hover {
+    background: #d32f2f;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
+}
+
 .btn-pair {
     display: flex;
     gap: 16px;
@@ -187,6 +197,53 @@
     min-width: 0;
 }
 
+/* --- Input Styling (Improved) --- */
+.add-item-container input,
+.add-item-container select,
+.add-item-container textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+/* --- Focus (Light Mode) --- */
+body.light-mode .add-item-container input:focus,
+body.light-mode .add-item-container select:focus,
+body.light-mode .add-item-container textarea:focus,
+body.light-mode .search-box input:focus {
+    border-color: #4CAF50 !important;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2) !important;
+}
+
+/* --- Focus (Dark Mode) --- */
+body.dark-mode .add-item-container input:focus,
+body.dark-mode .add-item-container select:focus,
+body.dark-mode .add-item-container textarea:focus,
+body.dark-mode .search-box input:focus {
+    border-color: #D96F32 !important;
+    box-shadow: 0 0 0 3px rgba(217, 111, 50, 0.25) !important;
+}
+
+/* --- Input Colors --- */
+body.light-mode .add-item-container input,
+body.light-mode .add-item-container select,
+body.light-mode .add-item-container textarea {
+    background: #fff !important;
+    color: #000 !important;
+    border: 1px solid #ccc !important;
+}
+
+body.dark-mode .add-item-container input,
+body.dark-mode .add-item-container select,
+body.dark-mode .add-item-container textarea {
+    background: #2a2a2a !important;
+    color: #fff !important;
+    border: 1px solid #555 !important;
+}
 
 /* ==========================================================
  * DATA TABLE STYLES
@@ -231,7 +288,7 @@
     text-align: left;
     font-weight: 600;
     text-transform: uppercase;
-    font-size: 11px;
+    font-size: 13px;
     letter-spacing: 0.5px;
     background: transparent;
 }
@@ -274,7 +331,6 @@
     padding: 40px 20px !important;
     font-style: italic;
 }
-
 
 /* ==========================================================
  * UPLOAD/THUMBNAIL STYLES
@@ -351,70 +407,50 @@
     transform: scale(1.05);
 }
 
-
 /* ==========================================================
  * MODAL STYLES
  * ========================================================== */
 
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(4px);
-    display: none; 
-    align-items: center;
-    justify-content: center;
+.delete-modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
 }
 
-.modal-content {
-    margin: auto;
-    padding: 30px;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 400px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    animation: slideIn 0.3s ease;
-}
+.delete-modal.hidden { display: none; }
 
-.modal-content h3 {
-    margin: 0 0 20px 0;
-    font-size: 18px;
-    font-weight: 600;
+.delete-modal-content {
+  background: var(--card-bg, #fff);
+  color: var(--text-color, #111);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  width: 350px;
+  text-align: center;
 }
 
 .modal-actions {
-    display: flex;
-    gap: 10px;
-    justify-content: flex-end;
-    margin-top: 25px;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
 }
 
-.modal-actions button {
-    padding: 10px 24px;
-    border: none;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
+.cancel-btn, .confirm-btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
 }
 
-.modal-actions .confirm {
-    background: #f44336;
-    color: white;
-}
+.cancel-btn { background: #ccc; color: #222; }
+.confirm-btn { background: #d9534f; color: white; }
 
-.modal-actions .confirm:hover {
-    background: #d32f2f;
-    box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
-}
 
-/* === IMAGE MODAL STYLES START === */
+/* === IMAGE MODAL STYLES === */
 .image-modal {
     display: none;
     position: fixed;
@@ -457,7 +493,6 @@
 .image-modal .close:hover {
     color: #ddd;
 }
-/* === IMAGE MODAL STYLES END === */
 
 @keyframes slideIn {
     from {
@@ -470,26 +505,14 @@
     }
 }
 
-
 /* ==========================================================
- * DYNAMIC THEME OVERRIDES (LIGHT MODE - Inventory)
+ * DYNAMIC THEME OVERRIDES
  * ========================================================== */
 
 body.light-mode {
     --text-dark: #1f2937;
     --border-light: #cccccc;
     --input-bg-light: #ffffff;
-}
-
-body.light-mode .page-title,
-body.light-mode .modal-content h3,
-body.light-mode .section-title,
-body.light-mode .summary-card h3,
-body.light-mode .data-table td,
-body.light-mode .data-table th,
-body.light-mode .item-link,
-body.light-mode .summary-card p {
-    color: var(--text-dark) !important;
 }
 
 body.light-mode input,
@@ -500,120 +523,12 @@ body.light-mode textarea {
     border: 1px solid #ccc !important;
 }
 
-body.light-mode .search-box input {
-    background: var(--input-bg-light);
-    color: var(--text-dark);
-    border-color: var(--border-light);
-}
-
-body.light-mode .search-box input:focus {
-    outline: none;
-    border-color: #134686;
-    box-shadow: 0 0 0 3px rgba(19, 70, 134, 0.15);
-}
-
-body.light-mode .data-table thead {
-    border-bottom: 1px solid #cccccc;
-}
-
-body.light-mode .data-table tbody tr {
-    border-bottom: 1px solid #eeeeee;
-}
-
-body.light-mode .modal:not(.image-modal) .modal-content {
-    background-color: var(--input-bg-light);
-}
-
-body.light-mode .modal-actions .cancel {
-    background: #e0e0e0;
-    color: var(--text-dark);
-}
-
-body.light-mode .upload-box {
-    background: rgba(255, 255, 255, 0.18);
-    border: 2px dashed rgba(255, 255, 255, 0.4);
-}
-
-body.light-mode .upload-label i {
-    color: #1f2937;
-}
-
-
-/* ==========================================================
- * DYNAMIC THEME OVERRIDES (DARK MODE - Inventory)
- * ========================================================== */
-
-body.dark-mode .page-title,
-body.dark-mode .modal-content h3,
-body.dark-mode .section-title,
-body.dark-mode .summary-card h3 {
-    color: #fff;
-}
-
 body.dark-mode input,
 body.dark-mode select,
 body.dark-mode textarea {
     background-color: #2d2d2d !important;
     color: #ffffff !important;
     border: 1px solid #555 !important;
-}
-
-body.dark-mode input::placeholder,
-body.dark-mode textarea::placeholder {
-    color: #bbbbbb;
-}
-
-body.dark-mode .search-box input {
-    background: #2a2a2a;
-    color: #fff;
-    border-color: #3a3a3a;
-}
-
-body.dark-mode .search-box input:focus {
-    outline: none;
-    border-color: #D96F32;
-    box-shadow: 0 0 0 3px rgba(217, 111, 50, 0.2);
-}
-
-body.dark-mode .data-table thead {
-    border-bottom: 1px solid #3a3a3a;
-}
-
-body.dark-mode .data-table th {
-    color: #888;
-}
-
-body.dark-mode .data-table tbody tr {
-    border-bottom: 1px solid #2a2a2a;
-}
-
-body.dark-mode .data-table td,
-body.dark-mode .item-link,
-body.dark-mode .summary-card p {
-    color: #e0e0e0;
-}
-
-body.dark-mode .modal:not(.image-modal) .modal-content {
-    background-color: #2a2a2a;
-}
-
-body.dark-mode .modal-actions .cancel {
-    background: #3a3a3a;
-    color: #e0e0e0;
-}
-
-body.dark-mode .upload-box {
-    background: rgba(255, 255, 255, 0.05);
-    border: 2px dashed rgba(255, 255, 255, 0.15);
-}
-
-body.dark-mode .upload-box:hover {
-    border-color: #D96F32;
-    background: rgba(217, 111, 50, 0.1);
-}
-
-body.dark-mode .upload-label i {
-    color: #ffffff;
 }
 
 /* ==========================================================
@@ -634,14 +549,12 @@ body .main-content {
     padding: 0 !important;
 }
 
-.page-controls {
-    max-width: none !important;
-    width: 100% !important;
-}
-
+.page-controls,
 .table-responsive {
     max-width: none !important;
     width: 100% !important;
     padding: 0 !important;
     margin: 0 !important;
 }
+
+

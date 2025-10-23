@@ -1,211 +1,239 @@
-document.addEventListener('DOMContentLoaded', function() {
-    
-    // --- START of all your existing code ---
+// ===========================
+// UPDATE ITEM PAGE - JAVASCRIPT
+// ===========================
 
-    const updateContainer = document.getElementById('updateContainer');
-    const serialModal = document.getElementById('serialModal');
+// DOM Elements
+const updateContainer = document.getElementById('updateContainer');
+const serialModal = document.getElementById('serialModal');
+const serialInputsContainer = document.getElementById('serialInputsContainer');
+const serialSearchBox = document.getElementById('serialSearchBox');
+const serialSearch = document.getElementById('serialSearch');
+const inField = document.getElementById('inField');
+const outField = document.getElementById('outField');
+const poSupplier = document.getElementById('poSupplierField');
+const poClient = document.getElementById('poClientField');
+const drInput = document.getElementById('drInput');
+const openSerialsBtn = document.getElementById('openSerialsBtn');
+const closeSerialsBtn = document.getElementById('closeSerialsBtn');
+const saveSerialsBtn = document.getElementById('saveSerialsBtn');
+const serialNumbersField = document.getElementById('serialNumbersField');
+const serialModalTitle = document.getElementById('serialModalTitle');
 
-    const inField = document.getElementById('inField');
-    const outField = document.getElementById('outField');
-    const poSupplier = document.getElementById('poSupplierField');
-    const poClient = document.getElementById('poClientField');
-    const drInput = document.getElementById('drInput');
-    const openSerialsBtn = document.getElementById('openSerialsBtn');
-    const closeSerialsBtn = document.getElementById('closeSerialsBtn');
-    const saveSerialsBtn = document.getElementById('saveSerialsBtn');
-    const serialInputsContainer = document.getElementById('serialInputsContainer');
-    const serialNumbersField = document.getElementById('serialNumbersField');
-    const serialModalTitle = document.getElementById('serialModalTitle');
+// ✅ Get available serials from window object (passed from HTML)
+let availableSerials = window.availableSerials || [];
 
-    // IMPORTANT: We need to get the availableSerials array from the HTML, 
-    // so we'll grab it from a data attribute on the serialModal element.
-    const serialModalElement = document.getElementById('serialModal');
-    // Check if element exists before trying to access attribute
-    const availableSerialsString = serialModalElement ? serialModalElement.getAttribute('data-available-serials') : '[]';
-    const availableSerials = JSON.parse(availableSerialsString);
+// Serial sorting logic
+if (Array.isArray(availableSerials)) {
+  availableSerials = availableSerials.sort((a, b) => {
+    // Improved sorting by replacing non-digits to ensure proper numeric sort for SN-0001, SN-0010, etc.
+    const numA = parseInt(a.replace(/\D/g, ''), 10);
+    const numB = parseInt(b.replace(/\D/g, ''), 10);
+    return numA - numB;
+  });
+}
 
-    // --- Helper Functions ---
-    function resetFields() {
-        inField.disabled = false;
-        outField.disabled = false;
-        poSupplier.disabled = false;
-        poClient.disabled = false;
-        drInput.disabled = true;
-        drInput.value = ""; // Clear DR on reset
-        poClient.value = ""; // Clear PO Client on reset
-        poSupplier.value = ""; // Clear PO Supplier on reset
-    }
+// ===========================
+// TRANSACTION TYPE HANDLING
+// ===========================
 
-    function handleTransactionType() {
-        const inVal = inField.value.trim();
-        const outVal = outField.value.trim();
-        const hasIn = inVal !== "" && parseInt(inVal) > 0;
-        const hasOut = outVal !== "" && parseInt(outVal) > 0;
+function resetFields() {
+  inField.disabled = false;
+  outField.disabled = false;
+  poSupplier.disabled = false;
+  poClient.disabled = false;
+  drInput.disabled = true;
+  drInput.value = "";
+  poClient.value = "";
+  poSupplier.value = "";
+}
 
-        if (hasIn && hasOut) {
-            alert("You can only enter either IN or OUT — not both.");
-            if (outField === document.activeElement) {
-                outField.value = "";
-            } else if (inField === document.activeElement) {
-                inField.value = "";
-            }
-            handleTransactionType(); 
-            return;
-        }
-            
-        if (hasIn) {
-            outField.disabled = true;
-            poClient.disabled = true;
-            drInput.disabled = true;
-            poSupplier.disabled = false;
-        }
-        else if (hasOut) {
-            inField.disabled = true;
-            poSupplier.disabled = true;
-            poClient.disabled = false;
-            drInput.disabled = false;
-        }
-        else {
-            resetFields();
-        }
-    }
+function handleTransactionType() {
+  const inVal = inField.value.trim();
+  const outVal = outField.value.trim();
+  const hasIn = inVal !== "" && parseInt(inVal) > 0;
+  const hasOut = outVal !== "" && parseInt(outVal) > 0;
 
-    // Attach event listeners to trigger the logic on input
-    [inField, outField].forEach(field => {
-        field.addEventListener('input', handleTransactionType);
-    });
-
-    // Initialize the state when the page loads
-    resetFields();
+  if (hasIn && hasOut) {
+    alert("You can only enter either IN or OUT — not both.");
+    if (outField === document.activeElement) outField.value = "";
+    else if (inField === document.activeElement) inField.value = "";
     handleTransactionType();
+    return;
+  }
 
+  if (hasIn) {
+    outField.disabled = true;
+    poClient.disabled = true;
+    drInput.disabled = true;
+    poSupplier.disabled = false;
+  } else if (hasOut) {
+    inField.disabled = true;
+    poSupplier.disabled = true;
+    poClient.disabled = false;
+    drInput.disabled = false;
+  } else {
+    resetFields();
+  }
+}
 
-    // --- View Swapping Functions ---
-    function showSerialView() {
-        updateContainer.classList.remove('show-view');
-        updateContainer.classList.add('hide-view');
-        
-        serialModal.classList.remove('hide-view');
-        serialModal.classList.add('show-view');
+// Add event listeners
+[inField, outField].forEach(f => f.addEventListener('input', handleTransactionType));
+resetFields();
+handleTransactionType();
+
+// ===========================
+// VIEW TOGGLING
+// ===========================
+
+function showSerialView() {
+  updateContainer.classList.replace('show-view', 'hide-view');
+  serialModal.classList.replace('hide-view', 'show-view');
+}
+
+function showUpdateView() {
+  serialModal.classList.replace('show-view', 'hide-view');
+  updateContainer.classList.replace('hide-view', 'show-view');
+}
+
+// ===========================
+// SERIAL CHECKBOXES RENDERING
+// ===========================
+
+function renderSerialCheckboxes(serialList) {
+  serialInputsContainer.innerHTML = "";
+  serialInputsContainer.style.display = 'grid'; // Default grid style for inputs/checkboxes
+
+  // Logic for 3-column split (for OUT/checkbox view)
+  const totalSerials = serialList.length;
+  const numColumns = 3;
+  const baseSize = Math.floor(totalSerials / numColumns);
+  const remainder = totalSerials % numColumns; 
+  
+  const columnSizes = [];
+  for (let i = 0; i < numColumns; i++) {
+    columnSizes.push(baseSize + (i < remainder ? 1 : 0));
+  }
+
+  // Override to flex for vertical columns only when OUT and there are serials
+  if (totalSerials > 0) {
+    serialInputsContainer.style.display = 'flex';
+    serialInputsContainer.style.flexDirection = 'row';
+    serialInputsContainer.style.flexWrap = 'nowrap';
+    serialInputsContainer.style.justifyContent = 'space-between';
+    serialInputsContainer.style.gap = '30px'; // Gap between columns
+  } else {
+    serialInputsContainer.style.display = 'grid'; // Fallback for IN or no serials
+  }
+
+  let serialIndex = 0;
+  columnSizes.forEach(size => {
+    const columnDiv = document.createElement('div');
+    columnDiv.style.display = 'flex';
+    columnDiv.style.flexDirection = 'column';
+    columnDiv.style.flexGrow = '1';
+    columnDiv.style.gap = '5px'; // Gap between items in a column
+
+    for (let i = 0; i < size; i++) {
+      const serial = serialList[serialIndex];
+      
+      const label = document.createElement('label');
+      label.style.display = 'flex';
+      label.style.alignItems = 'center';
+      
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.value = serial;
+      checkbox.style.marginRight = '10px';
+      
+      label.appendChild(checkbox);
+      label.appendChild(document.createTextNode(serial));
+      
+      columnDiv.appendChild(label);
+      serialIndex++;
     }
+    
+    serialInputsContainer.appendChild(columnDiv);
+  });
+}
 
-    function showUpdateView() {
-        serialModal.classList.remove('show-view');
-        serialModal.classList.add('hide-view');
-        
-        updateContainer.classList.remove('hide-view');
-        updateContainer.classList.add('show-view');
+// ===========================
+// SERIAL MODAL FUNCTIONALITY
+// ===========================
+
+openSerialsBtn.addEventListener('click', () => {
+  const inVal = parseInt(inField.value) || 0;
+  const outVal = parseInt(outField.value) || 0;
+  serialInputsContainer.innerHTML = '';
+  serialSearch.value = '';
+
+  if (inVal === 0 && outVal === 0) {
+    alert("Please enter a valid IN or OUT quantity before managing serials.");
+    return;
+  }
+
+  if (inVal > 0 && outVal === 0) {
+    serialModalTitle.textContent = `Add ${inVal} New Serial Numbers`;
+    serialSearchBox.style.display = "none";
+    // Reset to grid flow for input fields (3 columns wide)
+    serialInputsContainer.style.display = 'grid';
+    serialInputsContainer.style.gridTemplateColumns = 'repeat(3, 1fr)'; 
+    serialInputsContainer.style.gap = '10px 30px'; 
+    
+    for (let i = 1; i <= inVal; i++) {
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.placeholder = `Serial #${i}`;
+      input.className = 'serial-input';
+      serialInputsContainer.appendChild(input);
     }
-    // -------------------------------
+    showSerialView();
+    return;
+  }
 
-
-    /* ============================== SERIAL MODAL LOGIC ============================== */
-
-    // Check if openSerialsBtn exists before adding listener
-    if (openSerialsBtn) {
-        openSerialsBtn.addEventListener('click', () => {
-            const inVal = parseInt(inField.value) || 0;
-            const outVal = parseInt(outField.value) || 0;
-            serialInputsContainer.innerHTML = '';
-
-            if (inVal === 0 && outVal === 0) {
-                alert("Please enter a valid IN or OUT quantity before managing serials.");
-                return;
-            }
-                
-            if (inVal > 0 && outVal === 0) {
-                // IN - Adding new serials (3-column input fields)
-                serialModalTitle.textContent = `Add ${inVal} New Serial Numbers`;
-                serialInputsContainer.classList.add('form-grid'); 
-                for (let i = 1; i <= inVal; i++) {
-                    const input = document.createElement('input');
-                    input.type = 'text';
-                    input.placeholder = `Serial #${i}`;
-                    input.className = 'serial-input';
-                    serialInputsContainer.appendChild(input);
-                }
-                showSerialView();
-                return;
-            }
-
-            if (outVal > 0 && inVal === 0) {
-                // OUT - Selecting available serials (3-column checklist)
-                if (availableSerials.length === 0) {
-                    alert("No available serial numbers for this item.");
-                    return;
-                }
-                if (outVal > availableSerials.length) {
-                    alert(`Only ${availableSerials.length} serial numbers are available — you requested ${outVal}.`);
-                    return;
-                }
-
-                serialModalTitle.textContent = `Select ${outVal} Serial Numbers`;
-                serialInputsContainer.classList.add('form-grid'); 
-                
-                // Checkbox rendering logic for 3 columns
-                availableSerials.forEach(serial => {
-                    const label = document.createElement('label');
-                    label.style.display = 'flex';
-                    label.style.alignItems = 'center';
-                    
-                    const checkbox = document.createElement('input');
-                    checkbox.type = 'checkbox';
-                    checkbox.value = serial;
-                    checkbox.style.marginRight = '12px';
-                    
-                    label.appendChild(checkbox);
-                    label.appendChild(document.createTextNode(serial));
-                    
-                    // Wrap each checkbox/label in a DIV to ensure clean grid cells
-                    const wrapper = document.createElement('div');
-                    wrapper.appendChild(label);
-                    serialInputsContainer.appendChild(wrapper);
-                });
-                
-                showSerialView();
-                return;
-            }
-        });
+  if (outVal > 0 && inVal === 0) {
+    if (outVal > availableSerials.length) {
+      alert(`Only ${availableSerials.length} serial numbers are available — you requested ${outVal}.`);
+      return;
     }
+    serialModalTitle.textContent = `Select ${outVal} Serial Numbers`;
+    serialSearchBox.style.display = "block";
+    renderSerialCheckboxes(availableSerials);
+    showSerialView();
+  }
+});
 
+// Serial search functionality
+serialSearch.addEventListener('input', () => {
+  const query = serialSearch.value.toLowerCase();
+  const filtered = availableSerials.filter(s => s.toLowerCase().includes(query));
+  renderSerialCheckboxes(filtered);
+});
 
-    closeSerialsBtn.addEventListener('click', showUpdateView);
+// Close modal
+closeSerialsBtn.addEventListener('click', showUpdateView);
 
-    saveSerialsBtn.addEventListener('click', () => {
-        let serials = [];
-        const inVal = parseInt(inField.value) || 0;
-        const outVal = parseInt(outField.value) || 0;
+// Save serials
+saveSerialsBtn.addEventListener('click', () => {
+  let serials = [];
+  const inVal = parseInt(inField.value) || 0;
+  const outVal = parseInt(outField.value) || 0;
 
-        if (inVal > 0 && outVal === 0) {
-            serials = Array.from(serialInputsContainer.querySelectorAll('input.serial-input'))
-                .map(i => i.value.trim())
-                .filter(v => v !== '');
-            if (serials.length !== inVal) {
-                alert(`Please enter exactly ${inVal} serial numbers.`);
-                return;
-            }
-        }
-        else if (outVal > 0 && inVal === 0) {
-            const checked = Array.from(serialInputsContainer.querySelectorAll('input[type="checkbox"]:checked'))
-                .map(cb => cb.value);
-            if (checked.length !== outVal) {
-                alert(`Please select exactly ${outVal} serial numbers.`);
-                return;
-            }
-            serials = checked;
-        }
+  if (inVal > 0) {
+    serials = Array.from(serialInputsContainer.querySelectorAll('.serial-input'))
+      .map(i => i.value.trim()).filter(Boolean);
+    if (serials.length !== inVal) {
+      alert(`Please enter exactly ${inVal} serial numbers.`);
+      return;
+    }
+  } else if (outVal > 0) {
+    serials = Array.from(serialInputsContainer.querySelectorAll('input[type="checkbox"]:checked'))
+      .map(cb => cb.value);
+    if (serials.length !== outVal) {
+      alert(`Please select exactly ${outVal} serial numbers.`);
+      return;
+    }
+  }
 
-        serialNumbersField.value = serials.join(',');
-        showUpdateView();
-    });
-
-    document.querySelector('form').addEventListener('submit', (e) => {
-        const btn = e.target.querySelector('button[type="submit"]');
-        if (btn) {
-            btn.disabled = true;
-            btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Updating...';
-        }
-    });
-
-    // --- END of all your existing code ---
+  serialNumbersField.value = serials.join(',');
+  showUpdateView();
 });

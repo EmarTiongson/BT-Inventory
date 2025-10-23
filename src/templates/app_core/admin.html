@@ -53,7 +53,7 @@
             <button class="update-btn action-btn" onclick="window.location.href='{% url 'update_user' user.id %}'">
               Update
             </button>
-            <button class="delete-btn" data-user-id="{{ user.id }}">Delete</button>
+            <button class="delete-btn action-btn" data-user-id="{{ user.id }}">Delete</button>
           </td>
         </tr>
         {% empty %}

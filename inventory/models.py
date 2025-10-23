@@ -17,8 +17,10 @@ class Item(models.Model):
     allocated_quantity = models.IntegerField(default=0, blank=True, null=True)
     unit_of_quantity = models.CharField(max_length=20, choices=UNIT_CHOICES, default='pcs')
     part_no = models.CharField(max_length=100, blank=True, null=True)
-    date_last_modified = models.DateTimeField(auto_now=True)
+    date_last_modified = models.DateTimeField(default=timezone.now)
     user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True)
+    is_deleted = models.BooleanField(default=False)
+
 
     def __str__(self):
         return f"{self.item_name} ({self.id})"
@@ -27,6 +29,14 @@ class Item(models.Model):
     def available_serials(self):
         """Return all serial numbers currently available for this item."""
         return self.serial_numbers.filter(is_available=True).values_list('serial_no', flat=True)
+
+
+    @property
+    def last_transaction_user(self):
+        last_update = self.updates.order_by('-date').first()
+        if last_update and last_update.user:
+            return last_update.user
+        return self.user  # fallback to creator
 
 
 class ItemSerial(models.Model):
@@ -50,7 +60,7 @@ class ItemUpdate(models.Model):
     ]
 
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='updates')
-    date = models.DateTimeField(auto_now_add=True)
+    date = models.DateTimeField(default=timezone.now)
     transaction_type = models.CharField(max_length=3, choices=TRANSACTION_TYPE)
     quantity = models.PositiveIntegerField(default=0)  # amount of items in/out
 
@@ -63,9 +73,9 @@ class ItemUpdate(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True, related_name='item_updates')
     updated_by_user = models.CharField(max_length=150, blank=True, null=True)
     remarks = models.TextField(blank=True, null=True)
-
     stock_after_transaction = models.PositiveIntegerField(default=0)
-
+    undone = models.BooleanField(default=False)
+    
     class Meta:
         ordering = ['-date']
 
@@ -80,6 +90,12 @@ class ItemUpdate(models.Model):
         if not is_new:
             return
 
+        # Only update totals if this is the most recent transaction
+        latest_update = ItemUpdate.objects.filter(item=self.item).order_by('-date').first()
+        if latest_update and latest_update.id != self.id and self.date < latest_update.date:
+            # Backdated entry — don’t directly update total stock here
+            return
+
         if self.transaction_type == 'IN':
             for sn in (self.serial_numbers or []):
                 if not sn:
@@ -89,7 +105,6 @@ class ItemUpdate(models.Model):
                     serial_no=sn,
                     defaults={'is_available': True}
                 )
-            # ✅ Update total stock
             self.item.total_stock += self.quantity
 
         elif self.transaction_type == 'OUT':
@@ -103,8 +118,28 @@ class ItemUpdate(models.Model):
             self.item.allocated_quantity += self.quantity
             self.item.total_stock = max(self.item.total_stock - self.quantity, 0)
 
-        # ✅ Save snapshot AFTER updating totals
+        # ✅ Update timestamp and save
         self.item.date_last_modified = timezone.now()
         self.item.save()
         self.stock_after_transaction = self.item.total_stock
         super().save(update_fields=['stock_after_transaction'])
+
+class TransactionHistory(models.Model):
+    ACTION_CHOICES = [
+        ('in', 'Stock In'),
+        ('out', 'Stock Out'),
+        ('undo', 'Undo Transaction'),
+        ('add', 'New Item Added'),
+    ]
+
+    item = models.ForeignKey('Item', on_delete=models.CASCADE, related_name='transactions')
+    user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
+    action_type = models.CharField(max_length=20, choices=ACTION_CHOICES)
+    quantity = models.IntegerField(default=0)
+    previous_stock = models.IntegerField(default=0)
+    new_stock = models.IntegerField(default=0)
+    remarks = models.TextField(blank=True, null=True)
+    timestamp = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.item.item_name} - {self.action_type} ({self.quantity}) by {self.user}"

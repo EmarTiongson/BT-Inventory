@@ -1,0 +1,538 @@
+/* ===========================
+   ADD/UPDATE ITEM CONTAINER
+   =========================== */
+
+/* Add item container - standard layout */
+.add-item-container {
+  width: 95%;
+  max-width: 1600px;
+  margin: 40px auto;
+  padding: 40px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+/* Inventory card wrapper - make it transparent */
+.inventory-card {
+  background: transparent !important;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+.inventory-card form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: transparent !important;
+}
+
+/* ===========================
+   UPLOAD BOX
+   =========================== */
+
+.upload-box {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 20px auto 40px;
+  text-align: center;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.18);
+  border: 2px dashed rgba(0, 0, 0, 0.2);
+}
+
+.upload-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: #666;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.upload-label i {
+  font-size: 24px;
+  margin-bottom: 8px;
+  color: #666;
+}
+
+.image-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.image-preview:hover {
+  transform: scale(1.05);
+}
+
+/* Upload box hover - Light Mode */
+.upload-box:hover {
+  border-color: #134686;
+  background: rgba(19, 70, 134, 0.1);
+}
+
+/* ===========================
+   FORM GRID
+   =========================== */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+}
+
+/* Light Mode Inputs */
+.form-grid input,
+.form-grid select,
+.form-grid textarea {
+  background: #ffffff;
+  color: #1a1a1a;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.form-grid input::placeholder {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.form-grid input:focus {
+  outline: none;
+  border-color: #134686;
+  box-shadow: 0 0 0 3px rgba(19, 70, 134, 0.15);
+}
+
+/* IN/OUT Button Pair */
+.btn-pair {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+}
+
+.btn-pair input {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+/* ===========================
+   BUTTONS (Standardized to pill shape)
+   =========================== */
+
+/* Base Button Styling (Standardized structure) */
+.add-btn,
+.secondary-btn,
+.return-btn-fixed,
+.btn-pair input {
+  color: #fff;
+  border: none;
+  /* Standardized Styling */
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  margin-top: 0;
+}
+
+.btn-pair input {
+  color: #ffffff;
+}
+
+
+/* Primary Button (Add, Return, IN/OUT, Modal Confirm - Blue) */
+.add-btn,
+.return-btn-fixed,
+.serial-modal-actions .confirm {
+  background: #134686; /* Primary Blue */
+  box-shadow: 0 4px 10px rgba(25, 55, 107, 0.3);
+  color: #fff;
+}
+
+.add-btn:hover,
+.return-btn-fixed:hover,
+.serial-modal-actions .confirm:hover {
+  background: #0062d1; /* Hover Blue */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(11, 99, 255, 0.4);
+}
+
+/* Secondary Button (Manage Serials, Modal Cancel - Dark Gray) */
+.secondary-btn,
+.serial-modal-actions .cancel {
+  background-color: #134686;
+  color: #fff;
+  box-shadow: 0 6px 14px rgb(255, 255, 255);
+}
+
+.secondary-btn:hover,
+.serial-modal-actions .cancel:hover {
+  background: #134686;
+  box-shadow: 0 6px 14px rgb(255, 255, 255);
+}
+
+/* **FIXED**: UPDATE ITEM BUTTON STYLE (Light Mode: Restore Yellow/Orange Accent) */
+.update-submit-btn {
+  background-color: #134686;
+  color: #ffffff; /* Dark text for contrast on yellow */
+  box-shadow: 0 4px 10px rgb(255, 255, 255);
+}
+
+.update-submit-btn:hover {
+  background-color: #134686;
+  box-shadow: 0 6px 14px rgb(255, 255, 255);
+}
+
+/* Ensure the icon color is dark in light mode for contrast */
+.update-submit-btn i {
+  color: #ffffff;
+}
+
+.update-submit-btn:hover i {
+  color: #ffffff;
+
+}
+
+/* Re-apply needed top margin for the main buttons */
+.submit-section .add-btn,
+.serial-number-section .add-btn {
+  margin-top: 20px;
+}
+
+/* ===========================
+   FIXED RETURN BUTTON (Bottom Right)
+   =========================== */
+.return-btn-fixed {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  text-decoration: none;
+  font-size: 15px;
+  z-index: 1000;
+}
+
+/* Page Title */
+.page-title {
+  font-weight: 700;
+  font-size: 28px;
+  margin: 0 0 30px 0;
+  text-align: center;
+  color: #1a1a1a;
+}
+
+/* ===========================
+   SERIAL SECTION & MODAL 
+   =========================== */
+
+.serial-number-section {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.serial-input {
+  width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  background: #fff;
+  transition: all 0.2s ease;
+}
+
+.serial-input:focus {
+  border-color: #134686;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(19, 70, 134, 0.15);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ===========================
+   DARK MODE OVERRIDES
+   =========================== */
+
+body.dark-mode .add-item-container {
+  background: rgba(20, 25, 35, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+body.dark-mode .page-title {
+  color: #ffffff;
+}
+
+/* Dark Mode Upload Box */
+body.dark-mode .upload-box {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px dashed rgba(255, 255, 255, 0.15);
+}
+
+body.dark-mode .upload-box:hover {
+  border-color: #D96F32;
+  background: rgba(217, 111, 50, 0.1);
+}
+
+body.dark-mode .upload-label,
+body.dark-mode .upload-label i {
+  color: #ffffff;
+}
+
+/* Dark Mode Inputs */
+body.dark-mode .form-grid input,
+body.dark-mode .form-grid select,
+body.dark-mode .form-grid textarea {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+body.dark-mode .form-grid input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+body.dark-mode .form-grid input:focus:not(.btn-pair input) {
+  border-color: #D96F32;
+  box-shadow: 0 0 0 3px rgba(217, 111, 50, 0.2);
+}
+
+/* ======================================================
+   DARK MODE BUTTON LOGIC (ORANGE DEFAULT / BLUE HOVER)
+   ====================================================== */
+
+/* 1. Set all primary/secondary/fixed buttons and IN/OUT to Orange default */
+body.dark-mode .add-btn,
+body.dark-mode .secondary-btn,
+body.dark-mode .return-btn-fixed,
+body.dark-mode .update-submit-btn,
+body.dark-mode .serial-modal-actions .confirm,
+body.dark-mode .serial-modal-actions .cancel {
+  background: #D96F32; /* Primary Orange */
+  border-color: #D96F32;
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.315);
+}
+
+/* 2. Apply Blue Hover/Focus to all buttons and IN/OUT inputs */
+body.dark-mode .add-btn:hover,
+body.dark-mode .add-btn:focus,
+body.dark-mode .secondary-btn:hover,
+body.dark-mode .secondary-btn:focus,
+body.dark-mode .return-btn-fixed:hover,
+body.dark-mode .update-submit-btn:hover,
+body.dark-mode .serial-modal-actions .confirm:hover,
+body.dark-mode .serial-modal-actions .cancel:hover {
+  background: #D96F32; /* Hover Blue */
+  border-color: #D96F32;
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.315);
+  transform: translateY(-2px);
+}
+
+/* 3. Icon Styling for Update Item Button (The bi bi-arrow-up-circle) */
+
+/* Make icon explicit orange on the orange button */
+body.dark-mode .update-submit-btn i {
+  color: #ffffff; /* Orange icon */
+}
+
+/* Make icon white on blue hover */
+body.dark-mode .update-submit-btn:hover i,
+body.dark-mode .update-submit-btn:focus i {
+  color: #ffffff; /* White icon on blue hover */
+}
+
+/* Ensure IN/OUT focus has a blue glow (box-shadow) */
+body.dark-mode .btn-pair input:focus {
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3);
+}
+
+/* ===========================
+   SUBMIT SECTION
+   =========================== */
+
+.submit-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 5px;
+}
+
+/* ==================== OVERLAY & CONTAINERS ==================== */
+.update-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
+  z-index: 999;
+}
+
+body.dark-mode .update-overlay {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.base-container {
+  width: 100%;
+  max-width: 900px;
+  border-radius: 20px;
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 1000;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+body.dark-mode .base-container {
+  background: rgba(15, 23, 36, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ==================== VIEW STATES ==================== */
+.hide-view {
+  display: none !important;
+  opacity: 0;
+  transform: scale(0.95);
+  pointer-events: none;
+}
+
+.show-view {
+  display: block !important;
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ==================== SERIAL MODAL ==================== */
+.serial-modal-container h3 {
+  margin-bottom: 15px;
+  font-size: 26px;
+  text-align: center;
+  color: #1a1a1a;
+}
+body.dark-mode .serial-modal-container h3 {
+  color: #ffffff;
+}
+
+/* 🔍 Search Bar (OUT only) */
+.serial-search-box {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.serial-search-box input {
+  padding: 10px 14px;
+  width: 80%;
+  max-width: 500px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  outline: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
+}
+.serial-search-box input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+}
+
+/* Serial input fields (IN only) */
+.serial-input {
+  padding: 10px 14px;
+  width: 80%;
+  max-width: 500px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  margin: 8px auto;
+  display: block;
+  outline: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
+}
+.serial-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+}
+
+/* Serial List Grid */
+#serialInputsContainer {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px 30px;
+  margin-top: 20px;
+}
+#serialInputsContainer label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.serial-modal-actions {
+  text-align: center;
+  margin-top: 25px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+
+
