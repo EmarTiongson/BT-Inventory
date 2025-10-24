@@ -36,6 +36,7 @@ urlpatterns = [
     path('', include('app_core.urls')),   
     path('item/<int:item_id>/transactions/', views.transaction_history_view, name='transaction_history'),
     path('transaction/<int:update_id>/undo/', views.undo_transaction, name='undo_transaction'),
+    path('convert_allocate_to_out/<int:update_id>/', views.convert_allocate_to_out, name='convert_allocate_to_out'),
      # Django admin
     path('admin/', admin.site.urls),
     path('', lambda request: redirect('login')),

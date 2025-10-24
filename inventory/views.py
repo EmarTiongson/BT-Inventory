@@ -80,8 +80,13 @@ def add_item(request):
             date_input = request.POST.get('date_added', '').strip()
             if date_input:
                 try:
-                    # Parse and make timezone-aware
-                    date_added = timezone.make_aware(datetime.strptime(date_input, "%Y-%m-%d"))
+                    # Parse the date
+                    date_part = datetime.strptime(date_input, "%Y-%m-%d").date()
+                    # Combine with current local time
+                    current_time = timezone.localtime().time()
+                    combined_datetime = datetime.combine(date_part, current_time)
+                    # Make it timezone-aware
+                    date_added = timezone.make_aware(combined_datetime, timezone.get_current_timezone())
                 except ValueError:
                     date_added = timezone.now()
             else:
@@ -91,6 +96,33 @@ def add_item(request):
             serial_numbers_raw = request.POST.get('serial_numbers', '') or ''
             serial_numbers = [s.strip() for s in serial_numbers_raw.split(',') if s.strip()]
             serial_numbers = list(dict.fromkeys(serial_numbers))  # ✅ remove duplicates, preserve order
+
+            # ✅ Strict 1:1 rule between total_stock and serial numbers
+            if serial_numbers:
+                if len(serial_numbers) != total_stock:
+                    error_message = (
+                        f"❌ The number of serial numbers ({len(serial_numbers)}) "
+                        f"must match the total stock ({total_stock})."
+                    )
+                    # Re-render the same form without clearing user data
+                    return render(request, 'inventory/add_item.html', {
+                        'error_message': error_message,
+                        'today': timezone.now(),
+                        # Preserve previously entered data
+                        'form_data': {
+                            'item': item_name,
+                            'description': description,
+                            'total_stock': total_stock_raw,
+                            'allocated_quantity': allocated_raw,
+                            'unit_of_quantity': unit_of_quantity,
+                            'part_no': part_no,
+                            'serial_numbers': ', '.join(serial_numbers),
+                        },
+                    })
+            else:
+                # If serials are not provided but total_stock > 0, allow only if item does not use serial tracking
+                # (We assume no serial tracking means okay to skip)
+                pass  # no action needed
 
             # === Validation ===
             if not item_name or not description:
@@ -160,23 +192,35 @@ def updateitem_view(request, item_id):
     # Helper: recompute running stock
     def recalculate_item_stock(item):
         total = 0
-        updates = item.updates.order_by('date')  # chronological order
+        allocated = 0
+        updates = item.updates.filter(undone=False).order_by('date')  # only active transactions
         for update in updates:
             if update.transaction_type == 'IN':
                 total += update.quantity
             elif update.transaction_type == 'OUT':
                 total -= update.quantity
+            elif update.transaction_type == 'ALLOCATED':
+                allocated += update.allocated_quantity
+
+
             total = max(total, 0)
+            allocated = max(allocated, 0)
+
+
             update.stock_after_transaction = total
-            update.save(update_fields=['stock_after_transaction'])
+            update.allocated_after_transaction = allocated
+            update.save(update_fields=['stock_after_transaction', 'allocated_after_transaction'])
+
         item.total_stock = total
-        item.save(update_fields=['total_stock'])
-        return total
+        item.allocated_quantity = allocated
+        item.save(update_fields=['total_stock', 'allocated_quantity'])
+        return total, allocated
 
     if request.method == 'POST':
         try:
             in_value = int(request.POST.get('in', 0) or 0)
             out_value = int(request.POST.get('out', 0) or 0)
+            allocated_value = int(request.POST.get('allocated_quantity', 0) or 0)
             location = request.POST.get('location', '').strip()
             remarks = request.POST.get('remarks', '').strip()
             dr_no = request.POST.get('dr_no', '').strip()
@@ -184,6 +228,31 @@ def updateitem_view(request, item_id):
             po_to_client = request.POST.get('po_client', '').strip()
             serial_numbers_raw = request.POST.get('serial_numbers', '')
             serial_numbers = [s.strip() for s in serial_numbers_raw.split(',') if s.strip()]
+
+            # ✅ Enforce strict 1:1 rule between quantity and serial numbers
+            if serial_numbers:
+                expected_count = (
+                    allocated_value if allocated_value > 0
+                    else in_value if in_value > 0
+                    else out_value
+                )
+
+                if len(serial_numbers) != expected_count:
+                    messages.error(
+                        request,
+                        f"❌ The number of serial numbers ({len(serial_numbers)}) must match the quantity ({expected_count})."
+                    )
+                    return redirect('update_item', item_id=item.id)
+            else:
+                # If item already has serials in DB, disallow missing serials for transactions with quantity > 0
+                has_serial_tracking = item.serial_numbers.exists()
+                if has_serial_tracking and (in_value > 0 or out_value > 0 or allocated_value > 0):
+                    messages.error(
+                        request,
+                        "❌ This item uses serial numbers — please provide all serial numbers for this transaction."
+                    )
+                    return redirect('update_item', item_id=item.id)
+
 
             # Parse manual date (no time input)
             manual_date_str = request.POST.get('date_added', '').strip()
@@ -197,14 +266,12 @@ def updateitem_view(request, item_id):
             else:
                 combined_datetime = timezone.now()
 
-            # ---- Validation ----
-            if in_value > 0 and out_value > 0:
-                messages.error(request, "❌ You can only enter IN or OUT, not both.")
-                return redirect('update_item', item_id=item.id)
 
-            if in_value == 0 and out_value == 0:
-                messages.error(request, "❌ Please enter a value in either IN or OUT.")
-                return redirect('update_item', item_id=item.id)
+              # Validate mutual exclusivity
+            if (allocated_value > 0 and (in_value > 0 or out_value > 0)) or (in_value > 0 and out_value > 0):
+                messages.error(request, "❌ You can only enter IN/OUT or Allocated Quantity, not both.")
+                return redirect('update_item', item_id=item.id)   
+
 
             # Limit date range: allow only within 5 days from today
             today = timezone.localdate()
@@ -213,25 +280,46 @@ def updateitem_view(request, item_id):
                 return redirect('update_item', item_id=item.id)
 
 
-             # Determine transaction type and quantity
-            if in_value > 0:
+            # Determine transaction type
+            if allocated_value > 0:
+                transaction_type = 'ALLOCATED'
+                quantity = allocated_value
+            elif in_value > 0:
                 transaction_type = 'IN'
                 quantity = in_value
-            else:
+            elif out_value > 0:
                 transaction_type = 'OUT'
                 quantity = out_value
                 if quantity > item.total_stock:
                     messages.error(request, f"❌ Not enough stock. Available: {item.total_stock}")
                     return redirect('update_item', item_id=item.id)
+            else:
+                messages.error(request, "❌ Please enter a value in either IN, OUT, or Allocated Quantity.")
+                return redirect('update_item', item_id=item.id)
 
              # ✅ Store old stock before update (for logging)
             old_stock = item.total_stock
+            old_allocated = item.allocated_quantity
+
+            # === SERIAL UPDATES ===
+            if transaction_type == 'OUT':
+                # Mark used serials as unavailable
+                ItemSerial.objects.filter(item=item, serial_no__in=serial_numbers).update(is_available=False)
+            elif transaction_type == 'ALLOCATED':
+                # Mark allocated serials as unavailable (reserved)
+                ItemSerial.objects.filter(item=item, serial_no__in=serial_numbers).update(is_available=False)
+            elif transaction_type == 'IN':
+                # If new serials are added, create them as available
+                for sn in serial_numbers:
+                    ItemSerial.objects.get_or_create(item=item, serial_no=sn, defaults={'is_available': True})
+
 
              # Create the update
             new_update = ItemUpdate.objects.create(
                 item=item,
                 transaction_type=transaction_type,
-                quantity=quantity,
+                quantity=quantity if transaction_type in ['IN', 'OUT'] else 0,
+                allocated_quantity=quantity if transaction_type == 'ALLOCATED' else 0,
                 date=combined_datetime,
                 serial_numbers=serial_numbers if serial_numbers else None,
                 location=location or None,
@@ -245,7 +333,7 @@ def updateitem_view(request, item_id):
 
             
             # Recalculate stock for all transactions (handles backdated correctly)
-            new_total = recalculate_item_stock(item)
+            new_total, new_allocated = recalculate_item_stock(item)
 
 
                # ✅ Create transaction log
@@ -298,56 +386,113 @@ def delete_item(request, item_id):
     return redirect('inventory')
 
 
+def parse_serials(serial_data):
+    """Ensure serial_numbers from ItemUpdate are returned as a clean Python list."""
+    if not serial_data:
+        return []
+
+    if isinstance(serial_data, list):
+        return serial_data
+
+    if isinstance(serial_data, str):
+        try:
+            import json
+            data = json.loads(serial_data)
+            if isinstance(data, list):
+                return [s.strip() for s in data if s.strip()]
+            else:
+                # fallback if comma-separated string
+                return [s.strip() for s in serial_data.split(',') if s.strip()]
+        except json.JSONDecodeError:
+            return [s.strip() for s in serial_data.split(',') if s.strip()]
+
+    return []
+
+
 
 @login_required
 @transaction.atomic
 def undo_transaction(request, update_id):
-    item_update = get_object_or_404(ItemUpdate, id=update_id)
-    item = item_update.item
+    """Undo a specific transaction (IN, OUT, or ALLOCATED)."""
+    update = get_object_or_404(ItemUpdate, id=update_id)
+    item = update.item
 
-    if request.method == "POST":
-        try:
-            old_stock = item.total_stock
+    try:
+        # === Revert IN transaction ===
+        if update.transaction_type == "IN":
+            item.total_stock = max(item.total_stock - update.quantity, 0)
+            item.save(update_fields=["total_stock"])
 
-            # Mark transaction as undone
-            item_update.undone = True
-            item_update.save(update_fields=['undone'])
+            # Make serials unavailable again if they were added
+            if update.serial_numbers:
+                serials = parse_serials(update.serial_numbers)
+                ItemSerial.objects.filter(item=item, serial_no__in=serials).delete()
 
-            # Recalculate stock ignoring undone updates
-            total_stock = 0
-            updates = item.updates.filter(undone=False).order_by('date')
-            for update in updates:
-                if update.transaction_type == 'IN':
-                    total_stock += update.quantity
-                elif update.transaction_type == 'OUT':
-                    total_stock -= update.quantity
-                total_stock = max(total_stock, 0)
-                update.stock_after_transaction = total_stock
-                update.save(update_fields=['stock_after_transaction'])
+        # === Revert OUT transaction ===
+        elif update.transaction_type == "OUT":
+            item.total_stock += update.quantity
+            item.save(update_fields=["total_stock"])
 
-            item.total_stock = total_stock
-            item.save(update_fields=['total_stock'])
+            # Make serials available again
+            if update.serial_numbers:
+                serials = parse_serials(update.serial_numbers)
+                ItemSerial.objects.filter(item=item, serial_no__in=serials).update(is_available=True)
 
-            # Log undo
-            TransactionHistory.objects.create(
-                item=item,
-                user=request.user,
-                action_type='undo',
-                quantity=item_update.quantity,
-                previous_stock=old_stock,
-                new_stock=total_stock,
-                remarks=f"Undo of {item_update.transaction_type} from {item_update.date.date()}"
-            )
+            # ✅ If this OUT was converted from an ALLOCATE, re-enable that ALLOCATE transaction
+            if update.remarks and "Converted from ALLOCATE" in update.remarks:
+                import re
+                match = re.search(r"ALLOCATE #(\d+)", update.remarks)
+                if match:
+                    allocate_id = match.group(1)
+                    try:
+                        allocate_txn = ItemUpdate.objects.get(id=allocate_id, transaction_type="ALLOCATED")
+                        allocate_txn.is_converted = False
+                        allocate_txn.save(update_fields=["is_converted"])
+                    except ItemUpdate.DoesNotExist:
+                        pass  # skip silently if it no longer exists
 
-            messages.success(request, f"✅ Transaction undone for '{item.item_name}'!")
-            return redirect('item_history', item_id=item.id)
+                # Also return allocated quantity to allocated pool
+                item.allocated_quantity += update.quantity
+                item.save(update_fields=["allocated_quantity"])
 
-        except Exception as e:
-            traceback.print_exc()
-            messages.error(request, f"❌ Error undoing transaction: {str(e)}")
-            return redirect('item_history', item_id=item.id)
+        # === Revert ALLOCATED transaction ===
+        elif update.transaction_type == "ALLOCATED":
+            item.allocated_quantity = max(item.allocated_quantity - update.allocated_quantity, 0)
+            item.save(update_fields=["allocated_quantity"])
 
-    return redirect('item_history', item_id=item.id)
+            # Make serials available again, unless this OUT came from an ALLOCATE
+        if update.serial_numbers:
+            serials = parse_serials(update.serial_numbers)
+            if update.remarks and "Converted from ALLOCATE" in update.remarks:
+                # Revert to reserved state (ALLOCATED again)
+                ItemSerial.objects.filter(item=item, serial_no__in=serials).update(is_available=False)
+            else:
+                # Normal OUT undo — make available
+                ItemSerial.objects.filter(item=item, serial_no__in=serials).update(is_available=True)
+
+        # Delete the reverted transaction
+        update.delete()
+
+        # Log in transaction history
+        TransactionHistory.objects.create(
+            item=item,
+            user=request.user,
+            action_type="undo",
+            quantity=update.quantity or update.allocated_quantity,
+            previous_stock=item.total_stock,
+            new_stock=item.total_stock,
+            remarks=f"Reverted {update.transaction_type} transaction (ID: {update_id})",
+        )
+
+        messages.success(request, f"✅ {update.transaction_type} transaction successfully reverted.")
+        return redirect("item_history", item_id=item.id)
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        messages.error(request, f"❌ Failed to revert: {str(e)}")
+        return redirect("item_history", item_id=item.id)
+
 
 
 
@@ -360,3 +505,87 @@ def transaction_history_view(request, item_id):
         'item': item,
         'history': history,
     })
+
+
+
+
+@login_required
+@transaction.atomic
+def convert_allocate_to_out(request, update_id):
+    """Converts an ALLOCATE transaction into an OUT transaction."""
+    allocate_update = get_object_or_404(ItemUpdate, id=update_id, transaction_type='ALLOCATED')
+    item = allocate_update.item
+
+    # ✅ Prevent conversion if already converted
+    if allocate_update.is_converted:
+        messages.warning(request, "⚠️ This ALLOCATE transaction has already been converted to OUT.")
+        return redirect('item_history', item_id=item.id)
+
+    if request.method == "POST":
+        try:
+            # === Extract data from allocate transaction ===
+            quantity = allocate_update.allocated_quantity
+            serials = []
+
+            if allocate_update.serial_numbers:
+                if isinstance(allocate_update.serial_numbers, str):
+                    import json
+                    try:
+                        serials = json.loads(allocate_update.serial_numbers)
+                    except json.JSONDecodeError:
+                        serials = [s.strip() for s in allocate_update.serial_numbers.split(',') if s.strip()]
+                elif isinstance(allocate_update.serial_numbers, list):
+                    serials = allocate_update.serial_numbers
+
+            # === Create new OUT transaction ===
+            new_out = ItemUpdate.objects.create(
+                item=item,
+                transaction_type='OUT',
+                quantity=quantity,
+                allocated_quantity=0,
+                serial_numbers=serials,
+                date=timezone.now(),
+                location=allocate_update.location,
+                remarks=f"Converted from ALLOCATE #{allocate_update.id}",
+                dr_no=allocate_update.dr_no,
+                po_supplier=allocate_update.po_supplier,
+                po_client=allocate_update.po_client,
+                user=request.user,
+                updated_by_user=request.user.username,
+            )
+
+            # ✅ Mark this ALLOCATE transaction as converted
+            allocate_update.is_converted = True
+            allocate_update.save(update_fields=['is_converted'])
+
+            # === Update stock values ===
+            item.total_stock = max(item.total_stock - quantity, 0)
+            item.allocated_quantity = max(item.allocated_quantity - quantity, 0)
+            item.save(update_fields=['total_stock', 'allocated_quantity'])
+
+            # === Update serial availability ===
+            if serials:
+                ItemSerial.objects.filter(item=item, serial_no__in=serials).update(is_available=False)
+
+            # === Log in TransactionHistory ===
+            TransactionHistory.objects.create(
+                item=item,
+                user=request.user,
+                action_type='out',
+                quantity=quantity,
+                previous_stock=item.total_stock + quantity,  # before deduction
+                new_stock=item.total_stock,
+                remarks=f"Converted from ALLOCATE (ID: {allocate_update.id})"
+            )
+
+            messages.success(request, "✅ ALLOCATE transaction converted to OUT successfully!")
+            return redirect('item_history', item_id=item.id)
+
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            messages.error(request, f"❌ Failed to convert: {str(e)}")
+            return redirect('item_history', item_id=item.id)
+
+    return redirect('item_history', item_id=item.id)
+

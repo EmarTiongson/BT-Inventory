@@ -32,54 +32,7 @@ if (Array.isArray(availableSerials)) {
   });
 }
 
-// ===========================
-// TRANSACTION TYPE HANDLING
-// ===========================
 
-function resetFields() {
-  inField.disabled = false;
-  outField.disabled = false;
-  poSupplier.disabled = false;
-  poClient.disabled = false;
-  drInput.disabled = true;
-  drInput.value = "";
-  poClient.value = "";
-  poSupplier.value = "";
-}
-
-function handleTransactionType() {
-  const inVal = inField.value.trim();
-  const outVal = outField.value.trim();
-  const hasIn = inVal !== "" && parseInt(inVal) > 0;
-  const hasOut = outVal !== "" && parseInt(outVal) > 0;
-
-  if (hasIn && hasOut) {
-    alert("You can only enter either IN or OUT — not both.");
-    if (outField === document.activeElement) outField.value = "";
-    else if (inField === document.activeElement) inField.value = "";
-    handleTransactionType();
-    return;
-  }
-
-  if (hasIn) {
-    outField.disabled = true;
-    poClient.disabled = true;
-    drInput.disabled = true;
-    poSupplier.disabled = false;
-  } else if (hasOut) {
-    inField.disabled = true;
-    poSupplier.disabled = true;
-    poClient.disabled = false;
-    drInput.disabled = false;
-  } else {
-    resetFields();
-  }
-}
-
-// Add event listeners
-[inField, outField].forEach(f => f.addEventListener('input', handleTransactionType));
-resetFields();
-handleTransactionType();
 
 // ===========================
 // VIEW TOGGLING
@@ -163,22 +116,28 @@ function renderSerialCheckboxes(serialList) {
 openSerialsBtn.addEventListener('click', () => {
   const inVal = parseInt(inField.value) || 0;
   const outVal = parseInt(outField.value) || 0;
+  const allocVal = parseInt(allocatedQuantity.value) || 0; // ✅ NEW
   serialInputsContainer.innerHTML = '';
   serialSearch.value = '';
 
-  if (inVal === 0 && outVal === 0) {
-    alert("Please enter a valid IN or OUT quantity before managing serials.");
+  // Prevent opening modal without valid transaction quantity
+  if (inVal === 0 && outVal === 0 && allocVal === 0) {
+    alert("Please enter a valid IN, OUT, or ALLOCATE quantity before managing serials.");
     return;
   }
 
-  if (inVal > 0 && outVal === 0) {
+  // ===========================
+  // IN Transaction → Add serials
+  // ===========================
+  if (inVal > 0 && outVal === 0 && allocVal === 0) {
     serialModalTitle.textContent = `Add ${inVal} New Serial Numbers`;
     serialSearchBox.style.display = "none";
+
     // Reset to grid flow for input fields (3 columns wide)
     serialInputsContainer.style.display = 'grid';
-    serialInputsContainer.style.gridTemplateColumns = 'repeat(3, 1fr)'; 
-    serialInputsContainer.style.gap = '10px 30px'; 
-    
+    serialInputsContainer.style.gridTemplateColumns = 'repeat(3, 1fr)';
+    serialInputsContainer.style.gap = '10px 30px';
+
     for (let i = 1; i <= inVal; i++) {
       const input = document.createElement('input');
       input.type = 'text';
@@ -190,7 +149,10 @@ openSerialsBtn.addEventListener('click', () => {
     return;
   }
 
-  if (outVal > 0 && inVal === 0) {
+  // ===========================
+  // OUT Transaction → Select serials
+  // ===========================
+  if (outVal > 0 && inVal === 0 && allocVal === 0) {
     if (outVal > availableSerials.length) {
       alert(`Only ${availableSerials.length} serial numbers are available — you requested ${outVal}.`);
       return;
@@ -199,6 +161,22 @@ openSerialsBtn.addEventListener('click', () => {
     serialSearchBox.style.display = "block";
     renderSerialCheckboxes(availableSerials);
     showSerialView();
+    return;
+  }
+
+  // ===========================
+  // ALLOCATE Transaction → Select serials (same as OUT)
+  // ===========================
+  if (allocVal > 0 && inVal === 0 && outVal === 0) {
+    if (allocVal > availableSerials.length) {
+      alert(`Only ${availableSerials.length} serial numbers are available — you requested ${allocVal}.`);
+      return;
+    }
+    serialModalTitle.textContent = `Select ${allocVal} Serial Numbers (Allocate)`;
+    serialSearchBox.style.display = "block";
+    renderSerialCheckboxes(availableSerials);
+    showSerialView();
+    return;
   }
 });
 
@@ -217,7 +195,9 @@ saveSerialsBtn.addEventListener('click', () => {
   let serials = [];
   const inVal = parseInt(inField.value) || 0;
   const outVal = parseInt(outField.value) || 0;
+  const allocVal = parseInt(allocatedQuantity.value) || 0; // ✅ NEW
 
+  // IN → collect text inputs
   if (inVal > 0) {
     serials = Array.from(serialInputsContainer.querySelectorAll('.serial-input'))
       .map(i => i.value.trim()).filter(Boolean);
@@ -225,11 +205,14 @@ saveSerialsBtn.addEventListener('click', () => {
       alert(`Please enter exactly ${inVal} serial numbers.`);
       return;
     }
-  } else if (outVal > 0) {
+  } 
+  // OUT or ALLOCATE → collect selected checkboxes
+  else if (outVal > 0 || allocVal > 0) {
+    const expected = outVal > 0 ? outVal : allocVal;
     serials = Array.from(serialInputsContainer.querySelectorAll('input[type="checkbox"]:checked'))
       .map(cb => cb.value);
-    if (serials.length !== outVal) {
-      alert(`Please select exactly ${outVal} serial numbers.`);
+    if (serials.length !== expected) {
+      alert(`Please select exactly ${expected} serial numbers.`);
       return;
     }
   }
@@ -237,3 +220,134 @@ saveSerialsBtn.addEventListener('click', () => {
   serialNumbersField.value = serials.join(',');
   showUpdateView();
 });
+
+
+
+// Robust handleTransactionType + listeners (drop-in)
+(function () {
+  const inField = document.getElementById('inField');
+  const outField = document.getElementById('outField');
+  const allocateField = document.getElementById('allocatedQuantity'); // matches your HTML
+  const poSupplier = document.getElementById('poSupplierField');
+  const poClient = document.getElementById('poClientField');
+  const drInput = document.getElementById('drInput');
+
+  if (!inField || !outField || !allocateField) {
+    console.warn('handleTransactionType: required fields not found');
+    return;
+  }
+
+  // Safe positive number check
+  function isPositive(val) {
+    const n = Number(val);
+    return Number.isFinite(n) && n > 0;
+  }
+
+  function handleTransactionType() {
+    const hasIn = isPositive(inField.value);
+    const hasOut = isPositive(outField.value);
+    const hasAlloc = isPositive(allocateField.value);
+
+    // If user entered multiple simultaneously, clear the others and show alert
+    if ((hasIn && hasOut) || (hasIn && hasAlloc) || (hasOut && hasAlloc)) {
+      alert("You can only perform one transaction type at a time — IN, OUT, or ALLOCATE.");
+      const active = document.activeElement;
+      // Clear the field that is not active (so user keeps typing in current)
+      if (active === inField) { outField.value = ''; allocateField.value = ''; }
+      else if (active === outField) { inField.value = ''; allocateField.value = ''; }
+      else if (active === allocateField) { inField.value = ''; outField.value = ''; }
+    }
+
+    // Recompute booleans after possible clearing
+    const nowHasIn = isPositive(inField.value);
+    const nowHasOut = isPositive(outField.value);
+    const nowHasAlloc = isPositive(allocateField.value);
+
+    // Default: enable everything (we'll set properly below)
+    inField.disabled = false;
+    outField.disabled = false;
+    allocateField.disabled = false;
+    if (poSupplier) poSupplier.disabled = false;
+    if (poClient) poClient.disabled = false;
+    if (drInput) drInput.disabled = true; // default DR disabled
+
+    // IN case
+    if (nowHasIn) {
+      inField.disabled = false;
+      outField.disabled = true;
+      allocateField.disabled = true;
+
+      if (poSupplier) poSupplier.disabled = false;
+      if (poClient) poClient.disabled = false;
+      if (drInput) drInput.disabled = true;
+
+      // clear any stale allocate/out values just in case
+      outField.value = '';
+      allocateField.value = '';
+      return;
+    }
+
+    // OUT case
+    if (nowHasOut) {
+      inField.disabled = true;
+      outField.disabled = false;
+      allocateField.disabled = true;
+
+      if (poSupplier) poSupplier.disabled = true;
+      if (poClient) poClient.disabled = false;
+      if (drInput) drInput.disabled = false;
+
+      inField.value = '';
+      allocateField.value = '';
+      return;
+    }
+
+    // ALLOCATE case
+    if (nowHasAlloc) {
+      inField.disabled = true;
+      outField.disabled = true;
+      allocateField.disabled = false;
+
+      if (poSupplier) poSupplier.disabled = false;
+      if (poClient) poClient.disabled = false;
+      if (drInput) drInput.disabled = true;
+
+      inField.value = '';
+      outField.value = '';
+      return;
+    }
+
+    // No values present — reset to default
+    inField.disabled = false;
+    outField.disabled = false;
+    allocateField.disabled = false;
+    if (poSupplier) poSupplier.disabled = false;
+    if (poClient) poClient.disabled = false;
+    if (drInput) drInput.disabled = true;
+  }
+
+  // Attach listeners — input/change/keyup to be thorough
+  ['input', 'change', 'keyup'].forEach(evt => {
+    inField.addEventListener(evt, handleTransactionType);
+    outField.addEventListener(evt, handleTransactionType);
+    allocateField.addEventListener(evt, handleTransactionType);
+  });
+
+  // Also prevent typing into disabled fields (failsafe)
+  function preventIfDisabled(e) {
+    if (e.target.disabled) {
+      e.preventDefault();
+      e.target.blur();
+    }
+  }
+  [inField, outField, allocateField].forEach(el => {
+    el.addEventListener('keydown', preventIfDisabled);
+    el.addEventListener('focus', () => { if (el.disabled) el.blur(); });
+  });
+
+  // Initialize on load
+  handleTransactionType();
+
+  // Expose if other code wants to call it
+  window.handleTransactionType = handleTransactionType;
+})();

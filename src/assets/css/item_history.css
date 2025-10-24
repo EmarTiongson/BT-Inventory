@@ -161,7 +161,8 @@ body.dark-mode .history-table tbody td[colspan] {
 }
 
 /* Dark Mode Return Button */
-body.dark-mode .return-btn-fixed {
+body.dark-mode .return-btn-fixed,
+ {
   background: #D96F32;
   box-shadow: 0 4px 10px rgba(217, 111, 50, 0.3);
 }
@@ -171,6 +172,16 @@ body.dark-mode .return-btn-fixed:hover {
   box-shadow: 0 6px 14px rgba(217, 111, 50, 0.4);
 }
 
+
+.history-table tbody tr.undone td {
+  background-color: #fde2e2 !important; /* soft pastel red */
+  color: #1e293b !important; /* dark slate text */
+}
+
+body.dark-mode .history-table tbody tr.undone td {
+  background-color: #7f1d1d !important; /* deep dark red */
+  color: #f8fafc !important; /* soft white text */
+}
 
 
 .serial-tag {
@@ -206,4 +217,106 @@ body.dark-mode .return-btn-fixed:hover {
 }
 .undo-btn:hover {
   background-color: #ea580c;
+}
+
+
+.undone {
+    background-color: #f8d7da !important; /* light red */
+    color: #721c24 !important;            /* dark red text */
+    font-style: italic;
+}
+
+/* IN / OUT styling */
+.in-type { color: green; font-weight: bold; }
+.out-type { color: orange; font-weight: bold; }
+
+/* Undo button styling */
+.undo-btn {
+    background-color: #f44336;
+    color: #fff;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.undo-btn:hover {
+    background-color: #d32f2f;
+}
+
+/* Return button fixed */
+.return-btn-fixed {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #134686;
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 50px;
+    text-decoration: none;
+}
+.return-btn-fixed:hover {
+    background: #333;
+}
+
+
+/* item_history.css */
+.reverted {
+    background-color: #f8d7da; /* light red/pink */
+    color: #721c24; /* dark red text */
+}
+
+
+.convert-allocate {
+  cursor: pointer;
+  text-decoration: underline;
+}
+.convert-allocate:hover {
+  color: #e67e22; /* soft orange hover */
+}
+
+.disabled-allocate {
+  color: gray;
+  cursor: not-allowed;
+  text-decoration: none;
+  opacity: 0.7;
+}
+
+/* ==========================================================
+   SHOW ALL TRANSACTIONS BUTTON (Uniform with Back to Overview)
+   ========================================================== */
+
+#toggleHistoryBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 15px;
+  border: none;
+  cursor: pointer;
+  background: #134686; /* same as return-btn-fixed */
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(25, 55, 107, 0.3);
+  transition: all 0.3s ease;
+  margin-bottom: 15px; /* adds spacing before table */
+}
+
+#toggleHistoryBtn:hover {
+  background: #0062d1;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(11, 99, 255, 0.4);
+}
+
+/* Dark Mode Styling (same as return-btn-fixed) */
+body.dark-mode #toggleHistoryBtn {
+  background: #D96F32;
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(217, 111, 50, 0.3);
+}
+
+body.dark-mode #toggleHistoryBtn:hover {
+  background: #c85a1f;
+  box-shadow: 0 6px 14px rgba(217, 111, 50, 0.4);
 }

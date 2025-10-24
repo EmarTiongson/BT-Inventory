@@ -57,15 +57,15 @@ class ItemUpdate(models.Model):
     TRANSACTION_TYPE = [
         ('IN', 'Stock In'),
         ('OUT', 'Stock Out'),
+        ('ALLOCATE', 'Allocated')
     ]
 
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='updates')
     date = models.DateTimeField(default=timezone.now)
-    transaction_type = models.CharField(max_length=3, choices=TRANSACTION_TYPE)
+    transaction_type = models.CharField(max_length=15, choices=TRANSACTION_TYPE)
     quantity = models.PositiveIntegerField(default=0)  # amount of items in/out
-
+    allocated_quantity = models.PositiveIntegerField(default=0)  # for ALLOCATED transactions
     serial_numbers = models.JSONField(blank=True, null=True, help_text="List of serial numbers affected")
-
     location = models.CharField(max_length=200, blank=True, null=True)
     po_supplier = models.CharField("P.O From Supplier", max_length=100, blank=True, null=True)
     po_client = models.CharField("P.O To Client", max_length=100, blank=True, null=True)
@@ -74,7 +74,9 @@ class ItemUpdate(models.Model):
     updated_by_user = models.CharField(max_length=150, blank=True, null=True)
     remarks = models.TextField(blank=True, null=True)
     stock_after_transaction = models.PositiveIntegerField(default=0)
+    allocated_after_transaction = models.IntegerField(default=0)  # track allocated
     undone = models.BooleanField(default=False)
+    is_converted = models.BooleanField(default=False)
     
     class Meta:
         ordering = ['-date']

@@ -48,6 +48,11 @@
             <input type="number" name="out" id="outField" placeholder="OUT" min="0">
           </div>
 
+          <input type="number" id="allocatedQuantity" name="allocated_quantity" placeholder="Allocate Stock" min="0">
+
+
+
+
           <input type="text" name="dr_no" id="drInput" placeholder="DR No." value="{{ item.dr_no }}" disabled>
 
           <input type="text" name="po_supplier" id="poSupplierField" value="{{ item.po_from_supplier }}" placeholder="P.O To Supplier">
@@ -90,7 +95,7 @@
   </div>
 </div>
 
-<a href="#" class="return-btn-fixed" onclick="history.back();return false;">
+<a href="{% url 'inventory' %}" class="return-btn-fixed">
   <i class="bi bi-arrow-left-circle"></i> Back to Overview
 </a>
 

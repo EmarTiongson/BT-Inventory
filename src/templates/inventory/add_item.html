@@ -8,6 +8,14 @@
 {% block content %}
 <div class="add-item-container">
   <h1 class="page-title">Add New Item</h1>
+  
+  <!-- ✅ Error Message Display -->
+  {% if error_message %}
+  <div class="error-message">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    <span>{{ error_message }}</span>
+  </div>
+  {% endif %}
 
   <div class="inventory-card">
     <form method="POST" enctype="multipart/form-data" action="{% url 'add_item' %}">
@@ -24,20 +32,20 @@
 
       <!-- Form Fields -->
       <div class="form-grid">
-        <input type="date" name="date_added" required value="{{ today|date:'Y-m-d' }}">
-        <input type="text" name="item" placeholder="Item Name" required>
-        <input type="text" name="description" placeholder="Description" required>
+        <input type="date" name="date_added" required value="{% if form_data.date_added %}{{ form_data.date_added }}{% else %}{{ today|date:'Y-m-d' }}{% endif %}">
+        <input type="text" name="item" placeholder="Item Name" value="{{ form_data.item|default:'' }}" required>
+        <input type="text" name="description" placeholder="Description" value="{{ form_data.description|default:'' }}" required>
 
-        <input type="number" name="total_stock" placeholder="Total Stock" required>
-        <input type="number" name="allocated_quantity" placeholder="Allocated Quantity" required>
+        <input type="number" name="total_stock" id="totalStockInput" placeholder="Total Stock" value="{{ form_data.total_stock|default:'' }}" required>
+        <input type="number" name="allocated_quantity" placeholder="Allocated Quantity" value="{{ form_data.allocated_quantity|default:'' }}" required>
 
         <select name="unit_of_quantity" required>
-          <option value="" disabled selected>Unit of Quantity</option>
-          <option value="pieces">Pieces</option>
-          <option value="rolls">Rolls</option>
-          <option value="meters">Meters</option>
+          <option value="" disabled {% if not form_data.unit_of_quantity %}selected{% endif %}>Unit of Quantity</option>
+          <option value="pieces" {% if form_data.unit_of_quantity == 'pieces' %}selected{% endif %}>Pieces</option>
+          <option value="rolls" {% if form_data.unit_of_quantity == 'rolls' %}selected{% endif %}>Rolls</option>
+          <option value="meters" {% if form_data.unit_of_quantity == 'meters' %}selected{% endif %}>Meters</option>
         </select>
-        <input type="text" name="part_no" placeholder="Part No.">
+        <input type="text" name="part_no" placeholder="Part No." value="{{ form_data.part_no|default:'' }}">
       </div>
 
       <!-- ✅ Serial Numbers Section (with modal trigger) -->
@@ -47,7 +55,10 @@
           <button type="button" class="serial-btn" id="openSerialModal">+</button>
         </div>
         <!-- Hidden field to store serialized serial numbers -->
-        <input type="hidden" id="serialHiddenInput" name="serial_numbers">
+        <input type="hidden" id="serialHiddenInput" name="serial_numbers" value="{{ form_data.serial_numbers|default:'' }}">
+        <div class="serial-error" id="serialError">
+          <i class="bi bi-exclamation-circle"></i> Serial numbers must match total stock quantity
+        </div>
       </div>
 
       <!-- ✅ Modal for Serial Numbers -->
@@ -55,6 +66,9 @@
         <div class="modal-content">
           <h2>Serial Numbers</h2>
           <div id="serialFieldsContainer"></div>
+          <div class="serial-error" id="modalSerialError">
+            <i class="bi bi-exclamation-circle"></i> <span id="serialErrorText"></span>
+          </div>
           <div class="modal-actions">
             <button type="button" id="closeSerialModal" class="cancel-btn">Cancel</button>
             <button type="button" id="saveSerialNumbers" class="save-btn">Save</button>

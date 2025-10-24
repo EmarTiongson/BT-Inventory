@@ -5,46 +5,6 @@
 <link rel="stylesheet" href="{% static 'css/item_history.css' %}">
 <link rel="stylesheet" href="{% static 'css/serial.css' %}">
 
-<style>
-/* Highlight undone transactions */
-.undone {
-    color: red;
-    font-style: italic;
-    display: none;  /* initially hidden */
-}
-
-/* IN / OUT styling */
-.in-type { color: green; font-weight: bold; }
-.out-type { color: orange; font-weight: bold; }
-
-/* Undo button styling */
-.undo-btn {
-    background-color: #f44336;
-    color: #fff;
-    border: none;
-    padding: 4px 8px;
-    border-radius: 4px;
-    cursor: pointer;
-}
-.undo-btn:hover {
-    background-color: #d32f2f;
-}
-
-/* Return button fixed */
-.return-btn-fixed {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: #555;
-    color: #fff;
-    padding: 10px 15px;
-    border-radius: 50px;
-    text-decoration: none;
-}
-.return-btn-fixed:hover {
-    background: #333;
-}
-</style>
 {% endblock %}
 
 {% block content %}
@@ -62,11 +22,11 @@
           <th>Total Stock</th>
           <th>Serial Numbers</th>
           <th>Location</th>
-          <th>P.O From Supplier</th>
-          <th>P.O To Client</th>
+          <th>P.O To Supplier</th>
+          <th>P.O From Client</th>
           <th>DR No.</th>
           <th>Remarks</th>
-          <th>Updated By</th>
+          <th>Transaction By</th>
           <th>Action</th>
         </tr>
       </thead>
@@ -79,13 +39,30 @@
               <span class="in-type">IN</span>
             {% elif update.transaction_type == "OUT" %}
               <span class="out-type">OUT</span>
-            {% else %}
-              {{ update.transaction_type }}
+            {% elif update.transaction_type == "ALLOCATED" %}
+              {% if update.is_converted %}
+                <span class="allocated-type disabled-allocate" title="Already converted to OUT">ALLOCATED (✔)</span>
+              {% else %}
+                <a href="#" 
+                  class="allocated-type convert-allocate" 
+                  data-url="{% url 'convert_allocate_to_out' update.id %}" 
+                  title="Click to convert this ALLOCATE to OUT">
+                  ALLOCATED
+                </a>
+              {% endif %}
             {% endif %}
           </td>
           <td>
-            {% if update.transaction_type == "IN" %}+{% elif update.transaction_type == "OUT" %}-{% endif %}
-            {{ update.quantity }}
+            {% if update.transaction_type == "IN" %}
+              <span class="text-green-600">+{{ update.quantity }}</span>
+
+            {% elif update.transaction_type == "OUT" %}
+              <span class="text-red-600">-{{ update.quantity }}</span>
+
+            {% elif update.transaction_type == "ALLOCATED" %}
+              <span class="text-yellow-600">{{ update.allocated_quantity }}</span>
+
+            {% endif %}
           </td>
           <td>{{ update.stock_after_transaction }}</td>
 
@@ -140,7 +117,7 @@
   </div>
 </div>
 
-<a href="#" class="return-btn-fixed" onclick="history.back(); return false;">
+<a href="{% url 'inventory' %}" class="return-btn-fixed">
   <i class="bi bi-arrow-left-circle"></i> Back to Overview
 </a>
 
@@ -173,13 +150,43 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!inside) allDropdowns.forEach(el => el.classList.remove("show"));
     });
 
-    // Toggle undone transactions
+ 
+
+
     const btn = document.getElementById('toggleHistoryBtn');
+    const undoneRows = document.querySelectorAll('.undone');
+
+    // Hide undone rows initially
+    undoneRows.forEach(el => el.style.display = 'none');
+
     btn.addEventListener('click', () => {
-        document.querySelectorAll('.undone').forEach(el => {
-            el.style.display = el.style.display === 'table-row' ? 'none' : 'table-row';
+        undoneRows.forEach(el => {
+            el.style.display = el.style.display === 'none' ? 'table-row' : 'none';
         });
     });
+
+    document.querySelectorAll('.convert-allocate').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const url = e.target.getAttribute('data-url');
+      if (confirm("Convert this ALLOCATE transaction into an OUT transaction?\n\nThis will:\n- Deduct from total stock\n- Decrease allocated quantity\n- Mark serials as OUT")) {
+        fetch(url, {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+          }
+        }).then(() => location.reload());
+      }
+    });
+  });
+
+
+  
 });
+
+
+
+
+
 </script>
 {% endblock %}

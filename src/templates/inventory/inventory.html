@@ -34,14 +34,14 @@
       <tr>
         <th class="table-title">DATE LAST MODIFIED</th>
         <th class="table-title">ITEM ID</th>
-        <th class="table-title">ITEM</th>
+        <th class="table-title">ITEM NAME</th>
         <th class="table-title">IMAGE</th>
         <th class="table-title">DESCRIPTION</th>
         <th class="table-title">TOTAL STOCK</th>
-        <th class="table-title">ALLOCATED QUANTITY</th>
+        <th class="table-title">ALLOCATED STOCK</th>
         <th class="table-title">UNIT</th>
         <th class="table-title">Part Number</th>
-        <th class="table-title">SERIAL NUMBERS</th>
+        <th class="table-title">SERIAL NUMBER</th>
         <th class="table-title">User</th>
         <th class="table-title" style="text-align: center;">ACTIONS</th>
       </tr>
@@ -121,7 +121,7 @@
 
     <form method="POST" id="deleteForm">
       {% csrf_token %}
-      <input type="password" name="password" placeholder="Enter password" required>
+      <input type="password" name="password" class="modal-input" placeholder="Enter password" required>
       <div class="modal-actions">
         <button type="button" class="cancel-btn" onclick="closeDeleteModal()">Cancel</button>
         <button type="submit" class="confirm-btn">Confirm Delete</button>
@@ -129,6 +129,7 @@
     </form>
   </div>
 </div>
+
 
 <!-- Image Modal -->
 <div id="imageModal" class="image-modal" onclick="closeImagePopup()">

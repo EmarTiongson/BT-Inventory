@@ -464,3 +464,28 @@ body.dark-mode .save-btn {
 body.dark-mode .save-btn:hover {
   background: #D96F32;
 }
+
+
+.error-message {
+  background-color: #fee;
+  border: 1px solid #fcc;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  color: #c33;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.error-message i {
+  font-size: 1.2em;
+}
+.serial-error {
+  color: #c33;
+  font-size: 0.9em;
+  margin-top: 5px;
+  display: none;
+}
+.serial-error.show {
+  display: block;
+}
