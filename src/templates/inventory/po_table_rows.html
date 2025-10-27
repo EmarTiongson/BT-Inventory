@@ -1,0 +1,25 @@
+{% if query %}
+  {% for update in updates %}
+    <tr>
+      <td>{{ update.po_supplier|default:"—" }}</td>
+      <td>{{ update.po_client|default:"—" }}</td>
+      <td>{{ update.dr_no|default:"—" }}</td>
+      <td>{{ update.item.item_name }}</td>
+      <td>{{ update.quantity }}</td>
+      <td>{{ update.date|date:"F d, Y h:i A" }}</td>
+      <td>{{ update.user.username|default:"—" }}</td>
+      <td>{{ update.get_transaction_type_display }}</td>
+      <td>{{ update.updated_by_user|default:"—" }}</td>
+    </tr>
+  {% empty %}
+    <tr>
+      <td colspan="9" style="text-align:center;">No results found for "{{ query }}"</td>
+    </tr>
+  {% endfor %}
+{% else %}
+  <tr>
+    <td colspan="9" style="text-align:center; color: gray;">
+      Type a P.O Number or DR No. above to begin searching
+    </td>
+  </tr>
+{% endif %}

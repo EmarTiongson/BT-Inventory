@@ -57,7 +57,7 @@ class ItemUpdate(models.Model):
     TRANSACTION_TYPE = [
         ('IN', 'Stock In'),
         ('OUT', 'Stock Out'),
-        ('ALLOCATE', 'Allocated')
+        ('ALLOCATED', 'Allocated')
     ]
 
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='updates')

@@ -620,4 +620,36 @@ body .main-content {
     margin: 0 !important;
 }
 
+/* ======================
+   SEARCH BY P.O BUTTON
+   ====================== */
+.button-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.modern-po-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: #ff9800; /* Orange color */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.modern-po-btn:hover {
+    background: #f57c00;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+}
+
+
 

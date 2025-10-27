@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/inventory.css' %}">
+{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Search by P.O</h1>
+
+<div class="page-controls">
+  <div class="search-box">
+    <input type="text" id="poSearchInput" placeholder="Search by Purchase Order Number..." value="{{ query }}">
+    <i class="bi bi-search"></i>
+  </div>
+</div>
+
+<div class="inventory-card content-card">
+  <div class="table-responsive">
+    <table class="inventory-table data-table">
+      <thead>
+        <tr>
+          <th>P.O From Supplier</th>
+          <th>P.O To Client</th>
+          <th>DR No.</th>
+          <th>Item Name</th>
+          <th>Quantity</th>
+          <th>Type</th>
+          <th>Date</th>
+          <th>Transaction By</th>
+        </tr>
+      </thead>
+      <tbody id="poTableBody">
+        <tr>
+            <td colspan="9" style="text-align:center; color: gray;">
+            Type a P.O Number or DR No. above to begin searching
+            </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<a href="{% url 'inventory' %}" class="return-btn-fixed">
+  <i class="bi bi-arrow-left-circle"></i> Back to Overview
+</a>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const searchInput = document.getElementById("poSearchInput");
+  const tableBody = document.getElementById("poTableBody");
+  let timer = null;
+
+  searchInput.addEventListener("input", () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      const query = searchInput.value.trim();
+
+      fetch(`/ajax/search-po/?q=${encodeURIComponent(query)}`)
+        .then(response => response.json())
+        .then(data => {
+          tableBody.innerHTML = data.html;
+        })
+        .catch(error => console.error('Error fetching data:', error));
+    }, 300); // 300ms debounce
+  });
+});
+</script>
+{% endblock %}

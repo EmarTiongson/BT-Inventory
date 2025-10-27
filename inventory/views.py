@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.utils import timezone
@@ -12,6 +13,8 @@ import traceback
 from datetime import datetime, timedelta
 from django.db.models import Prefetch
 from django.contrib.auth import authenticate
+from django.template.loader import render_to_string
+
 
 @login_required
 def inventory_view(request):
@@ -200,7 +203,9 @@ def updateitem_view(request, item_id):
             elif update.transaction_type == 'OUT':
                 total -= update.quantity
             elif update.transaction_type == 'ALLOCATED':
-                allocated += update.allocated_quantity
+                # Only count allocations that have NOT been converted to OUT
+                if not getattr(update, 'is_converted', False):
+                    allocated += update.allocated_quantity
 
 
             total = max(total, 0)
@@ -471,8 +476,8 @@ def undo_transaction(request, update_id):
                 ItemSerial.objects.filter(item=item, serial_no__in=serials).update(is_available=True)
 
         # Delete the reverted transaction
-        update.delete()
-
+        update.undone = True
+        update.save(update_fields=['undone'])
         # Log in transaction history
         TransactionHistory.objects.create(
             item=item,
@@ -512,80 +517,128 @@ def transaction_history_view(request, item_id):
 @login_required
 @transaction.atomic
 def convert_allocate_to_out(request, update_id):
-    """Converts an ALLOCATE transaction into an OUT transaction."""
+    """Converts an ALLOCATED transaction into an OUT transaction and then
+    re-calculates item totals from all non-undo updates to ensure consistency.
+    """
     allocate_update = get_object_or_404(ItemUpdate, id=update_id, transaction_type='ALLOCATED')
     item = allocate_update.item
 
-    # ✅ Prevent conversion if already converted
+    # Prevent double conversion
     if allocate_update.is_converted:
-        messages.warning(request, "⚠️ This ALLOCATE transaction has already been converted to OUT.")
+        messages.warning(request, "⚠️ This ALLOCATED transaction has already been converted to OUT.")
         return redirect('item_history', item_id=item.id)
 
-    if request.method == "POST":
-        try:
-            # === Extract data from allocate transaction ===
-            quantity = allocate_update.allocated_quantity
-            serials = []
+    if request.method != "POST":
+        return redirect('item_history', item_id=item.id)
 
-            if allocate_update.serial_numbers:
-                if isinstance(allocate_update.serial_numbers, str):
-                    import json
-                    try:
-                        serials = json.loads(allocate_update.serial_numbers)
-                    except json.JSONDecodeError:
-                        serials = [s.strip() for s in allocate_update.serial_numbers.split(',') if s.strip()]
-                elif isinstance(allocate_update.serial_numbers, list):
-                    serials = allocate_update.serial_numbers
+    try:
+        # Extract allocation details
+        quantity = allocate_update.allocated_quantity or 0
+        serials = []
+        if allocate_update.serial_numbers:
+            if isinstance(allocate_update.serial_numbers, str):
+                try:
+                    serials = json.loads(allocate_update.serial_numbers)
+                except json.JSONDecodeError:
+                    serials = [s.strip() for s in allocate_update.serial_numbers.split(',') if s.strip()]
+            elif isinstance(allocate_update.serial_numbers, list):
+                serials = allocate_update.serial_numbers
 
-            # === Create new OUT transaction ===
-            new_out = ItemUpdate.objects.create(
-                item=item,
-                transaction_type='OUT',
-                quantity=quantity,
-                allocated_quantity=0,
-                serial_numbers=serials,
-                date=timezone.now(),
-                location=allocate_update.location,
-                remarks=f"Converted from ALLOCATE #{allocate_update.id}",
-                dr_no=allocate_update.dr_no,
-                po_supplier=allocate_update.po_supplier,
-                po_client=allocate_update.po_client,
-                user=request.user,
-                updated_by_user=request.user.username,
-            )
+        # Create OUT transaction (do NOT manually touch item totals here)
+        new_out = ItemUpdate.objects.create(
+            item=item,
+            transaction_type='OUT',
+            quantity=quantity,
+            allocated_quantity=0,
+            serial_numbers=serials or None,
+            date=timezone.now(),
+            location=allocate_update.location,
+            remarks=f"Converted from ALLOCATED #{allocate_update.id}",
+            dr_no=allocate_update.dr_no,
+            po_supplier=allocate_update.po_supplier,
+            po_client=allocate_update.po_client,
+            user=request.user,
+            updated_by_user=request.user.username,
+        )
 
-            # ✅ Mark this ALLOCATE transaction as converted
-            allocate_update.is_converted = True
-            allocate_update.save(update_fields=['is_converted'])
+        # Mark the allocate as converted
+        allocate_update.is_converted = True
+        allocate_update.save(update_fields=['is_converted'])
 
-            # === Update stock values ===
-            item.total_stock = max(item.total_stock - quantity, 0)
-            item.allocated_quantity = max(item.allocated_quantity - quantity, 0)
-            item.save(update_fields=['total_stock', 'allocated_quantity'])
+        # Mark serials unavailable if any
+        if serials:
+            ItemSerial.objects.filter(item=item, serial_no__in=serials).update(is_available=False)
 
-            # === Update serial availability ===
-            if serials:
-                ItemSerial.objects.filter(item=item, serial_no__in=serials).update(is_available=False)
+        # ---- Canonical recalculation of item totals ----
+        # Walk all non-undone updates in chronological order and recompute
+        total = 0
+        allocated = 0
+        updates_qs = item.updates.filter(undone=False).order_by('date')
 
-            # === Log in TransactionHistory ===
-            TransactionHistory.objects.create(
-                item=item,
-                user=request.user,
-                action_type='out',
-                quantity=quantity,
-                previous_stock=item.total_stock + quantity,  # before deduction
-                new_stock=item.total_stock,
-                remarks=f"Converted from ALLOCATE (ID: {allocate_update.id})"
-            )
+        for u in updates_qs:
+            if u.transaction_type == 'IN':
+                total += (u.quantity or 0)
+            elif u.transaction_type == 'OUT':
+                total -= (u.quantity or 0)
+            elif u.transaction_type == 'ALLOCATED':
+                # Only count allocations that are NOT converted to OUT
+                if not getattr(u, 'is_converted', False):
+                    allocated += (u.allocated_quantity or 0)
 
-            messages.success(request, "✅ ALLOCATE transaction converted to OUT successfully!")
-            return redirect('item_history', item_id=item.id)
+            # keep non-negative running totals
+            total = max(total, 0)
+            allocated = max(allocated, 0)
 
-        except Exception as e:
-            import traceback
-            traceback.print_exc()
-            messages.error(request, f"❌ Failed to convert: {str(e)}")
-            return redirect('item_history', item_id=item.id)
+            # update snapshot fields per-update (helpful for auditing)
+            u.stock_after_transaction = total
+            u.allocated_after_transaction = allocated
+            u.save(update_fields=['stock_after_transaction', 'allocated_after_transaction'])
 
-    return redirect('item_history', item_id=item.id)
+        # Persist canonical totals on Item
+        item.total_stock = total
+        item.allocated_quantity = allocated
+        item.date_last_modified = timezone.now()
+        item.save(update_fields=['total_stock', 'allocated_quantity', 'date_last_modified'])
 
+        # Log conversion in TransactionHistory (previous vs new stock)
+        TransactionHistory.objects.create(
+            item=item,
+            user=request.user,
+            action_type='out',
+            quantity=quantity,
+            previous_stock=total + quantity,  # before deduction (approx)
+            new_stock=total,
+            remarks=f"Converted from ALLOCATED (ID: {allocate_update.id})"
+        )
+
+        messages.success(request, "✅ ALLOCATED transaction converted to OUT successfully!")
+        return redirect('item_history', item_id=item.id)
+
+    except Exception as e:
+        traceback.print_exc()
+        messages.error(request, f"❌ Failed to convert: {str(e)}")
+        return redirect('item_history', item_id=item.id)
+
+
+        
+def search_by_po(request):
+    """Main page — shows the search UI."""
+    return render(request, 'inventory/search_po.html')
+
+
+def ajax_search_po(request):
+    """AJAX endpoint — returns filtered results dynamically."""
+    query = request.GET.get('q', '').strip()
+    updates = []
+
+    if query:
+        updates = ItemUpdate.objects.filter(
+            Q(po_supplier__icontains=query) |
+            Q(po_client__icontains=query) |
+            Q(dr_no__icontains=query)
+        ).filter(
+            Q(po_supplier__gt="") | Q(po_client__gt="")
+        ).select_related('item', 'user').order_by('-date')
+
+    html = render_to_string('inventory/po_table_rows.html', {'updates': updates, 'query': query})
+    return JsonResponse({'html': html})
