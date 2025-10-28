@@ -6,13 +6,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('inventory', '0018_itemupdate_allocated_after_transaction_and_more'),
+        ("inventory", "0018_itemupdate_allocated_after_transaction_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='itemupdate',
-            name='transaction_type',
-            field=models.CharField(choices=[('IN', 'Stock In'), ('OUT', 'Stock Out'), ('ALLOCATE', 'Allocated')], max_length=15),
+            model_name="itemupdate",
+            name="transaction_type",
+            field=models.CharField(
+                choices=[
+                    ("IN", "Stock In"),
+                    ("OUT", "Stock Out"),
+                    ("ALLOCATE", "Allocated"),
+                ],
+                max_length=15,
+            ),
         ),
     ]

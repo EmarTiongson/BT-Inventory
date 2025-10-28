@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('inventory', '0017_itemupdate_undone'),
+        ("inventory", "0017_itemupdate_undone"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='itemupdate',
-            name='allocated_after_transaction',
+            model_name="itemupdate",
+            name="allocated_after_transaction",
             field=models.IntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='itemupdate',
-            name='allocated_quantity',
+            model_name="itemupdate",
+            name="allocated_quantity",
             field=models.PositiveIntegerField(default=0),
         ),
     ]

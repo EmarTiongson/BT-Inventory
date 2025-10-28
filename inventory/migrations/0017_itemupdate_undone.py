@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('inventory', '0016_alter_transactionhistory_action_type'),
+        ("inventory", "0016_alter_transactionhistory_action_type"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='itemupdate',
-            name='undone',
+            model_name="itemupdate",
+            name="undone",
             field=models.BooleanField(default=False),
         ),
     ]

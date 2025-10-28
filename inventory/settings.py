@@ -4,8 +4,9 @@ Django settings for inventory project.
 
 import os
 from pathlib import Path
-from dotenv import load_dotenv
+
 import dj_database_url
+from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
@@ -15,7 +16,7 @@ load_dotenv()
 # ---------------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-20)gx2%#j5wsswc4!l!&cfn-v^6c2h!rmfcor=7c40o)w(3k*o'
+SECRET_KEY = "django-insecure-20)gx2%#j5wsswc4!l!&cfn-v^6c2h!rmfcor=7c40o)w(3k*o"
 
 DEBUG = True
 ALLOWED_HOSTS = []
@@ -24,53 +25,53 @@ ALLOWED_HOSTS = []
 # APPLICATIONS
 # ---------------------------------------------------------
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'app_core',
-    'accounts',
-    'inventory',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "app_core",
+    "accounts",
+    "inventory",
 ]
 
 # ---------------------------------------------------------
 # MIDDLEWARE
 # ---------------------------------------------------------
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'accounts.middleware.ForcePasswordChangeMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "accounts.middleware.ForcePasswordChangeMiddleware",
 ]
 
-ROOT_URLCONF = 'inventory.urls'
+ROOT_URLCONF = "inventory.urls"
 
 # ---------------------------------------------------------
 # TEMPLATES
 # ---------------------------------------------------------
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [ BASE_DIR / 'src' / 'templates' ],  # ✅ fixed — correct place
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [BASE_DIR / "src" / "templates"],  # ✅ fixed — correct place
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'inventory.wsgi.application'
+WSGI_APPLICATION = "inventory.wsgi.application"
 
 # ---------------------------------------------------------
 # DATABASE
@@ -89,49 +90,49 @@ DATABASES = {
 # ---------------------------------------------------------
 # AUTH & REDIRECTS
 # ---------------------------------------------------------
-AUTH_USER_MODEL = 'accounts.CustomUser'
-LOGIN_URL = '/accounts/login/'
-LOGIN_REDIRECT_URL = '/dashboard/'
-LOGOUT_REDIRECT_URL = '/accounts/login/'
+AUTH_USER_MODEL = "accounts.CustomUser"
+LOGIN_URL = "/accounts/login/"
+LOGIN_REDIRECT_URL = "/dashboard/"
+LOGOUT_REDIRECT_URL = "/accounts/login/"
 
 # ---------------------------------------------------------
 # PASSWORD VALIDATION
 # ---------------------------------------------------------
 
 AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "OPTIONS": {"min_length": 8},
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+    },
 ]
+
 
 # ---------------------------------------------------------
 # INTERNATIONALIZATION
 # ---------------------------------------------------------
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'Asia/Manila'
+LANGUAGE_CODE = "en-us"
+TIME_ZONE = "Asia/Manila"
 USE_I18N = True
 USE_TZ = True
 
 # ---------------------------------------------------------
 # STATIC FILES (CSS, JS, IMAGES)
 # ---------------------------------------------------------
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [ BASE_DIR / 'src' / 'assets' ]  # ✅ correct local static directory
-STATIC_ROOT = BASE_DIR / 'staticfiles'  # where collectstatic stores files
+STATIC_URL = "/static/"
+STATICFILES_DIRS = [BASE_DIR / "src" / "assets"]  # ✅ correct local static directory
+STATIC_ROOT = BASE_DIR / "staticfiles"  # where collectstatic stores files
 
 # ---------------------------------------------------------
 # DEFAULTS
 # ---------------------------------------------------------
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-
-
-
-
-
-
-
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")

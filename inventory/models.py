@@ -1,49 +1,88 @@
 from django.db import models
-from django.utils import timezone
-from accounts.models import CustomUser
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils import timezone
+
+from accounts.models import CustomUser
 
 
 class Item(models.Model):
+    """
+    Represents an inventory item in the system.
+
+    Stores key details about an item, including name, stock information,
+    unit of measure, part number, and metadata about creation and modification.
+
+    Attributes:
+        item_name (str): The name of the item.
+        image (ImageField): Optional image representing the item.
+        description (str): Optional item description.
+        total_stock (int): Current total stock of the item.
+        allocated_quantity (int): Quantity currently allocated.
+        unit_of_quantity (str): The unit type for the item (e.g., pieces, rolls).
+        part_no (str): The part number of the item.
+        date_last_modified (datetime): Timestamp for the last modification.
+        user (CustomUser): The user who created or last modified the item.
+        is_deleted (bool): Marks the item as soft-deleted when stock reaches zero.
+    """
+
     UNIT_CHOICES = [
-        ('pcs', 'Pieces'),
-        ('rolls', 'Rolls'),
-        ('meters', 'Meters'),
+        ("pcs", "Pieces"),
+        ("rolls", "Rolls"),
+        ("meters", "Meters"),
     ]
 
     item_name = models.CharField(max_length=200)
-    image = models.ImageField(upload_to='item_images/', blank=True, null=True)
+    image = models.ImageField(upload_to="item_images/", blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     total_stock = models.IntegerField(default=0)
     allocated_quantity = models.IntegerField(default=0, blank=True, null=True)
-    unit_of_quantity = models.CharField(max_length=20, choices=UNIT_CHOICES, default='pcs')
+    unit_of_quantity = models.CharField(max_length=20, choices=UNIT_CHOICES, default="pcs")
     part_no = models.CharField(max_length=100, blank=True, null=True)
     date_last_modified = models.DateTimeField(default=timezone.now)
     user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True)
     is_deleted = models.BooleanField(default=False)
-
 
     def __str__(self):
         return f"{self.item_name} ({self.id})"
 
     @property
     def available_serials(self):
-        """Return all serial numbers currently available for this item."""
-        return self.serial_numbers.filter(is_available=True).values_list('serial_no', flat=True)
+        """
+        Returns all serial numbers currently marked as available for this item.
 
+        Returns:
+            QuerySet[str]: List of available serial numbers.
+        """
+        return self.serial_numbers.filter(is_available=True).values_list("serial_no", flat=True)
 
     @property
     def last_transaction_user(self):
-        last_update = self.updates.order_by('-date').first()
+        """
+        Returns the user who made the most recent transaction for this item.
+
+        Returns:
+            CustomUser: The user of the last transaction, or the creator if none exist.
+        """
+        last_update = self.updates.order_by("-date").first()
         if last_update and last_update.user:
             return last_update.user
         return self.user  # fallback to creator
 
 
 class ItemSerial(models.Model):
-    """Represents each individual serial number tied to an item."""
-    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='serial_numbers')
+    """
+    Represents a serial number tied to a specific item.
+
+    Tracks the availability of each unique serial number under an Item.
+
+    Attributes:
+        item (Item): The related item this serial belongs to.
+        serial_no (str): The serial number string.
+        is_available (bool): Whether the serial is currently in stock.
+    """
+
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="serial_numbers")
     serial_no = models.CharField(max_length=100)
     is_available = models.BooleanField(default=True)
 
@@ -52,17 +91,36 @@ class ItemSerial(models.Model):
         return f"{self.serial_no} ({status})"
 
     class Meta:
-        unique_together = ('item', 'serial_no')
+        unique_together = ("item", "serial_no")
 
 
 class ItemUpdate(models.Model):
+    """
+    Logs each inventory transaction for an item (stock in, out, or allocation).
+
+    Tracks stock changes, user actions, related serial numbers, and remarks.
+    Automatically adjusts total stock and serial availability when saved.
+
+    Attributes:
+        item (Item): The item being updated.
+        date (datetime): Timestamp of the transaction.
+        transaction_type (str): Type of transaction ("IN", "OUT", or "ALLOCATED").
+        quantity (int): Quantity affected by the transaction.
+        serial_numbers (JSONField): List of serial numbers affected.
+        location (str): Location related to the transaction.
+        user (CustomUser): User who made the transaction.
+        remarks (str): Optional additional notes.
+        stock_after_transaction (int): Resulting stock level after transaction.
+        undone (bool): Whether this transaction has been undone.
+    """
+
     TRANSACTION_TYPE = [
-        ('IN', 'Stock In'),
-        ('OUT', 'Stock Out'),
-        ('ALLOCATED', 'Allocated')
+        ("IN", "Stock In"),
+        ("OUT", "Stock Out"),
+        ("ALLOCATED", "Allocated"),
     ]
 
-    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='updates')
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="updates")
     date = models.DateTimeField(default=timezone.now)
     transaction_type = models.CharField(max_length=15, choices=TRANSACTION_TYPE)
     quantity = models.PositiveIntegerField(default=0)  # amount of items in/out
@@ -72,22 +130,41 @@ class ItemUpdate(models.Model):
     po_supplier = models.CharField("P.O From Supplier", max_length=100, blank=True, null=True)
     po_client = models.CharField("P.O To Client", max_length=100, blank=True, null=True)
     dr_no = models.CharField("DR No.", max_length=100, blank=True, null=True)
-    user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True, related_name='item_updates')
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="item_updates",
+    )
     updated_by_user = models.CharField(max_length=150, blank=True, null=True)
     remarks = models.TextField(blank=True, null=True)
     stock_after_transaction = models.PositiveIntegerField(default=0)
     allocated_after_transaction = models.IntegerField(default=0)  # track allocated
     undone = models.BooleanField(default=False)
     is_converted = models.BooleanField(default=False)
-    
+
     class Meta:
-        ordering = ['-date']
+        ordering = ["-date"]
 
     def __str__(self):
         direction = "➕" if self.transaction_type == "IN" else "➖"
         return f"{direction} {self.item.item_name} ({self.quantity})"
 
     def save(self, *args, **kwargs):
+        """
+        Saves the transaction and automatically updates related stock values.
+
+        For 'IN' transactions:
+            - Adds new serials if provided.
+            - Increases item total stock.
+
+        For 'OUT' transactions:
+            - Marks used serials as unavailable.
+            - Decreases total stock and increases allocated quantity.
+
+        Ensures stock changes are only applied to the latest transaction.
+        """
         is_new = self._state.adding
         super().save(*args, **kwargs)
 
@@ -95,24 +172,19 @@ class ItemUpdate(models.Model):
             return
 
         # Only update totals if this is the most recent transaction
-        latest_update = ItemUpdate.objects.filter(item=self.item).order_by('-date').first()
+        latest_update = ItemUpdate.objects.filter(item=self.item).order_by("-date").first()
         if latest_update and latest_update.id != self.id and self.date < latest_update.date:
-            # Backdated entry — don’t directly update total stock here
-            return
+            return  # Backdated transaction — skip stock update
 
-        if self.transaction_type == 'IN':
-            for sn in (self.serial_numbers or []):
+        if self.transaction_type == "IN":
+            for sn in self.serial_numbers or []:
                 if not sn:
                     continue
-                ItemSerial.objects.get_or_create(
-                    item=self.item,
-                    serial_no=sn,
-                    defaults={'is_available': True}
-                )
+                ItemSerial.objects.get_or_create(item=self.item, serial_no=sn, defaults={"is_available": True})
             self.item.total_stock += self.quantity
 
-        elif self.transaction_type == 'OUT':
-            for sn in (self.serial_numbers or []):
+        elif self.transaction_type == "OUT":
+            for sn in self.serial_numbers or []:
                 try:
                     serial = ItemSerial.objects.get(item=self.item, serial_no=sn, is_available=True)
                     serial.is_available = False
@@ -122,21 +194,37 @@ class ItemUpdate(models.Model):
             self.item.allocated_quantity += self.quantity
             self.item.total_stock = max(self.item.total_stock - self.quantity, 0)
 
-        # ✅ Update timestamp and save
         self.item.date_last_modified = timezone.now()
         self.item.save()
         self.stock_after_transaction = self.item.total_stock
-        super().save(update_fields=['stock_after_transaction'])
+        super().save(update_fields=["stock_after_transaction"])
+
 
 class TransactionHistory(models.Model):
+    """
+    Keeps a record of all major stock-related actions (in, out, undo, add).
+
+    Used for detailed audit trails of item movement and changes.
+
+    Attributes:
+        item (Item): Item related to this transaction.
+        user (CustomUser): User who performed the action.
+        action_type (str): The type of action performed.
+        quantity (int): Quantity affected.
+        previous_stock (int): Stock count before the action.
+        new_stock (int): Stock count after the action.
+        remarks (str): Optional description or reason.
+        timestamp (datetime): When the action occurred.
+    """
+
     ACTION_CHOICES = [
-        ('in', 'Stock In'),
-        ('out', 'Stock Out'),
-        ('undo', 'Undo Transaction'),
-        ('add', 'New Item Added'),
+        ("in", "Stock In"),
+        ("out", "Stock Out"),
+        ("undo", "Undo Transaction"),
+        ("add", "New Item Added"),
     ]
 
-    item = models.ForeignKey('Item', on_delete=models.CASCADE, related_name='transactions')
+    item = models.ForeignKey("Item", on_delete=models.CASCADE, related_name="transactions")
     user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
     action_type = models.CharField(max_length=20, choices=ACTION_CHOICES)
     quantity = models.IntegerField(default=0)
@@ -151,9 +239,11 @@ class TransactionHistory(models.Model):
 
 @receiver(post_save, sender=Item)
 def auto_soft_delete_zero_stock(sender, instance, **kwargs):
+    """
+    Automatically soft-deletes items with zero stock.
+
+    If an item's `total_stock` becomes zero, sets `is_deleted=True`.
+    If stock becomes positive again, restores it (`is_deleted=False`).
+    """
     if instance.total_stock <= 0 and not instance.is_deleted:
-        instance.is_deleted = True
-        instance.save(update_fields=['is_deleted'])
-    elif instance.total_stock > 0 and instance.is_deleted:
-        instance.is_deleted = False
-        instance.save(update_fields=['is_deleted'])
+        Item.objects.filter(pk=instance.pk, is_deleted=False).update(is_deleted=True)

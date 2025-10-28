@@ -6,13 +6,21 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('inventory', '0015_transactionhistory'),
+        ("inventory", "0015_transactionhistory"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='transactionhistory',
-            name='action_type',
-            field=models.CharField(choices=[('in', 'Stock In'), ('out', 'Stock Out'), ('undo', 'Undo Transaction'), ('add', 'New Item Added')], max_length=20),
+            model_name="transactionhistory",
+            name="action_type",
+            field=models.CharField(
+                choices=[
+                    ("in", "Stock In"),
+                    ("out", "Stock Out"),
+                    ("undo", "Undo Transaction"),
+                    ("add", "New Item Added"),
+                ],
+                max_length=20,
+            ),
         ),
     ]

@@ -6,17 +6,17 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('inventory', '0006_rename_po_to_client_itemupdate_po_client_and_more'),
+        ("inventory", "0006_rename_po_to_client_itemupdate_po_client_and_more"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='itemupdate',
-            old_name='quantity',
-            new_name='total_stock',
+            model_name="itemupdate",
+            old_name="quantity",
+            new_name="total_stock",
         ),
         migrations.RemoveField(
-            model_name='item',
-            name='quantity',
+            model_name="item",
+            name="quantity",
         ),
     ]

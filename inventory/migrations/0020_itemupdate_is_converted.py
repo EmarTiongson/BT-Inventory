@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('inventory', '0019_alter_itemupdate_transaction_type'),
+        ("inventory", "0019_alter_itemupdate_transaction_type"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='itemupdate',
-            name='is_converted',
+            model_name="itemupdate",
+            name="is_converted",
             field=models.BooleanField(default=False),
         ),
     ]

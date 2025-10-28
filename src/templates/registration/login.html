@@ -32,6 +32,14 @@
     <img src="{% static 'images/brite-logo.png' %}" alt="Brite-Tech Logo" />
   </div>
 
+  {% if messages %}
+      <ul class="messages">
+          {% for message in messages %}
+          <li>{{ message }}</li>
+          {% endfor %}
+      </ul>
+  {% endif %}
+
   <!-- Sign In Box -->
   <div class="container">
     <div class="login-box">
@@ -43,7 +51,7 @@
         {% csrf_token %}
 
         {% if form.errors %}
-          <div class="error">⚠️ Invalid username or password.</div>
+          <div class="error"> Invalid username or password.</div>
         {% endif %}
 
         <div class="form-group">

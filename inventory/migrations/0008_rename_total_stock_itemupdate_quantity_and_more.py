@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('inventory', '0007_rename_quantity_itemupdate_total_stock_and_more'),
+        ("inventory", "0007_rename_quantity_itemupdate_total_stock_and_more"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='itemupdate',
-            old_name='total_stock',
-            new_name='quantity',
+            model_name="itemupdate",
+            old_name="total_stock",
+            new_name="quantity",
         ),
         migrations.AlterField(
-            model_name='itemupdate',
-            name='date',
+            model_name="itemupdate",
+            name="date",
             field=models.DateTimeField(auto_now_add=True),
         ),
     ]

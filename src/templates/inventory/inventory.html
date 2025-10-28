@@ -120,13 +120,13 @@
   </div>
 </div>
 
-<!-- 🔒 Delete Confirmation Modal -->
+<!-- Delete Confirmation Modal -->
 <div id="deleteModal" class="delete-modal hidden">
   <div class="delete-modal-content">
     <h3>Confirm Deletion</h3>
     <p>Please enter your password to confirm item deletion.</p>
 
-    <form method="POST" id="deleteForm">
+    <form method="POST" id="deleteForm" data-url-template="{% url 'delete_item' 0 %}">
       {% csrf_token %}
       <input type="password" name="password" class="modal-input" placeholder="Enter password" required>
       <div class="modal-actions">
@@ -146,6 +146,5 @@
 </div>
 
 <script src="{% static 'js/inventory.js' %}"></script>
-<script src="{% static 'js/admin.js' %}"></script>
 <script src="{% static 'js/serial.js' %}"></script>
 {% endblock %}

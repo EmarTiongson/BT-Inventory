@@ -14,34 +14,47 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path, include
-from app_core import views as core_views
-from django.views.generic import RedirectView
-from . import views
-from django.shortcuts import redirect
+
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib import admin
+from django.shortcuts import redirect
+from django.urls import include, path
+
+from . import views as inventory_views  # inventory app views
 
 urlpatterns = [
-     # Default landing page
-    path('inventory/', views.inventory_view, name='inventory'),
-    # Inventory item management
-    path('item/<int:item_id>/history/', views.item_history, name='item_history'),
-    path('add-item/', views.add_item, name='add_item'),
-    path('update/<int:item_id>/', views.updateitem_view, name='update_item'),
-    path('delete-item/<int:item_id>/', views.delete_item, name='delete_item'),
-    # Include URLs from other apps
-    path('accounts/', include('accounts.urls')),   
-    path('', include('app_core.urls')),   
-    path('item/<int:item_id>/transactions/', views.transaction_history_view, name='transaction_history'),
-    path('transaction/<int:update_id>/undo/', views.undo_transaction, name='undo_transaction'),
-    path('convert_allocate_to_out/<int:update_id>/', views.convert_allocate_to_out, name='convert_allocate_to_out'),
-    path('search-by-po/', views.search_by_po, name='search_by_po'),
-    path('ajax/search-po/', views.ajax_search_po, name='ajax_search_po'),
-     # Django admin
-    path('admin/', admin.site.urls),
-    path('', lambda request: redirect('login')),
+    # Inventory-related
+    path("inventory/", inventory_views.inventory_view, name="inventory"),
+    path("item/<int:item_id>/history/", inventory_views.item_history, name="item_history"),
+    path("add-item/", inventory_views.add_item, name="add_item"),
+    path("update/<int:item_id>/", inventory_views.updateitem_view, name="update_item"),
+    path("delete-item/<int:item_id>/", inventory_views.delete_item, name="delete_item"),
+    path(
+        "item/<int:item_id>/transactions/",
+        inventory_views.transaction_history_view,
+        name="transaction_history",
+    ),
+    path(
+        "transaction/<int:update_id>/undo/",
+        inventory_views.undo_transaction,
+        name="undo_transaction",
+    ),
+    path(
+        "convert_allocate_to_out/<int:update_id>/",
+        inventory_views.convert_allocate_to_out,
+        name="convert_allocate_to_out",
+    ),
+    path("search-by-po/", inventory_views.search_by_po, name="search_by_po"),
+    path("ajax/search-po/", inventory_views.ajax_search_po, name="ajax_search_po"),
+    # Core app (dashboard, admin page)
+    path("", include("app_core.urls")),
+    # Accounts app
+    path("accounts/", include("accounts.urls")),
+    # Django admin
+    path("admin/", admin.site.urls),
+    # Redirect root to login
+    path("", lambda request: redirect("login")),
 ]
 
 if settings.DEBUG:

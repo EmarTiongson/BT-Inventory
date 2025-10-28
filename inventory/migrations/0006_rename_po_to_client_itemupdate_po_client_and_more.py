@@ -8,34 +8,40 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('inventory', '0005_item_user'),
+        ("inventory", "0005_item_user"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='itemupdate',
-            old_name='po_to_client',
-            new_name='po_client',
+            model_name="itemupdate",
+            old_name="po_to_client",
+            new_name="po_client",
         ),
         migrations.RenameField(
-            model_name='itemupdate',
-            old_name='po_from_supplier',
-            new_name='po_supplier',
+            model_name="itemupdate",
+            old_name="po_from_supplier",
+            new_name="po_supplier",
         ),
         migrations.AddField(
-            model_name='itemupdate',
-            name='updated_by_user',
+            model_name="itemupdate",
+            name="updated_by_user",
             field=models.CharField(blank=True, max_length=150, null=True),
         ),
         migrations.AlterField(
-            model_name='itemupdate',
-            name='date',
+            model_name="itemupdate",
+            name="date",
             field=models.DateField(auto_now_add=True),
         ),
         migrations.AlterField(
-            model_name='itemupdate',
-            name='user',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='item_updates', to=settings.AUTH_USER_MODEL),
+            model_name="itemupdate",
+            name="user",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="item_updates",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

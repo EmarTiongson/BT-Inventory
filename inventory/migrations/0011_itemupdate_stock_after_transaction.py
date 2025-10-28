@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('inventory', '0010_remove_itemserial_date_added'),
+        ("inventory", "0010_remove_itemserial_date_added"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='itemupdate',
-            name='stock_after_transaction',
+            model_name="itemupdate",
+            name="stock_after_transaction",
             field=models.PositiveIntegerField(default=0),
         ),
     ]

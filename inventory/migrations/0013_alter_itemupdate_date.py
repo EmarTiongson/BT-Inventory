@@ -7,13 +7,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('inventory', '0012_alter_item_date_last_modified'),
+        ("inventory", "0012_alter_item_date_last_modified"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='itemupdate',
-            name='date',
+            model_name="itemupdate",
+            name="date",
             field=models.DateTimeField(default=django.utils.timezone.now),
         ),
     ]

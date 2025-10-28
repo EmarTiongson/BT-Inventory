@@ -6,17 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('inventory', '0003_remove_item_item_id'),
+        ("inventory", "0003_remove_item_item_id"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='itemupdate',
-            name='part_no',
+            model_name="itemupdate",
+            name="part_no",
         ),
         migrations.AddField(
-            model_name='item',
-            name='part_no',
+            model_name="item",
+            name="part_no",
             field=models.CharField(blank=True, max_length=100, null=True),
         ),
     ]

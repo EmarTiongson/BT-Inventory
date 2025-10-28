@@ -16,52 +16,141 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Item',
+            name="Item",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('item_id', models.CharField(max_length=50, unique=True)),
-                ('item_name', models.CharField(max_length=200)),
-                ('image', models.ImageField(blank=True, null=True, upload_to='item_images/')),
-                ('description', models.TextField(blank=True, null=True)),
-                ('total_stock', models.IntegerField(default=0)),
-                ('quantity', models.IntegerField(default=0)),
-                ('allocated_quantity', models.IntegerField(default=0)),
-                ('unit_of_quantity', models.CharField(choices=[('pcs', 'Pieces'), ('rolls', 'Rolls'), ('meters', 'Meters')], default='pcs', max_length=20)),
-                ('date_last_modified', models.DateTimeField(auto_now=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("item_id", models.CharField(max_length=50, unique=True)),
+                ("item_name", models.CharField(max_length=200)),
+                (
+                    "image",
+                    models.ImageField(blank=True, null=True, upload_to="item_images/"),
+                ),
+                ("description", models.TextField(blank=True, null=True)),
+                ("total_stock", models.IntegerField(default=0)),
+                ("quantity", models.IntegerField(default=0)),
+                ("allocated_quantity", models.IntegerField(default=0)),
+                (
+                    "unit_of_quantity",
+                    models.CharField(
+                        choices=[
+                            ("pcs", "Pieces"),
+                            ("rolls", "Rolls"),
+                            ("meters", "Meters"),
+                        ],
+                        default="pcs",
+                        max_length=20,
+                    ),
+                ),
+                ("date_last_modified", models.DateTimeField(auto_now=True)),
             ],
         ),
         migrations.CreateModel(
-            name='ItemUpdate',
+            name="ItemUpdate",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date', models.DateTimeField(auto_now_add=True)),
-                ('part_no', models.CharField(blank=True, max_length=100, null=True)),
-                ('transaction_type', models.CharField(choices=[('IN', 'Stock In'), ('OUT', 'Stock Out')], max_length=3)),
-                ('quantity', models.PositiveIntegerField(default=0)),
-                ('serial_numbers', models.JSONField(blank=True, help_text='List of serial numbers affected', null=True)),
-                ('location', models.CharField(blank=True, max_length=200, null=True)),
-                ('po_from_supplier', models.CharField(blank=True, max_length=100, null=True, verbose_name='P.O From Supplier')),
-                ('po_to_client', models.CharField(blank=True, max_length=100, null=True, verbose_name='P.O To Client')),
-                ('dr_no', models.CharField(blank=True, max_length=100, null=True, verbose_name='DR No.')),
-                ('remarks', models.TextField(blank=True, null=True)),
-                ('item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='updates', to='inventory.item')),
-                ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("date", models.DateTimeField(auto_now_add=True)),
+                ("part_no", models.CharField(blank=True, max_length=100, null=True)),
+                (
+                    "transaction_type",
+                    models.CharField(choices=[("IN", "Stock In"), ("OUT", "Stock Out")], max_length=3),
+                ),
+                ("quantity", models.PositiveIntegerField(default=0)),
+                (
+                    "serial_numbers",
+                    models.JSONField(
+                        blank=True,
+                        help_text="List of serial numbers affected",
+                        null=True,
+                    ),
+                ),
+                ("location", models.CharField(blank=True, max_length=200, null=True)),
+                (
+                    "po_from_supplier",
+                    models.CharField(
+                        blank=True,
+                        max_length=100,
+                        null=True,
+                        verbose_name="P.O From Supplier",
+                    ),
+                ),
+                (
+                    "po_to_client",
+                    models.CharField(
+                        blank=True,
+                        max_length=100,
+                        null=True,
+                        verbose_name="P.O To Client",
+                    ),
+                ),
+                (
+                    "dr_no",
+                    models.CharField(blank=True, max_length=100, null=True, verbose_name="DR No."),
+                ),
+                ("remarks", models.TextField(blank=True, null=True)),
+                (
+                    "item",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="updates",
+                        to="inventory.item",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'ordering': ['-date'],
+                "ordering": ["-date"],
             },
         ),
         migrations.CreateModel(
-            name='ItemSerial',
+            name="ItemSerial",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('serial_no', models.CharField(max_length=100)),
-                ('is_available', models.BooleanField(default=True)),
-                ('date_added', models.DateTimeField(default=django.utils.timezone.now)),
-                ('item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='serial_numbers', to='inventory.item')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("serial_no", models.CharField(max_length=100)),
+                ("is_available", models.BooleanField(default=True)),
+                ("date_added", models.DateTimeField(default=django.utils.timezone.now)),
+                (
+                    "item",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="serial_numbers",
+                        to="inventory.item",
+                    ),
+                ),
             ],
             options={
-                'unique_together': {('item', 'serial_no')},
+                "unique_together": {("item", "serial_no")},
             },
         ),
     ]
