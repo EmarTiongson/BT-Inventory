@@ -1,100 +1,87 @@
-function showImagePopup(src) {
-  const modal = document.getElementById('imageModal');
-  const modalImg = document.getElementById('popupImage');
-  modal.style.display = "flex"; /* Changed from 'block' to 'flex' to enable centering */
-  modalImg.src = src;
-}
-
-function closeImagePopup() {
-  document.getElementById('imageModal').style.display = "none";
-}
-
-// Delete item logic
-const deleteModal = document.getElementById('deleteModal');
-const confirmDeleteBtn = document.getElementById('confirmDelete');
-const cancelDeleteBtn = document.getElementById('cancelDelete');
-let itemIdToDelete = null;
-
-document.querySelectorAll('.delete-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    itemIdToDelete = btn.dataset.itemId;
-    deleteModal.style.display = 'block';
-  });
-});
-
-cancelDeleteBtn.addEventListener('click', () => {
-  itemIdToDelete = null;
-  deleteModal.style.display = 'none';
-});
-
-confirmDeleteBtn.addEventListener('click', () => {
-  if (!itemIdToDelete) return;
-  const deleteUrlTemplate = "{% url 'delete_item' 0 %}";
-  const deleteUrl = deleteUrlTemplate.replace('0', itemIdToDelete);
-
-  fetch(deleteUrl, {
-    method: 'POST',
-    headers: {
-      'X-CSRFToken': getCookie('csrftoken'),
-      'Content-Type': 'application/json'
-    },
-  })
-    .then(res => {
-      if (!res.ok) throw new Error('Network response not OK');
-      return res.json();
-    })
-    .then(data => {
-      if (data.success) {
-        const row = document.getElementById(`item-row-${itemIdToDelete}`);
-        if (row) {
-          row.style.transition = 'opacity 0.5s';
-          row.style.opacity = 0;
-          setTimeout(() => row.remove(), 500);
-        }
-      }
-      deleteModal.style.display = 'none';
-      itemIdToDelete = null;
-    })
-    .catch(err => {
-      console.error('Error deleting item:', err);
-      deleteModal.style.display = 'none';
-      itemIdToDelete = null;
-    });
-});
-
-function getCookie(name) {
-  let cookieValue = null;
-  if (document.cookie && document.cookie !== '') {
-    document.cookie.split(';').forEach(cookie => {
-      cookie = cookie.trim();
-      if (cookie.startsWith(name + '=')) cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-    });
-  }
-  return cookieValue;
-}
-
-window.addEventListener('click', e => {
-  if (e.target === deleteModal) {
-    deleteModal.style.display = 'none';
-    itemIdToDelete = null;
-  }
-});
-
-// --- Serial Dropdown Logic ---
 document.addEventListener("DOMContentLoaded", () => {
+  /* =====================================================
+   * IMAGE POPUP / LIGHTBOX
+   * ===================================================== */
+  const overlay = document.getElementById("imageLightboxOverlay");
+  const img = document.getElementById("imageLightboxImg");
+  const closeBtn = document.getElementById("imageLightboxClose");
+
+  function openImage(src) {
+    img.src = src;
+    overlay.classList.add("active");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeImage() {
+    overlay.classList.remove("active");
+    img.src = "";
+    document.body.style.overflow = "";
+  }
+
+  document.body.addEventListener("click", e => {
+    const thumb = e.target.closest("img.thumbnail");
+    if (thumb) openImage(thumb.dataset.src || thumb.src);
+  });
+
+  overlay.addEventListener("click", e => {
+    if (e.target === overlay || e.target === closeBtn) closeImage();
+  });
+
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && overlay.classList.contains("active")) closeImage();
+  });
+
+
+  /* =====================================================
+   * DELETE ITEM MODAL
+   * ===================================================== */
+  const deleteModal = document.getElementById("deleteModal");
+  const deleteForm = document.getElementById("deleteForm");
+  let itemIdToDelete = null;
+
+  // Save URL template from Django
+  const deleteUrlTemplate = deleteForm?.dataset.urlTemplate;
+
+  document.querySelectorAll(".delete-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      itemIdToDelete = btn.dataset.itemId;
+      if (deleteUrlTemplate && deleteForm) {
+        deleteForm.action = deleteUrlTemplate.replace("0", itemIdToDelete);
+      }
+      deleteModal.classList.remove("hidden");
+    });
+  });
+
+  document.querySelectorAll(".cancel-btn").forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.preventDefault();
+      closeDeleteModal();
+    });
+  });
+
+  window.addEventListener("click", e => {
+    if (e.target === deleteModal) closeDeleteModal();
+  });
+
+  function closeDeleteModal() {
+    itemIdToDelete = null;
+    deleteModal.classList.add("hidden");
+    deleteForm.reset();
+  }
+
+
+  /* =====================================================
+   * SERIAL DROPDOWN + FILTER
+   * ===================================================== */
   const allDropdowns = document.querySelectorAll(".serials-list-container");
 
-  window.toggleSerials = function (id) {
+  window.toggleSerials = id => {
     const dropdown = document.getElementById(`serials-${id}`);
-    if (dropdown.classList.contains("show")) {
-      dropdown.classList.remove("show");
-      return;
-    }
     allDropdowns.forEach(el => el.classList.remove("show"));
-    dropdown.classList.add("show");
+    dropdown.classList.toggle("show");
   };
 
-  window.filterSerials = function (id) {
+  window.filterSerials = id => {
     const input = document.querySelector(`#serials-${id} .serial-search`);
     const filter = input.value.toLowerCase();
     const items = document.querySelectorAll(`#serials-${id} .serials-list li`);
@@ -103,25 +90,22 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-  document.addEventListener("click", (e) => {
+  document.addEventListener("click", e => {
     const inside = e.target.closest(".serials-wrapper");
-    if (!inside) {
-      allDropdowns.forEach(el => el.classList.remove("show"));
-    }
+    if (!inside) allDropdowns.forEach(el => el.classList.remove("show"));
   });
-});
 
-// ======== MAIN TABLE SEARCH BAR ========
-document.addEventListener("DOMContentLoaded", () => {
+
+  /* =====================================================
+   * TABLE SEARCH BAR
+   * ===================================================== */
   const searchInput = document.getElementById("searchInput");
   const tableRows = document.querySelectorAll("#inventoryTableBody tr");
 
-  searchInput.addEventListener("keyup", () => {
+  searchInput?.addEventListener("keyup", () => {
     const filter = searchInput.value.toLowerCase();
-
     tableRows.forEach(row => {
-      const text = row.textContent.toLowerCase();
-      row.style.display = text.includes(filter) ? "" : "none";
+      row.style.display = row.textContent.toLowerCase().includes(filter) ? "" : "none";
     });
   });
 });

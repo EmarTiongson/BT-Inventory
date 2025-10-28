@@ -183,6 +183,19 @@ body.dark-mode .history-table tbody tr.undone td {
   color: #f8fafc !important; /* soft white text */
 }
 
+/* Dark Mode Buttons */
+body.dark-mode .add-btn,
+body.dark-mode .return-btn-fixed {
+  background: #D96F32;
+  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.315);
+}
+
+body.dark-mode .add-btn:hover,
+body.dark-mode .return-btn-fixed:hover {
+  background: #D96F32;
+  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.315);
+  transform: translateY(-2px);
+}
 
 .serial-tag {
   display: inline-block;
@@ -251,7 +264,6 @@ body.dark-mode .history-table tbody tr.undone td {
     background: #134686;
     color: #fff;
     padding: 10px 15px;
-    border-radius: 50px;
     text-decoration: none;
 }
 .return-btn-fixed:hover {

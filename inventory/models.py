@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils import timezone
 from accounts.models import CustomUser
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class Item(models.Model):
@@ -145,3 +147,13 @@ class TransactionHistory(models.Model):
 
     def __str__(self):
         return f"{self.item.item_name} - {self.action_type} ({self.quantity}) by {self.user}"
+
+
+@receiver(post_save, sender=Item)
+def auto_soft_delete_zero_stock(sender, instance, **kwargs):
+    if instance.total_stock <= 0 and not instance.is_deleted:
+        instance.is_deleted = True
+        instance.save(update_fields=['is_deleted'])
+    elif instance.total_stock > 0 and instance.is_deleted:
+        instance.is_deleted = False
+        instance.save(update_fields=['is_deleted'])

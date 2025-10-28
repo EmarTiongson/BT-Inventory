@@ -368,23 +368,31 @@ body.dark-mode .upload-box:hover {
   background: rgba(217, 111, 50, 0.1);
 }
 
-body.dark-mode .upload-label,
-body.dark-mode .upload-label i {
-  color: #ffffff;
+/* ==========================
+   DARK MODE - SELECT DROPDOWN FIX
+   ========================== */
+
+body.dark-mode select,
+body.dark-mode option {
+  background-color: #ffffff; /* dark background for dropdown */
+  color: #000000; /* white text for visibility */
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* Dark Mode Inputs */
-body.dark-mode .form-grid input,
-body.dark-mode .form-grid select,
-body.dark-mode .form-grid textarea {
-  background: rgba(255, 255, 255, 0.08);
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+/* When the dropdown is focused (clicked) */
+body.dark-mode select:focus {
+  outline: none;
+  border-color: #f39c12; /* orange border highlight */
 }
 
-body.dark-mode .form-grid input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
+/* Optional: improve hover contrast in dropdown list */
+body.dark-mode option:hover,
+body.dark-mode option:checked {
+  background-color: #f39c12; /* orange highlight for active/hover */
+  color: #000; /* black text for contrast when highlighted */
 }
+
+
 
 body.dark-mode .form-grid input:focus,
 body.dark-mode .form-grid select:focus {

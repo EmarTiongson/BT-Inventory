@@ -1,6 +1,6 @@
 from django.shortcuts import redirect
 from django.urls import reverse
-
+#forces password change for first time log in of new user, runs before and after every request
 class ForcePasswordChangeMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response

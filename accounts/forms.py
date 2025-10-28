@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 
+#inherits from django built in registration
 class CustomUserCreationForm(UserCreationForm):
     middle_initial = forms.CharField(max_length=1, required=False, label="Middle Initial")
     position = forms.CharField(max_length=100, required=True)

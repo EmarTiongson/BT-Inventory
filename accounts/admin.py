@@ -4,12 +4,13 @@ from django.utils.translation import gettext_lazy as _
 from .models import CustomUser
 
 
+#inherit UserAdmin to get all the default user management features
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
     # Fields displayed in the user list view
     list_display = (
         'username',
-        'get_full_name',
+        'get_full_name', #function
         'email',
         'role',
         'position',

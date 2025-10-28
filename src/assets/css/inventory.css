@@ -119,6 +119,7 @@
 .modern-add-btn {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     padding: 10px 20px;
     background: #4CAF50;
@@ -320,7 +321,7 @@ body.dark-mode .add-item-container textarea {
 }
 
 .item-link:hover {
-    color: #4CAF50;
+    color:#f59e0b;
     font-weight: 700;
     transform: translateX(3px);
 }
@@ -394,9 +395,15 @@ body.dark-mode .add-item-container textarea {
     transform: scale(1.05);
 }
 
+/* ==========================================================
+ * IMAGE EXPAND ON CLICK (THUMBNAIL PREVIEW)
+ * ========================================================== */
+
 .thumbnail {
+    display: block;
+    margin: 0 auto;
     width: 50px;
-    height: px;
+    height: 50px;
     object-fit: cover;
     border-radius: 8px;
     cursor: pointer;
@@ -406,6 +413,75 @@ body.dark-mode .add-item-container textarea {
 .thumbnail:hover {
     transform: scale(1.05);
 }
+
+/* IMAGE LIGHTBOX */
+.image-lightbox-overlay {
+  position: fixed;
+  inset: 0; /* top:0; right:0; bottom:0; left:0; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0,0,0,0.85);
+  z-index: 2147483647; /* very high to guarantee on top */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 220ms ease, visibility 220ms ease;
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+
+.image-lightbox-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.image-lightbox-inner {
+  max-width: 92%;
+  max-height: 92%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.image-lightbox-inner img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+  transform: translateZ(0);
+}
+
+Close button
+.image-lightbox-close {
+  position: fixed;
+  top: 18px;
+  right: 22px;
+  z-index: 2147483648;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 36px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: color 150ms ease, transform 150ms ease;
+}
+
+.image-lightbox-close:hover {
+  color: #ffb86b;
+  transform: scale(1.05);
+}
+
+/* Ensure thumbnail pointer indicates clickability */
+img.thumbnail { cursor: zoom-in; }
+
+
 
 /* ===================== DELETE MODAL ===================== */
 
@@ -488,6 +564,7 @@ body.light-mode .modal-input:focus {
   border-color: #f59e0b;
   box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
 }
+
 
 /* Modal Buttons */
 .modal-actions {
@@ -594,6 +671,20 @@ body.dark-mode textarea {
     border: 1px solid #555 !important;
 }
 
+body.dark-mode .item-link {
+    color: #2196F3; /* Normal link color in dark mode */
+}
+
+body.dark-mode .item-link:visited {
+    color: #2196F3; /* Prevent violet color */
+}
+
+body.dark-mode .item-link:hover {
+    color: #f59e0b; /* Orange hover in dark mode */
+    font-weight: 700;
+    transform: translateX(3px);
+}
+
 /* ==========================================================
  * CRITICAL FIX: Override base.css main-content padding
  * ========================================================== */
@@ -651,5 +742,21 @@ body .main-content {
     box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
 }
 
+.item-link,
+.item-link:link,
+.item-link:visited,
+body.light-mode .item-link,
+body.light-mode .item-link:link,
+body.light-mode .item-link:visited {
+    color: #2196F3!important; /* Black for light mode */
+    text-decoration: none !important;
+}
+
+.item-link:hover,
+body.light-mode .item-link:hover {
+    color: #f59e0b !important; /* Orange hover */
+    font-weight: 700 !important;
+    transform: translateX(3px) !important;
+}
 
 
