@@ -44,14 +44,9 @@ class ItemAdmin(admin.ModelAdmin):
 
     list_display = (
         "item_name",
-        "total_stock",
-        "allocated_quantity",
-        "unit_of_quantity",
-        "part_no",
         "date_last_modified",
     )
-    search_fields = ("item_name", "part_no", "id")
-    list_filter = ("unit_of_quantity",)
+    search_fields = ("item_name", "id")
     inlines = [ItemSerialInline]
     readonly_fields = ("date_last_modified",)
     ordering = ("item_name",)

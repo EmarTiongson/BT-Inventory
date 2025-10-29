@@ -36,8 +36,8 @@
         <input type="text" name="item" placeholder="Item Name" value="{{ form_data.item|default:'' }}" required>
         <input type="text" name="description" placeholder="Description" value="{{ form_data.description|default:'' }}" required>
 
-        <input type="number" name="total_stock" id="totalStockInput" placeholder="Total Stock" value="{{ form_data.total_stock|default:'' }}" required>
-        <input type="number" name="allocated_quantity" placeholder="Allocated Quantity" value="{{ form_data.allocated_quantity|default:'' }}" required>
+        <!-- <input type="number" name="total_stock" id="totalStockInput" placeholder="Total Stock" value="{{ form_data.total_stock|default:'' }}" required>
+        <input type="number" name="allocated_quantity" placeholder="Allocated Quantity" value="{{ form_data.allocated_quantity|default:'' }}" required> -->
 
         <select name="unit_of_quantity" required>
           <option value="" disabled {% if not form_data.unit_of_quantity %}selected{% endif %}>Unit of Quantity</option>
@@ -45,24 +45,24 @@
           <option value="rolls" {% if form_data.unit_of_quantity == 'rolls' %}selected{% endif %}>Rolls</option>
           <option value="meters" {% if form_data.unit_of_quantity == 'meters' %}selected{% endif %}>Meters</option>
         </select>
-        <input type="text" name="part_no" placeholder="Part No." value="{{ form_data.part_no|default:'' }}">
+        <!-- <input type="text" name="part_no" placeholder="Part No." value="{{ form_data.part_no|default:'' }}"> --> 
       </div>
 
       <!-- ✅ Serial Numbers Section (with modal trigger) -->
-      <div class="serial-section">
+      <!-- <div class="serial-section">
         <div class="serial-header">
           <label>Add Serial Numbers</label>
           <button type="button" class="serial-btn" id="openSerialModal">+</button>
-        </div>
+        </div> -->
         <!-- Hidden field to store serialized serial numbers -->
-        <input type="hidden" id="serialHiddenInput" name="serial_numbers" value="{{ form_data.serial_numbers|default:'' }}">
+        <!-- <input type="hidden" id="serialHiddenInput" name="serial_numbers" value="{{ form_data.serial_numbers|default:'' }}">
         <div class="serial-error" id="serialError">
           <i class="bi bi-exclamation-circle"></i> Serial numbers must match total stock quantity
         </div>
-      </div>
+      </div> -->
 
       <!-- ✅ Modal for Serial Numbers -->
-      <div id="serialModal" class="modal">
+      <!-- <div id="serialModal" class="modal">
         <div class="modal-content">
           <h2>Serial Numbers</h2>
           <div id="serialFieldsContainer"></div>
@@ -74,7 +74,7 @@
             <button type="button" id="saveSerialNumbers" class="save-btn">Save</button>
           </div>
         </div>
-      </div>
+      </div> -->
 
       <!-- Submit Section -->
       <div class="submit-section">

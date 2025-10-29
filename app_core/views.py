@@ -47,3 +47,15 @@ def admin_view(request):
     users = User.objects.all().order_by("id")
     context = {"users": users}
     return render(request, "app_core/admin.html", context)
+
+
+@login_required
+def assets_tools_view(request):
+    # Example: you can pass assets/tools data later
+    context = {"page_title": "Assets & Tools"}
+    return render(request, "app_core/assets_tools.html", context)
+
+
+@login_required
+def project_summary_view(request):
+    return render(request, "app_core/project_summary.html")

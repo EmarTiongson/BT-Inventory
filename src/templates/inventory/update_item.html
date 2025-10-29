@@ -26,13 +26,6 @@
     <div class="inventory-card">
       <form method="POST" enctype="multipart/form-data" action="{% url 'update_item' item.id %}">
         {% csrf_token %}
-        <div class="upload-box">
-          {% if item.image %}
-            <img src="{{ item.image.url }}" alt="Item Image" class="image-preview">
-          {% else %}
-            <span class="upload-label" style="color: #aaa;">No Image Available</span>
-          {% endif %}
-        </div>
 
         <div class="form-grid">
           <input type="date" name="date_added" required value="{{ today|date:'Y-m-d' }}">

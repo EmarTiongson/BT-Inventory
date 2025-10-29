@@ -1,0 +1,57 @@
+/* ==========================================================
+ * ASSETS & TOOLS PAGE STYLES
+ * Based on inventory.css
+ * ========================================================== */
+
+/* Import all base inventory styles */
+@import url('inventory.css');
+
+/* ------------------------------------------
+   CUSTOM OVERRIDES OR PAGE-SPECIFIC STYLES
+-------------------------------------------*/
+
+/* Page title (you can adjust the color or spacing if desired) */
+.page-title {
+  margin-bottom: 25px;
+}
+
+/* Search box placeholder */
+#searchInput::placeholder {
+  color: #888;
+}
+
+/* Make the Add Asset/Tool button distinct (orange accent) */
+.modern-add-btn {
+  background-color: #f97316; /* orange-500 */
+  color: white;
+}
+
+.modern-add-btn:hover {
+  background-color: #ea580c; /* darker orange */
+}
+
+/* Table tweaks for assets/tools */
+.inventory-table th,
+.inventory-table td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* Make images slightly larger for assets/tools */
+.inventory-table img.thumbnail {
+  width: 75px;
+  height: 75px;
+  object-fit: cover;
+  border-radius: 10px;
+  transition: transform 0.2s ease;
+}
+
+.inventory-table img.thumbnail:hover {
+  transform: scale(1.05);
+}
+
+/* Lightbox overlay (copied from inventory style with tweak) */
+.image-lightbox-overlay {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+

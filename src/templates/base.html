@@ -37,20 +37,27 @@
   <span>Inventory</span>
 </a>
 
-    <a href="#" class="nav-item">
+  <a href="{% url 'assets_tools' %}" class="nav-item {% if request.path == '/assets-tools/' %}active{% endif %}">
+    <i class="bi bi-tools"></i>
+    <span>Assets & Tools</span>
+  </a>
+
+
+    <!-- <a href="#" class="nav-item">
       <i class="bi bi-cart3"></i>
       <span>Order Management</span>
+    </a> -->
+
+    <a href="{% url 'project_summary' %}" class="nav-item {% if request.path == '/project-summary/' %}active{% endif %}">
+  <i class="bi bi-file-earmark-text"></i>
+  <span>Project Summary</span>
     </a>
 
-    <a href="#" class="nav-item">
-      <i class="bi bi-file-earmark-text"></i>
-      <span>Reports</span>
-    </a>
 
-    <a href="#" class="nav-item">
+    <!-- <a href="#" class="nav-item">
       <i class="bi bi-bell"></i>
       <span>Alert & Notification</span>
-    </a>
+    </a> -->
 
     {% if request.user.role == "superadmin" or request.user.role == "admin" %}
       <a href="{% url 'admin_page' %}" class="nav-item">

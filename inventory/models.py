@@ -10,20 +10,8 @@ class Item(models.Model):
     """
     Represents an inventory item in the system.
 
-    Stores key details about an item, including name, stock information,
-    unit of measure, part number, and metadata about creation and modification.
-
-    Attributes:
-        item_name (str): The name of the item.
-        image (ImageField): Optional image representing the item.
-        description (str): Optional item description.
-        total_stock (int): Current total stock of the item.
-        allocated_quantity (int): Quantity currently allocated.
-        unit_of_quantity (str): The unit type for the item (e.g., pieces, rolls).
-        part_no (str): The part number of the item.
-        date_last_modified (datetime): Timestamp for the last modification.
-        user (CustomUser): The user who created or last modified the item.
-        is_deleted (bool): Marks the item as soft-deleted when stock reaches zero.
+    Now simplified for creation — only image, name, description, and date are
+    required when first adding an item.
     """
 
     UNIT_CHOICES = [
@@ -42,6 +30,7 @@ class Item(models.Model):
     date_last_modified = models.DateTimeField(default=timezone.now)
     user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True)
     is_deleted = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.item_name} ({self.id})"
@@ -238,12 +227,16 @@ class TransactionHistory(models.Model):
 
 
 @receiver(post_save, sender=Item)
-def auto_soft_delete_zero_stock(sender, instance, **kwargs):
+def auto_soft_delete_zero_stock(sender, instance, created, **kwargs):
     """
-    Automatically soft-deletes items with zero stock.
+    Automatically soft-deletes items only when their total_stock
+    changes to zero AFTER being created.
+    - Newly created items (even with 0 stock) are not deleted.
+    - Items that regain stock are restored.
+    """
 
-    If an item's `total_stock` becomes zero, sets `is_deleted=True`.
-    If stock becomes positive again, restores it (`is_deleted=False`).
-    """
+    if created and (timezone.now() - instance.created).total_seconds() < 60:
+        return
+
     if instance.total_stock <= 0 and not instance.is_deleted:
         Item.objects.filter(pk=instance.pk, is_deleted=False).update(is_deleted=True)

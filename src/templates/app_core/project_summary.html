@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/project_summary.css' %}">
+{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Project Summary</h1>
+
+<div class="project-search-container">
+  <div class="dropdown-search">
+    <input 
+      type="text" 
+      id="projectSearchInput" 
+      placeholder="Find project..." 
+      onkeyup="filterProjects()" 
+      onclick="showAllProjects()" 
+      autocomplete="off"
+    >
+    <ul id="projectList" class="dropdown-list">
+      <li onclick="selectProject('4140066606 MAGNOLIA RPMPMFG WAREHOUSE LAN & CCTV CABLING')">4140066606 MAGNOLIA RPMPMFG WAREHOUSE LAN & CCTV CABLING</li>
+      <li onclick="selectProject('4110234348 SMFI Pampanga Active Components')">4110234348 SMFI Pampanga Active Components</li>
+      <li onclick="selectProject('6400181818 GSMI Supply and Installation of CCTV at MG8 Alcohol')">6400181818 GSMI Supply and Installation of CCTV at MG8 Alcohol</li>
+      <li onclick="selectProject('4120094815 PHC P3 ADDTL 4 CAMERAS AT FG WH RAMP')">4120094815 PHC P3 ADDTL 4 CAMERAS AT FG WH RAMP</li>
+      <li onclick="selectProject('4110232600 SMFI SOUTH LUZON STA ROSA REGIONAL OFFICE LAN & CCTV')">4110232600 SMFI SOUTH LUZON STA ROSA REGIONAL OFFICE LAN & CCTV</li>
+      <li onclick="selectProject('4120098179 PHC PLANT1 Additional CCTV')">4120098179 PHC PLANT1 Additional CCTV</li>
+      <li onclick="selectProject('4110233855 SMFI SAN ILDEFONSO BULACAN FEEDMILL EXPANSION & PREMIX PLANT CCTV/TIMELAPSE CAMERA')">4110233855 SMFI SAN ILDEFONSO BULACAN FEEDMILL EXPANSION & PREMIX PLANT CCTV/TIMELAPSE CAMERA</li>
+      <li onclick="selectProject('4140064998 MAGNOLIA BMC CCTV REPLACEMENT')">4140064998 MAGNOLIA BMC CCTV REPLACEMENT</li>
+      <li onclick="selectProject('4110232302 SMFI SARIAYA QUEZON REGION OFFICE IT INFRA PROJECT')">4110232302 SMFI SARIAYA QUEZON REGION OFFICE IT INFRA PROJECT</li>
+      <li onclick="selectProject('4120100131 PHC PLANT 2 CCTV VIEWING (CANTEEN MONITORING)')">4120100131 PHC PLANT 2 CCTV VIEWING (CANTEEN MONITORING)</li>
+      <li onclick="selectProject('4120097226 PHC P3 ENGG ADDITIONAL LAN CABLING - BOILER & REFRIGERATION OFFICE')">4120097226 PHC P3 ENGG ADDITIONAL LAN CABLING - BOILER & REFRIGERATION OFFICE</li>
+      <li onclick="selectProject('4110220209 SMFI MABINI FEEDMILL LAN & CCTV CABLING')">4110220209 SMFI MABINI FEEDMILL LAN & CCTV CABLING</li>
+      <li onclick="selectProject('4150027673 SMMI Feedmill Additional CCTV 2023')">4150027673 SMMI Feedmill Additional CCTV 2023</li>
+      <li onclick="selectProject('4150027911 SMMI TABANGAO (CCTV REHAB)')">4150027911 SMMI TABANGAO (CCTV REHAB)</li>
+      <li onclick="selectProject('4110232661 SMFI North Luzon Office Additional and Restructural of LAN Outlet Project')">4110232661 SMFI North Luzon Office Additional and Restructural of LAN Outlet Project</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Project Details Container -->
+<div id="projectDetailsContainer" class="project-details-container" style="display: none;">
+  <div class="project-header">
+    <h2 id="projectTitle" class="project-title-text">MAGNOLIA RPMPMFG WAREHOUSE LAN & CCTV CABLING</h2>
+  </div>
+
+  <div class="project-section">
+    <h3 class="section-title">REMARKS</h3>
+    <p id="projectRemarks" class="remarks-text">BS 4987 TO SI 2622</p>
+  </div>
+
+  <div class="project-section">
+    <h3 class="section-title">Billing</h3>
+    <div id="billingList" class="billing-list">
+      <!-- Billing cards -->
+      <div class="billing-card" onclick="openBillingModal('4670', 'DOWN PAYMENT', '5/25/2023', '6/24/2023', '₱49,370.15', true, '4120100131 PHC PLANT 1 CCTV VIEWING (CANTEEN...)', 'PHC PLANT 1 CCTV VIEWING (...', '4120100135')">
+        <div class="billing-number">4670</div>
+        <div class="billing-details">
+          <div class="billing-row">
+            <span class="billing-label">STATUS</span>
+            <span class="billing-label">TYPE OF BILLING</span>
+            <span class="billing-label">BS DATE</span>
+            <span class="billing-label">AGING</span>
+          </div>
+          <div class="billing-row">
+            <span class="status-icon">✓</span>
+            <span class="billing-type down-payment">DOWN PAYMENT</span>
+            <span>5/25/2023</span>
+            <span>6/24/2023</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="billing-card" onclick="openBillingModal('4823', 'PROGRESS BILLING 1', '10/23/2023', '11/22/2023', '₱49,370.15', true, '4120100131 PHC PLANT 1 CCTV VIEWING (CANTEEN...)', 'PHC PLANT 1 CCTV VIEWING (...', '4120100135')">
+        <div class="billing-number">4823</div>
+        <div class="billing-details">
+          <div class="billing-row">
+            <span class="billing-label">STATUS</span>
+            <span class="billing-label">TYPE OF BILLING</span>
+            <span class="billing-label">BS DATE</span>
+            <span class="billing-label">AGING</span>
+          </div>
+          <div class="billing-row">
+            <span class="status-icon">✓</span>
+            <span class="billing-type progress-billing">PROGRESS BILLING 1</span>
+            <span>10/23/2023</span>
+            <span>11/22/2023</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="billing-card" onclick="openBillingModal('2622', 'RETENTION', '5/14/2024', '6/13/2024', '₱49,370.15', true, '4120100131 PHC PLANT 1 CCTV VIEWING (CANTEEN...)', 'PHC PLANT 1 CCTV VIEWING (...', '4120100135')">
+        <div class="billing-number">2622</div>
+        <div class="billing-details">
+          <div class="billing-row">
+            <span class="billing-label">STATUS</span>
+            <span class="billing-label">TYPE OF BILLING</span>
+            <span class="billing-label">BS DATE</span>
+            <span class="billing-label">AGING</span>
+          </div>
+          <div class="billing-row">
+            <span class="status-icon">✓</span>
+            <span class="billing-type retention">RETENTION</span>
+            <span>5/14/2024</span>
+            <span>6/13/2024</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="billing-card" onclick="openBillingModal('4849', 'FULL PAYMENT', '11/22/2023', '12/22/2023', '₱49,370.15', true, '4120100131 PHC PLANT 1 CCTV VIEWING (CANTEEN...)', 'PHC PLANT 1 CCTV VIEWING (...', '4120100135')">
+        <div class="billing-number">4849</div>
+        <div class="billing-details">
+          <div class="billing-row">
+            <span class="billing-label">STATUS</span>
+            <span class="billing-label">TYPE OF BILLING</span>
+            <span class="billing-label">BS DATE</span>
+            <span class="billing-label">AGING</span>
+          </div>
+          <div class="billing-row">
+            <span class="status-icon">✓</span>
+            <span class="billing-type full-payment">FULL PAYMENT</span>
+            <span>11/22/2023</span>
+            <span>12/22/2023</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Billing Modal -->
+<div id="billingModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button class="modal-nav-btn" onclick="previousBilling()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+      <h2 id="modalBsNumber" class="modal-title">4849</h2>
+      <button class="modal-nav-btn" onclick="nextBilling()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+      <button class="modal-close" onclick="closeBillingModal()">&times;</button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="modal-field">
+        <label class="modal-label">BS #</label>
+        <div id="modalBsNumberValue" class="modal-value">4849</div>
+      </div>
+
+      <div class="modal-field">
+        <label class="modal-label">PROJECT</label>
+        <div class="modal-project-link">
+          <div class="modal-project-info">
+            <div id="modalProjectTitle" class="modal-project-title">4120100135 PHC PLANT 1 CCTV VIEWING (CANTEEN...</div>
+            <div class="modal-project-details">
+              <span class="modal-project-label">PROJECT TITLE</span>
+              <span id="modalProjectShortTitle">PHC PLANT 1 CCTV VIEWING (...</span>
+            </div>
+            <div class="modal-project-details">
+              <span class="modal-project-label">PO #</span>
+              <span id="modalProjectPo">4120100135</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-field">
+        <label class="modal-label">STATUS</label>
+        <div class="modal-value">
+          <span id="modalStatus" class="status-icon">✓</span>
+        </div>
+      </div>
+
+      <div class="modal-field">
+        <label class="modal-label">BS DATE</label>
+        <div id="modalBsDate" class="modal-value">11/22/2023</div>
+      </div>
+
+      <div class="modal-field">
+        <label class="modal-label">AGING</label>
+        <div id="modalAging" class="modal-value">12/22/2023</div>
+      </div>
+
+      <div class="modal-field">
+        <label class="modal-label">TYPE OF BILLING</label>
+        <div class="modal-value">
+          <span id="modalBillingType" class="billing-type full-payment">FULL PAYMENT</span>
+        </div>
+      </div>
+
+      <div class="modal-field">
+        <label class="modal-label">BILLED AMOUNT</label>
+        <div id="modalBilledAmount" class="modal-value modal-amount">₱49,370.15</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% block extra_js %}
+<script src="{% static 'js/project_summary.js' %}"></script>
+{% endblock %}
+{% endblock %}

@@ -1,13 +1,12 @@
 {% if query %}
   {% for update in updates %}
     <tr>
+      <td>{{ update.date|date:"F d, Y h:i A" }}</td>
       <td>{{ update.po_supplier|default:"—" }}</td>
       <td>{{ update.po_client|default:"—" }}</td>
       <td>{{ update.dr_no|default:"—" }}</td>
       <td>{{ update.item.item_name }}</td>
       <td>{{ update.quantity }}</td>
-      <td>{{ update.date|date:"F d, Y h:i A" }}</td>
-      <td>{{ update.user.username|default:"—" }}</td>
       <td>{{ update.get_transaction_type_display }}</td>
       <td>{{ update.updated_by_user|default:"—" }}</td>
     </tr>

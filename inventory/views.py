@@ -1,11 +1,12 @@
 import json
+import re
 import traceback
 from datetime import datetime, timedelta
 
 from django.contrib import messages
 from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.db import IntegrityError, transaction
+from django.db import transaction
 from django.db.models import Prefetch, Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -91,14 +92,14 @@ def add_item(request):
             #  Extract form data
             item_name = request.POST.get("item", "").strip()
             description = request.POST.get("description", "").strip()
-            total_stock_raw = request.POST.get("total_stock", "").strip()
-            total_stock = int(total_stock_raw) if total_stock_raw.isdigit() else 0
+            # total_stock_raw = request.POST.get("total_stock", "").strip()
+            # total_stock = int(total_stock_raw) if total_stock_raw.isdigit() else 0
 
-            allocated_raw = request.POST.get("allocated_quantity", "").strip()
-            allocated_quantity = int(allocated_raw) if allocated_raw.isdigit() else 0
+            # allocated_raw = request.POST.get("allocated_quantity", "").strip()
+            # allocated_quantity = int(allocated_raw) if allocated_raw.isdigit() else 0
 
             unit_of_quantity = request.POST.get("unit_of_quantity", "").strip() or "pcs"
-            part_no = request.POST.get("part_no", "").strip() or None
+            # part_no = request.POST.get("part_no", "").strip() or None
             image = request.FILES.get("image")
 
             # Parse user-supplied date
@@ -117,38 +118,38 @@ def add_item(request):
             else:
                 date_added = timezone.now()
 
-            # Parse serial numbers safely
-            serial_numbers_raw = request.POST.get("serial_numbers", "") or ""
-            serial_numbers = [s.strip() for s in serial_numbers_raw.split(",") if s.strip()]
-            serial_numbers = list(dict.fromkeys(serial_numbers))  # remove duplicates, preserve order
+            # # Parse serial numbers safely
+            # serial_numbers_raw = request.POST.get("serial_numbers", "") or ""
+            # serial_numbers = [s.strip() for s in serial_numbers_raw.split(",") if s.strip()]
+            # serial_numbers = list(dict.fromkeys(serial_numbers))  # remove duplicates, preserve order
 
-            # Strict 1:1 rule between total_stock and serial numbers
-            if serial_numbers:
-                if len(serial_numbers) != total_stock:
-                    error_message = f" The number of serial numbers ({len(serial_numbers)}) " f"must match the total stock ({total_stock})."
-                    # Re-render the same form without clearing user data
-                    return render(
-                        request,
-                        "inventory/add_item.html",
-                        {
-                            "error_message": error_message,
-                            "today": timezone.now(),
-                            # Preserve previously entered data
-                            "form_data": {
-                                "item": item_name,
-                                "description": description,
-                                "total_stock": total_stock_raw,
-                                "allocated_quantity": allocated_raw,
-                                "unit_of_quantity": unit_of_quantity,
-                                "part_no": part_no,
-                                "serial_numbers": ", ".join(serial_numbers),
-                            },
-                        },
-                    )
-            else:
-                # If serials are not provided but total_stock > 0, allow only if item does not use serial tracking
-                # (We assume no serial tracking means okay to skip)
-                pass  # no action needed
+            # # Strict 1:1 rule between total_stock and serial numbers
+            # if serial_numbers:
+            #     if len(serial_numbers) != total_stock:
+            #         error_message = f" The number of serial numbers ({len(serial_numbers)}) " f"must match the total stock ({total_stock})
+            #         # Re-render the same form without clearing user data
+            #         return render(
+            #             request,
+            #             "inventory/add_item.html",
+            #             {
+            #                 "error_message": error_message,
+            #                 "today": timezone.now(),
+            #                 # Preserve previously entered data
+            #                 "form_data": {
+            #                     "item": item_name,
+            #                     "description": description,
+            #                     "total_stock": total_stock_raw,
+            #                     "allocated_quantity": allocated_raw,
+            #                     "unit_of_quantity": unit_of_quantity,
+            #                     "part_no": part_no,
+            #                     "serial_numbers": ", ".join(serial_numbers),
+            #                 },
+            #             },
+            #         )
+            # else:
+            #     # If serials are not provided but total_stock > 0, allow only if item does not use serial tracking
+            #     # (We assume no serial tracking means okay to skip)
+            #     pass  # no action needed
 
             # Validation
             if not item_name or not description:
@@ -156,46 +157,48 @@ def add_item(request):
                 return redirect("add_item")
 
             #  Create Item
-            item = Item.objects.create(
+            Item.objects.create(
                 item_name=item_name,
                 description=description,
-                total_stock=0,
-                allocated_quantity=allocated_quantity,
-                unit_of_quantity=unit_of_quantity,
-                part_no=part_no,
                 image=image,
+                total_stock=0,
+                allocated_quantity=0,
+                unit_of_quantity=unit_of_quantity,
+                part_no=None,
+                is_deleted=False,
+                created=timezone.now(),
                 user=request.user,
                 date_last_modified=date_added,
             )
 
-            # Create Serial Numbers (if any)
-            created_sn = 0
-            for sn in serial_numbers:
-                try:
-                    ItemSerial.objects.create(item=item, serial_no=sn, is_available=True)
-                    created_sn += 1
-                except IntegrityError:
-                    continue  # skip duplicates silently
+            # # Create Serial Numbers (if any)
+            # created_sn = 0
+            # for sn in serial_numbers:
+            #     try:
+            #         ItemSerial.objects.create(item=item, serial_no=sn, is_available=True)
+            #         created_sn += 1
+            #     except IntegrityError:
+            #         continue  # skip duplicates silently
 
             # Log in ItemUpdate (Initial Import)
             # When adding new item
-            initial_quantity = total_stock  # total stock entered in the form
-            ItemUpdate.objects.create(
-                item=item,
-                transaction_type="IN",
-                quantity=initial_quantity,
-                serial_numbers=serial_numbers if serial_numbers else None,
-                location="Initial Import",
-                remarks="Initial item creation",
-                user=request.user,
-                updated_by_user=request.user.username,
-                date=date_added,
-            )
+            # initial_quantity = total_stock  # total stock entered in the form
+            # ItemUpdate.objects.create(
+            #     item=item,
+            #     transaction_type="IN",
+            #     quantity=initial_quantity,
+            #     serial_numbers=serial_numbers if serial_numbers else None,
+            #     location="Initial Import",
+            #     remarks="Initial item creation",
+            #     user=request.user,
+            #     updated_by_user=request.user.username,
+            #     date=date_added,
+            # )
 
-            msg = f" Item '{item_name}' added successfully!"
-            if created_sn:
-                msg += f" ({created_sn} serials added)"
-            messages.success(request, msg)
+            # msg = f" Item '{item_name}' added successfully!"
+            # if created_sn:
+            #     msg += f" ({created_sn} serials added)"
+            # messages.success(request, msg)
             return redirect("inventory")
 
         except Exception as e:
@@ -463,63 +466,62 @@ def undo_transaction(request, update_id):
     item = update.item
 
     try:
-        #  Revert IN transaction
+        # 1️⃣ Revert IN transaction
         if update.transaction_type == "IN":
             item.total_stock = max(item.total_stock - update.quantity, 0)
             item.save(update_fields=["total_stock"])
 
-            # Make serials unavailable again if they were added
+            # Remove serials added by this transaction
             if update.serial_numbers:
                 serials = parse_serials(update.serial_numbers)
                 ItemSerial.objects.filter(item=item, serial_no__in=serials).delete()
 
-        #  Revert OUT transaction
+        # 2️⃣ Revert OUT transaction
         elif update.transaction_type == "OUT":
             item.total_stock += update.quantity
             item.save(update_fields=["total_stock"])
+
+            # Mark this OUT as undone
+            update.undone = True
+            update.save(update_fields=["undone"])
 
             # Make serials available again
             if update.serial_numbers:
                 serials = parse_serials(update.serial_numbers)
                 ItemSerial.objects.filter(item=item, serial_no__in=serials).update(is_available=True)
 
-            # If this OUT was converted from an ALLOCATE, re-enable that ALLOCATE transaction
-            if update.remarks and "Converted from ALLOCATE" in update.remarks:
-                import re
-
-                match = re.search(r"ALLOCATE #(\d+)", update.remarks)
+            # 🔧 If this OUT was converted from an ALLOCATED, restore it
+            if update.remarks and "Converted from ALLOCATED" in update.remarks:
+                match = re.search(r"ALLOCATED #(\d+)", update.remarks)
                 if match:
                     allocate_id = match.group(1)
                     try:
                         allocate_txn = ItemUpdate.objects.get(id=allocate_id, transaction_type="ALLOCATED")
-                        allocate_txn.is_converted = False
+                        allocate_txn.is_converted = False  # ✅ restore flag
                         allocate_txn.save(update_fields=["is_converted"])
                     except ItemUpdate.DoesNotExist:
-                        pass  # skip silently if it no longer exists
+                        pass  # silently skip if not found
 
-                # Also return allocated quantity to allocated pool
+                # Return quantity to allocated pool
                 item.allocated_quantity += update.quantity
                 item.save(update_fields=["allocated_quantity"])
 
-        #  Revert ALLOCATED transaction
+        # 3️⃣ Revert ALLOCATED transaction
         elif update.transaction_type == "ALLOCATED":
             item.allocated_quantity = max(item.allocated_quantity - update.allocated_quantity, 0)
             item.save(update_fields=["allocated_quantity"])
 
-            # Make serials available again, unless this OUT came from an ALLOCATE
+        # 4️⃣ Serial availability correction
         if update.serial_numbers:
             serials = parse_serials(update.serial_numbers)
-            if update.remarks and "Converted from ALLOCATE" in update.remarks:
-                # Revert to reserved state (ALLOCATED again)
+            if update.remarks and "Converted from ALLOCATED" in update.remarks:
+                # If this was a converted OUT, serials revert to allocated (unavailable)
                 ItemSerial.objects.filter(item=item, serial_no__in=serials).update(is_available=False)
             else:
-                # Normal OUT undo — make available
+                # Normal OUT undo — make serials available
                 ItemSerial.objects.filter(item=item, serial_no__in=serials).update(is_available=True)
 
-        # Delete the reverted transaction
-        update.undone = True
-        update.save(update_fields=["undone"])
-        # Log in transaction history
+        # 5️⃣ Log in transaction history
         TransactionHistory.objects.create(
             item=item,
             user=request.user,
@@ -530,14 +532,14 @@ def undo_transaction(request, update_id):
             remarks=f"Reverted {update.transaction_type} transaction (ID: {update_id})",
         )
 
-        messages.success(request, f" {update.transaction_type} transaction successfully reverted.")
+        messages.success(request, f"{update.transaction_type} transaction successfully reverted.")
         return redirect("item_history", item_id=item.id)
 
     except Exception as e:
         import traceback
 
         traceback.print_exc()
-        messages.error(request, f" Failed to revert: {str(e)}")
+        messages.error(request, f"Failed to revert: {str(e)}")
         return redirect("item_history", item_id=item.id)
 
 
@@ -576,7 +578,7 @@ def convert_allocate_to_out(request, update_id):
 
     # Prevent double conversion
     if allocate_update.is_converted:
-        messages.warning(request, " This ALLOCATED transaction has already been converted to OUT.")
+        messages.warning(request, "This ALLOCATED transaction has already been converted to OUT.")
         return redirect("item_history", item_id=item.id)
 
     if request.method != "POST":
@@ -662,7 +664,7 @@ def convert_allocate_to_out(request, update_id):
             remarks=f"Converted from ALLOCATED (ID: {allocate_update.id})",
         )
 
-        messages.success(request, " ALLOCATED transaction converted to OUT successfully!")
+        messages.success(request, "ALLOCATED transaction converted to OUT successfully!")
         return redirect("item_history", item_id=item.id)
 
     except Exception as e:

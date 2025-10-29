@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/assets_tools.css' %}">
+{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Assets & Tools</h1>
+
+{% if messages %}
+  <div class="messages">
+    {% for message in messages %}
+      <div class="alert {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<div class="page-controls">
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="Search assets or tools..." />
+    <i class="bi bi-search"></i>
+  </div>
+
+  <div class="button-stack">
+    <button class="add-btn modern-add-btn" onclick="window.location.href='#'">
+      <i class="fas fa-plus"></i> Add Asset / Tool
+    </button>
+  </div>
+</div>
+
+<div class="inventory-card content-card">
+  <div class="table-responsive">
+    <table class="inventory-table data-table">
+      <thead>
+        <tr>
+          <th class="table-title">Date</th>
+          <th class="table-title">Tool / Asset Name</th>
+          <th class="table-title">Image</th>
+          <th class="table-title">Warranty Date</th>
+          <th class="table-title">Assigned User</th>
+          <th class="table-title">Who Made the Assignment</th>
+          <th class="table-title" style="text-align: center;">Actions</th>
+        </tr>
+      </thead>
+
+      <tbody id="assetsToolsTableBody">
+        <!-- Dummy Data -->
+        <tr>
+          <td>October 15, 2025</td>
+          <td>Electric Drill</td>
+          <td>
+            <img src="{% static 'img/sample-drill.jpg' %}" alt="Electric Drill" class="thumbnail" onclick="showImagePopup('{% static 'img/sample-drill.jpg' %}')">
+          </td>
+          <td>October 15, 2027</td>
+          <td>John Doe</td>
+          <td>Admin User</td>
+          <td style="text-align: center;">
+            <button class="update-btn action-btn">Update</button>
+            <button class="delete-btn action-btn" id="red-btn">Delete</button>
+          </td>
+        </tr>
+
+        <tr>
+          <td>September 30, 2025</td>
+          <td>Welding Machine</td>
+          <td>
+            <img src="{% static 'img/sample-welding.jpg' %}" alt="Welding Machine" class="thumbnail" onclick="showImagePopup('{% static 'img/sample-welding.jpg' %}')">
+          </td>
+          <td>September 30, 2028</td>
+          <td>Jane Smith</td>
+          <td>Superadmin</td>
+          <td style="text-align: center;">
+            <button class="update-btn action-btn">Update</button>
+            <button class="delete-btn action-btn" id="red-btn">Delete</button>
+          </td>
+        </tr>
+
+        <tr>
+          <td>August 12, 2025</td>
+          <td>Company Laptop</td>
+          <td>
+            <img src="{% static 'img/sample-laptop.jpg' %}" alt="Company Laptop" class="thumbnail" onclick="showImagePopup('{% static 'img/sample-laptop.jpg' %}')">
+          </td>
+          <td>August 12, 2026</td>
+          <td>Michael Reyes</td>
+          <td>Admin User</td>
+          <td style="text-align: center;">
+            <button class="update-btn action-btn">Update</button>
+            <button class="delete-btn action-btn" id="red-btn">Delete</button>
+          </td>
+        </tr>
+
+        <tr>
+          <td>July 10, 2025</td>
+          <td>Office Printer</td>
+          <td>
+            <img src="{% static 'img/sample-printer.jpg' %}" alt="Office Printer" class="thumbnail" onclick="showImagePopup('{% static 'img/sample-printer.jpg' %}')">
+          </td>
+          <td>July 10, 2027</td>
+          <td>Sarah Cruz</td>
+          <td>Superadmin</td>
+          <td style="text-align: center;">
+            <button class="update-btn action-btn">Update</button>
+            <button class="delete-btn action-btn" id="red-btn">Delete</button>
+          </td>
+        </tr>
+
+        <tr>
+          <td>October 2, 2025</td>
+          <td>Measuring Tape</td>
+          <td>
+            <img src="{% static 'img/sample-tape.jpg' %}" alt="Measuring Tape" class="thumbnail" onclick="showImagePopup('{% static 'img/sample-tape.jpg' %}')">
+          </td>
+          <td>—</td>
+          <td>Unassigned</td>
+          <td>Admin User</td>
+          <td style="text-align: center;">
+            <button class="update-btn action-btn">Update</button>
+            <button class="delete-btn action-btn" id="red-btn">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- IMAGE POPUP / LIGHTBOX -->
+<div id="imageLightboxOverlay" class="image-lightbox-overlay" aria-hidden="true" role="dialog">
+  <button id="imageLightboxClose" class="image-lightbox-close" aria-label="Close image">&times;</button>
+  <div class="image-lightbox-inner" role="document">
+    <img id="imageLightboxImg" alt="Preview" />
+  </div>
+</div>
+
+<script src="{% static 'js/assets_tools.js' %}"></script>
+{% endblock %}
