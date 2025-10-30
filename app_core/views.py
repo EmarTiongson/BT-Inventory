@@ -1,7 +1,10 @@
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
+
+from .models import AssetTool, AssetUpdate
 
 User = get_user_model()
 
@@ -59,3 +62,173 @@ def assets_tools_view(request):
 @login_required
 def project_summary_view(request):
     return render(request, "app_core/project_summary.html")
+
+
+@login_required
+def assets_tools(request):
+    """
+    View to display all assets and tools
+    """
+    # Get all assets/tools ordered by date added (newest first)
+    assets_tools = AssetTool.objects.all().order_by("-date_added")
+
+    context = {"assets_tools": assets_tools}
+
+    return render(request, "app_core/assets_tools.html", context)
+
+
+@login_required
+def add_asset_tool(request):
+    """
+    View to handle adding new assets and tools
+    """
+    if request.method == "POST":
+        try:
+            # Get form data
+            date_added = request.POST.get("date_added")
+            tool_name = request.POST.get("tool_name")
+            description = request.POST.get("description")
+            warranty_date = request.POST.get("warranty_date")
+            image = request.FILES.get("image")
+
+            # Get current user as assigned_by
+            assigned_by = request.user.username
+
+            # Validate required fields
+            if not all([date_added, tool_name, description, image]):
+                return render(
+                    request,
+                    "app_core/add_asset_tool.html",
+                    {
+                        "error_message": "Please fill in all required fields (Date, Name, Description, and Image).",
+                        "form_data": request.POST,
+                        "today": timezone.now().date(),
+                    },
+                )
+
+            # Create new asset/tool entry
+            AssetTool.objects.create(
+                date_added=date_added,
+                tool_name=tool_name,
+                description=description,
+                warranty_date=warranty_date if warranty_date else None,
+                assigned_user=None,  # Initially unassigned
+                assigned_by=assigned_by,  # Current logged-in user
+                image=image,
+            )
+
+            # Success message
+            messages.success(request, f"{tool_name} has been added successfully!")
+            return redirect("assets_tools")
+
+        except Exception as e:
+            # More detailed error message
+            print(f"Error in add_asset_tool: {str(e)}")  # For debugging in console
+            return render(
+                request,
+                "app_core/add_asset_tool.html",
+                {"error_message": f"An error occurred while saving: {str(e)}", "form_data": request.POST, "today": timezone.now().date()},
+            )
+
+    # GET request - display the form
+    return render(request, "app_core/add_asset_tool.html", {"today": timezone.now().date()})
+
+
+@login_required
+def update_asset(request, asset_id):
+    # Fetch asset instance safely
+    asset = get_object_or_404(AssetTool, id=asset_id)
+
+    if request.method == "POST":
+        new_assigned_to = request.POST.get("assigned_user")
+        remarks = request.POST.get("remarks")
+        transaction_date_str = request.POST.get("transaction_date")
+
+        # Convert manually inputted date/time
+        if transaction_date_str:
+            try:
+                transaction_date = timezone.datetime.fromisoformat(transaction_date_str)
+                # Ensure timezone aware
+                if timezone.is_naive(transaction_date):
+                    transaction_date = timezone.make_aware(transaction_date)
+            except ValueError:
+                transaction_date = timezone.now()
+        else:
+            transaction_date = timezone.now()
+
+        # ✅ Only create a history record if assigned user actually changes
+        if new_assigned_to and new_assigned_to != asset.assigned_user:
+            previous_user = asset.assigned_user
+
+            # ✅ Log update in AssetUpdate
+            AssetUpdate.objects.create(
+                asset=asset,
+                previous_user=previous_user,
+                assigned_to=new_assigned_to,
+                remarks=remarks,
+                updated_by=request.user,  # ✅ Correct: pass user object
+                transaction_date=transaction_date,
+            )
+
+            # ✅ Update the asset record itself
+            asset.assigned_user = new_assigned_to
+            asset.assigned_by = request.user.username
+            asset.remarks = remarks
+            asset.save()
+
+            messages.success(
+                request,
+                f"Asset reassigned from {previous_user or 'Unassigned'} to {new_assigned_to}.",
+            )
+        else:
+            messages.info(request, "No changes in assignment were made.")
+
+        return redirect("asset_history", asset_id=asset.id)
+
+    # ✅ Pass correct context variable name and pre-fill datetime
+    current_datetime = timezone.now().strftime("%Y-%m-%dT%H:%M")
+    context = {
+        "asset_tool": asset,
+        "current_datetime": current_datetime,
+    }
+
+    return render(request, "app_core/update_asset_tool.html", context)
+
+
+@login_required
+def delete_asset_tool(request, id):
+    """
+    View to handle deleting assets and tools
+    """
+    asset_tool = get_object_or_404(AssetTool, id=id)
+
+    if request.method == "POST":
+        tool_name = asset_tool.tool_name
+
+        # Delete the image file if it exists
+        if asset_tool.image:
+            asset_tool.image.delete()
+
+        # Delete the database entry
+        asset_tool.delete()
+
+        messages.success(request, f"{tool_name} has been deleted successfully!")
+        return redirect("assets_tools")
+
+    # If GET request, redirect back to assets_tools page
+    return redirect("assets_tools")
+
+
+@login_required
+def asset_history(request, asset_id):
+    asset = get_object_or_404(AssetTool, id=asset_id)
+
+    # ✅ Fetch related updates from AssetUpdate, most recent first
+    updates = asset.updates.all().order_by("-transaction_date")
+
+    context = {
+        "asset": asset,
+        "updates": updates,
+    }
+
+    return render(request, "app_core/asset_history.html", context)

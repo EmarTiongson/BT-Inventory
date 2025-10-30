@@ -23,7 +23,7 @@
   </div>
 
   <div class="button-stack">
-    <button class="add-btn modern-add-btn" onclick="window.location.href='#'">
+    <button class="add-btn modern-add-btn" onclick="window.location.href='{% url 'add_asset_tool' %}'">
       <i class="fas fa-plus"></i> Add Asset / Tool
     </button>
   </div>
@@ -39,87 +39,48 @@
           <th class="table-title">Image</th>
           <th class="table-title">Warranty Date</th>
           <th class="table-title">Assigned User</th>
-          <th class="table-title">Who Made the Assignment</th>
+          <th class="table-title">Assigned By</th>
           <th class="table-title" style="text-align: center;">Actions</th>
         </tr>
       </thead>
 
       <tbody id="assetsToolsTableBody">
-        <!-- Dummy Data -->
+        {% for asset in assets_tools %}
         <tr>
-          <td>October 15, 2025</td>
-          <td>Electric Drill</td>
+          <td>{{ asset.date_added|date:"F d, Y" }}</td>
+          <td><a href="{% url 'asset_history' asset.id %}">{{ asset.tool_name }}</a></td>
           <td>
-            <img src="{% static 'img/sample-drill.jpg' %}" alt="Electric Drill" class="thumbnail" onclick="showImagePopup('{% static 'img/sample-drill.jpg' %}')">
+            {% if asset.image %}
+            <img src="{{ asset.image.url }}" alt="{{ asset.tool_name }}" class="thumbnail" onclick="showImagePopup('{{ asset.image.url }}')">
+            {% else %}
+            <span>No Image</span>
+            {% endif %}
           </td>
-          <td>October 15, 2027</td>
-          <td>John Doe</td>
-          <td>Admin User</td>
+          <td>
+            {% if asset.warranty_date %}
+              {{ asset.warranty_date|date:"F d, Y" }}
+            {% else %}
+              —
+            {% endif %}
+          </td>
+          <td>{{ asset.assigned_user|default:"Unassigned" }}</td>
+          <td>{{ asset.assigned_by }}</td>
           <td style="text-align: center;">
-            <button class="update-btn action-btn">Update</button>
-            <button class="delete-btn action-btn" id="red-btn">Delete</button>
+            <button class="action-btn update-btn" onclick="window.location.href='{% url 'update_asset_tool' asset.id %}'">
+              <i class="bi bi-pencil-square"></i> Update
+            </button>
+            <button class="action-btn delete-btn" onclick="confirmDelete('{{ asset.tool_name }}', '{% url 'delete_asset_tool' asset.id %}')">
+              <i class="bi bi-trash-fill"></i> Delete
+            </button>
           </td>
         </tr>
-
+        {% empty %}
         <tr>
-          <td>September 30, 2025</td>
-          <td>Welding Machine</td>
-          <td>
-            <img src="{% static 'img/sample-welding.jpg' %}" alt="Welding Machine" class="thumbnail" onclick="showImagePopup('{% static 'img/sample-welding.jpg' %}')">
-          </td>
-          <td>September 30, 2028</td>
-          <td>Jane Smith</td>
-          <td>Superadmin</td>
-          <td style="text-align: center;">
-            <button class="update-btn action-btn">Update</button>
-            <button class="delete-btn action-btn" id="red-btn">Delete</button>
+          <td colspan="7" style="text-align: center; padding: 40px;">
+            No assets or tools added yet. Click "Add Asset / Tool" to get started.
           </td>
         </tr>
-
-        <tr>
-          <td>August 12, 2025</td>
-          <td>Company Laptop</td>
-          <td>
-            <img src="{% static 'img/sample-laptop.jpg' %}" alt="Company Laptop" class="thumbnail" onclick="showImagePopup('{% static 'img/sample-laptop.jpg' %}')">
-          </td>
-          <td>August 12, 2026</td>
-          <td>Michael Reyes</td>
-          <td>Admin User</td>
-          <td style="text-align: center;">
-            <button class="update-btn action-btn">Update</button>
-            <button class="delete-btn action-btn" id="red-btn">Delete</button>
-          </td>
-        </tr>
-
-        <tr>
-          <td>July 10, 2025</td>
-          <td>Office Printer</td>
-          <td>
-            <img src="{% static 'img/sample-printer.jpg' %}" alt="Office Printer" class="thumbnail" onclick="showImagePopup('{% static 'img/sample-printer.jpg' %}')">
-          </td>
-          <td>July 10, 2027</td>
-          <td>Sarah Cruz</td>
-          <td>Superadmin</td>
-          <td style="text-align: center;">
-            <button class="update-btn action-btn">Update</button>
-            <button class="delete-btn action-btn" id="red-btn">Delete</button>
-          </td>
-        </tr>
-
-        <tr>
-          <td>October 2, 2025</td>
-          <td>Measuring Tape</td>
-          <td>
-            <img src="{% static 'img/sample-tape.jpg' %}" alt="Measuring Tape" class="thumbnail" onclick="showImagePopup('{% static 'img/sample-tape.jpg' %}')">
-          </td>
-          <td>—</td>
-          <td>Unassigned</td>
-          <td>Admin User</td>
-          <td style="text-align: center;">
-            <button class="update-btn action-btn">Update</button>
-            <button class="delete-btn action-btn" id="red-btn">Delete</button>
-          </td>
-        </tr>
+        {% endfor %}
       </tbody>
     </table>
   </div>
@@ -130,6 +91,21 @@
   <button id="imageLightboxClose" class="image-lightbox-close" aria-label="Close image">&times;</button>
   <div class="image-lightbox-inner" role="document">
     <img id="imageLightboxImg" alt="Preview" />
+  </div>
+</div>
+
+<!-- DELETE CONFIRMATION MODAL -->
+<div id="deleteModal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <h2>Confirm Delete</h2>
+    <p>Are you sure you want to delete <strong id="deleteItemName"></strong>?</p>
+    <div class="modal-actions">
+      <button type="button" class="cancel-btn" onclick="closeDeleteModal()">Cancel</button>
+      <form id="deleteForm" method="POST" style="display: inline;">
+        {% csrf_token %}
+        <button type="submit" class="save-btn">Delete</button>
+      </form>
+    </div>
   </div>
 </div>
 

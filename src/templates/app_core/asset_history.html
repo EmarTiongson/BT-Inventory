@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/add_asset_tool.css' %}">
+<style>
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+}
+.history-table th, .history-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+.history-table th {
+  background-color: var(--table-header-bg, #f4f4f4);
+  font-weight: 600;
+}
+.history-table tr:nth-child(even) {
+  background-color: #fafafa;
+}
+.history-table tr:hover {
+  background-color: #f1f1f1;
+}
+.back-btn {
+  margin-top: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  color: var(--accent-color, #007bff);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="add-item-container">
+  <h1 class="page-title">Asset / Tool History</h1>
+
+  <div class="inventory-card">
+    <h2 style="margin-bottom: 10px;">{{ asset.tool_name }}</h2>
+    <p style="margin-bottom: 20px;">{{ asset.description }}</p>
+
+    {% if updates %}
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Date & Time</th>
+            <th>Previous User</th>
+            <th>Assigned To</th>
+            <th>Remarks</th>
+            <th>Updated By</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for update in updates %}
+            <tr>
+              <td>{{ update.transaction_date|date:"Y-m-d H:i" }}</td>
+              <td>{{ update.previous_user|default:"—" }}</td>
+              <td>{{ update.assigned_to|default:"—" }}</td>
+              <td>{{ update.remarks|default:"No remarks" }}</td>
+              <td>{{ update.updated_by.username|default:"System" }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>No history available for this asset/tool yet.</p>
+    {% endif %}
+  </div>
+
+  <!-- ✅ Back Button -->
+  <a href="{% url 'assets_tools' %}" class="back-btn">
+    <i class="bi bi-arrow-left-circle"></i> Back to Assets & Tools
+  </a>
+</div>
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/add_asset_tool.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="add-item-container">
+  <h1 class="page-title">Update Asset / Tool</h1>
+
+  <!-- ✅ Display Django messages -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+        <i class="bi bi-info-circle"></i> {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <div class="inventory-card">
+    <form method="POST" action="{% url 'update_asset_tool' asset_tool.id %}">
+      {% csrf_token %}
+
+      <div class="form-grid">
+        <!-- Tool / Asset Name -->
+        <input type="text"
+               name="tool_name"
+               placeholder="Tool / Asset Name"
+               value="{{ asset_tool.tool_name }}"
+               readonly disabled>
+
+        <!-- Description -->
+        <input type="text"
+               name="description"
+               placeholder="Description"
+               value="{{ asset_tool.description }}"
+               readonly disabled>
+
+        <!-- Assigned User -->
+        <input type="text"
+               name="assigned_user"
+               placeholder="Assigned User (Optional)"
+               value="{{ asset_tool.assigned_user|default:'' }}">
+
+        <!-- Assigned By -->
+        <input type="text"
+               name="assigned_by"
+               placeholder="Who Made the Assignment"
+               value="{{ request.user.username }}"
+               readonly>
+
+        <!-- ✅ Transaction Date & Time -->
+        <label for="transaction_date" class="label-field">Transaction Date & Time</label>
+        <input type="datetime-local"
+               id="transaction_date"
+               name="transaction_date"
+               value="{{ current_datetime }}"
+               required>
+
+        <!-- ✅ Remarks -->
+        <textarea name="remarks"
+                  placeholder="Remarks about this update (optional)"
+                  rows="3"
+                  style="resize: none;">{{ asset_tool.remarks|default:'' }}</textarea>
+      </div>
+
+      <!-- ===========================
+           SUBMIT SECTION
+      ============================ -->
+      <div class="submit-section">
+        <button type="submit" class="add-btn">
+          <i class="bi bi-check-square"></i> Update Asset / Tool
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ✅ Fixed Return Button -->
+<a href="{% url 'assets_tools' %}" class="return-btn-fixed">
+  <i class="bi bi-arrow-left-circle"></i> Back to Assets & Tools
+</a>
+
+<script src="{% static 'js/add_asset_tool.js' %}"></script>
+
+<!-- ✅ Auto-fill current datetime if empty -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const dtInput = document.getElementById("transaction_date");
+  if (dtInput && !dtInput.value) {
+    const now = new Date();
+    dtInput.value = now.toISOString().slice(0, 16);
+  }
+});
+</script>
+{% endblock %}

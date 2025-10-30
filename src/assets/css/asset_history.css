@@ -1,0 +1,184 @@
+/* ========================================================== */
+/* --- ASSET & TOOLS HISTORY PAGE --- */
+/* ========================================================== */
+
+.history-container {
+  padding: 20px;
+}
+
+.page-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #0f172a;
+  transition: color 0.3s ease;
+}
+
+/* ========================================================== */
+/* --- TABLE STYLING --- */
+/* ========================================================== */
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.history-table th,
+.history-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-right: 1px solid #e2e8f0;
+}
+
+.history-table th:last-child,
+.history-table td:last-child {
+  border-right: none;
+}
+
+.history-table thead th {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  background: #dce8f3;
+  color: #0f172a;
+  border-bottom: 2px solid #cbd5e1;
+}
+
+/* Alternating Rows */
+.history-table tbody td {
+  color: #0f172a;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.history-table tbody tr:nth-child(odd) td {
+  background-color: #ffffff;
+}
+
+.history-table tbody tr:nth-child(even) td {
+  background-color: #dce8f3;
+}
+
+.history-table tbody tr:hover td {
+  background-color: #e5e7eb !important;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+/* Empty state */
+.history-table tbody td[colspan] {
+  color: #64748b;
+  text-align: center;
+  font-style: italic;
+  padding: 40px;
+  background-color: #ffffff !important;
+}
+
+/* ========================================================== */
+/* --- TYPE STYLES --- */
+/* ========================================================== */
+
+.in-type {
+  color: #16a34a; /* green */
+  font-weight: bold;
+}
+
+.out-type {
+  color: #dc2626; /* red */
+  font-weight: bold;
+}
+
+.update-type {
+  color: #e67e22; /* orange */
+  font-weight: bold;
+}
+
+/* ========================================================== */
+/* --- RETURN BUTTON --- */
+/* ========================================================== */
+
+.return-btn-fixed {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 15px;
+  cursor: pointer;
+  background: #134686;
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(25, 55, 107, 0.3);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.return-btn-fixed:hover {
+  background: #0062d1;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(11, 99, 255, 0.4);
+}
+
+/* ========================================================== */
+/* --- DARK MODE --- */
+/* ========================================================== */
+
+body.dark-mode .page-title {
+  color: #f1f5f9;
+}
+
+body.dark-mode .history-table {
+  background: #1e293b;
+  border: 1px solid #334155;
+}
+
+body.dark-mode .history-table thead th {
+  background: #0f172a;
+  color: #cbd5e1;
+  border-bottom: 2px solid #475569;
+  border-right: 1px solid #334155;
+}
+
+body.dark-mode .history-table tbody td {
+  color: #e2e8f0;
+  border-bottom: 1px solid #334155;
+  border-right: 1px solid #334155;
+}
+
+body.dark-mode .history-table tbody tr:nth-child(odd) td {
+  background: #1e293b;
+}
+
+body.dark-mode .history-table tbody tr:nth-child(even) td {
+  background-color: #0f172a;
+}
+
+body.dark-mode .history-table tbody tr:hover td {
+  background-color: #334155 !important;
+}
+
+body.dark-mode .history-table tbody td[colspan] {
+  color: #94a3b8;
+  background: #1e293b !important;
+}
+
+/* Dark Mode Return Button */
+body.dark-mode .return-btn-fixed {
+  background: #D96F32;
+  box-shadow: 0 4px 10px rgba(217, 111, 50, 0.3);
+}
+
+body.dark-mode .return-btn-fixed:hover {
+  background: #c85a1f;
+  box-shadow: 0 6px 14px rgba(217, 111, 50, 0.4);
+}
