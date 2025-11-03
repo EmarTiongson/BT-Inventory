@@ -9,7 +9,7 @@ class AssetTool(models.Model):
     Model for storing Assets and Tools information
     """
 
-    date_added = models.DateField(default=timezone.now)
+    date_added = models.DateTimeField(default=timezone.now)
     tool_name = models.CharField(max_length=255)
     description = models.TextField()
     warranty_date = models.DateField(null=True, blank=True)
@@ -18,6 +18,7 @@ class AssetTool(models.Model):
     image = models.ImageField(upload_to="assets_tools/", null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    is_deleted = models.BooleanField(default=False)
 
     class Meta:
         ordering = ["-date_added"]
@@ -67,7 +68,7 @@ class AssetUpdate(models.Model):
     updated_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, help_text="The system user who performed the update."
     )
-    transaction_date = models.DateTimeField(default=timezone.now, help_text="The date and time this update was recorded.")
+    transaction_date = models.DateTimeField(auto_now_add=True, help_text="The date and time this update was recorded.")
 
     def __str__(self):
         return f"Update for {self.asset.tool_name} on {self.transaction_date.strftime('%Y-%m-%d %H:%M:%S')}"

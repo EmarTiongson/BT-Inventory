@@ -46,9 +46,9 @@
 
       <tbody id="assetsToolsTableBody">
         {% for asset in assets_tools %}
-        <tr>
+        <tr id="asset-row-{{ asset.id }}" style="transition: opacity 0.3s ease;">
           <td>{{ asset.date_added|date:"F d, Y" }}</td>
-          <td><a href="{% url 'asset_history' asset.id %}">{{ asset.tool_name }}</a></td>
+          <td><a href="{% url 'asset_history' asset.id %}" class="item-link">{{ asset.tool_name }}</a></td>
           <td>
             {% if asset.image %}
             <img src="{{ asset.image.url }}" alt="{{ asset.tool_name }}" class="thumbnail" onclick="showImagePopup('{{ asset.image.url }}')">
@@ -67,11 +67,11 @@
           <td>{{ asset.assigned_by }}</td>
           <td style="text-align: center;">
             <button class="action-btn update-btn" onclick="window.location.href='{% url 'update_asset_tool' asset.id %}'">
-              <i class="bi bi-pencil-square"></i> Update
+              Update
             </button>
-            <button class="action-btn delete-btn" onclick="confirmDelete('{{ asset.tool_name }}', '{% url 'delete_asset_tool' asset.id %}')">
-              <i class="bi bi-trash-fill"></i> Delete
-            </button>
+            {% if request.user.role == 'superadmin' %}
+              <button class="delete-btn action-btn" id="red-btn" data-asset-id="{{ asset.id }}">Delete</button>
+            {% endif %}
           </td>
         </tr>
         {% empty %}
@@ -94,20 +94,22 @@
   </div>
 </div>
 
-<!-- DELETE CONFIRMATION MODAL -->
-<div id="deleteModal" class="modal" style="display: none;">
-  <div class="modal-content">
-    <h2>Confirm Delete</h2>
-    <p>Are you sure you want to delete <strong id="deleteItemName"></strong>?</p>
-    <div class="modal-actions">
-      <button type="button" class="cancel-btn" onclick="closeDeleteModal()">Cancel</button>
-      <form id="deleteForm" method="POST" style="display: inline;">
-        {% csrf_token %}
-        <button type="submit" class="save-btn">Delete</button>
-      </form>
-    </div>
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="delete-modal hidden">
+  <div class="delete-modal-content">
+    <h3>Confirm Deletion</h3>
+    <p>Please enter your password to confirm asset/tool deletion.</p>
+
+    <form method="POST" id="deleteForm" data-url-template="{% url 'delete_asset_tool' 0 %}">
+      {% csrf_token %}
+      <input type="password" name="password" class="modal-input" placeholder="Enter password" required>
+      <div class="modal-actions">
+        <button type="button" class="cancel-btn" onclick="closeDeleteModal()">Cancel</button>
+        <button type="submit" class="confirm-btn">Confirm Delete</button>
+      </div>
+    </form>
   </div>
 </div>
 
-<script src="{% static 'js/assets_tools.js' %}"></script>
+<script src="{% static 'js/assets_tool.js' %}"></script>
 {% endblock %}

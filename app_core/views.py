@@ -1,6 +1,7 @@
 from django.contrib import messages
-from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
@@ -53,13 +54,6 @@ def admin_view(request):
 
 
 @login_required
-def assets_tools_view(request):
-    # Example: you can pass assets/tools data later
-    context = {"page_title": "Assets & Tools"}
-    return render(request, "app_core/assets_tools.html", context)
-
-
-@login_required
 def project_summary_view(request):
     return render(request, "app_core/project_summary.html")
 
@@ -67,10 +61,11 @@ def project_summary_view(request):
 @login_required
 def assets_tools(request):
     """
-    View to display all assets and tools
+    View to display all active (non-deleted) assets and tools
     """
-    # Get all assets/tools ordered by date added (newest first)
-    assets_tools = AssetTool.objects.all().order_by("-date_added")
+
+    # Get all non-deleted assets/tools ordered by date added (newest first)
+    assets_tools = AssetTool.objects.filter(is_deleted=False).order_by("-date_added")
 
     context = {"assets_tools": assets_tools}
 
@@ -196,26 +191,31 @@ def update_asset(request, asset_id):
 
 
 @login_required
-def delete_asset_tool(request, id):
+@user_passes_test(lambda u: u.role == "superadmin")  # Restrict to superadmins
+@transaction.atomic
+def delete_asset_tool(request, asset_id):
     """
-    View to handle deleting assets and tools
+    Soft-delete an Asset/Tool (Superadmin only).
+
+    Marks the asset as deleted instead of permanently removing it,
+    ensuring historical records remain accessible.
     """
-    asset_tool = get_object_or_404(AssetTool, id=id)
+    asset = get_object_or_404(AssetTool, id=asset_id)
 
     if request.method == "POST":
-        tool_name = asset_tool.tool_name
+        password = request.POST.get("password")
+        user = authenticate(username=request.user.username, password=password)
 
-        # Delete the image file if it exists
-        if asset_tool.image:
-            asset_tool.image.delete()
+        if user is not None:
+            asset.is_deleted = True
+            asset.save(update_fields=["is_deleted"])
+            messages.success(request, f"'{asset.tool_name}' was deleted successfully.")
+            return redirect("assets_tools")
+        else:
+            messages.error(request, "Incorrect password. Deletion cancelled.")
+            return redirect("assets_tools")
 
-        # Delete the database entry
-        asset_tool.delete()
-
-        messages.success(request, f"{tool_name} has been deleted successfully!")
-        return redirect("assets_tools")
-
-    # If GET request, redirect back to assets_tools page
+    messages.error(request, "Invalid request method.")
     return redirect("assets_tools")
 
 

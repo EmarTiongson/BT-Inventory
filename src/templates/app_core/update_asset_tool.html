@@ -23,46 +23,69 @@
       {% csrf_token %}
 
       <div class="form-grid">
-        <!-- Tool / Asset Name -->
-        <input type="text"
-               name="tool_name"
-               placeholder="Tool / Asset Name"
-               value="{{ asset_tool.tool_name }}"
-               readonly disabled>
 
-        <!-- Description -->
-        <input type="text"
-               name="description"
-               placeholder="Description"
-               value="{{ asset_tool.description }}"
-               readonly disabled>
+        <!-- ✅ Tool / Asset Name -->
+        <div class="form-field">
+          <label for="tool_name" class="field-label">Tool / Asset Name</label>
+          <input type="text"
+                 id="tool_name"
+                 name="tool_name"
+                 value="{{ asset_tool.tool_name }}"
+                 readonly
+                 disabled>
+        </div>
 
-        <!-- Assigned User -->
-        <input type="text"
-               name="assigned_user"
-               placeholder="Assigned User (Optional)"
-               value="{{ asset_tool.assigned_user|default:'' }}">
+        <!-- ✅ Description -->
+        <div class="form-field">
+          <label for="description" class="field-label">Description</label>
+          <input type="text"
+                 id="description"
+                 name="description"
+                 value="{{ asset_tool.description }}"
+                 readonly
+                 disabled>
+        </div>
 
-        <!-- Assigned By -->
-        <input type="text"
-               name="assigned_by"
-               placeholder="Who Made the Assignment"
-               value="{{ request.user.username }}"
-               readonly>
+        <!-- ✅ Assigned User -->
+        <div class="form-field">
+          <label for="assigned_user" class="field-label">Assigned User (Optional)</label>
+          <input type="text"
+                 id="assigned_user"
+                 name="assigned_user"
+                 placeholder="Enter assigned user"
+                 value="{{ asset_tool.assigned_user|default:'' }}">
+        </div>
+
+        <!-- ✅ Assigned By -->
+        <div class="form-field">
+          <label for="assigned_by" class="field-label">Assigned By</label>
+          <input type="text"
+                 id="assigned_by"
+                 name="assigned_by"
+                 value="{{ request.user.username }}"
+                 readonly>
+        </div>
 
         <!-- ✅ Transaction Date & Time -->
-        <label for="transaction_date" class="label-field">Transaction Date & Time</label>
-        <input type="datetime-local"
-               id="transaction_date"
-               name="transaction_date"
-               value="{{ current_datetime }}"
-               required>
+        <div class="form-field">
+          <label for="transaction_date" class="field-label">Transaction Date & Time</label>
+          <input type="datetime-local"
+                 id="transaction_date"
+                 name="transaction_date"
+                 value="{{ current_datetime }}"
+                 required>
+        </div>
 
         <!-- ✅ Remarks -->
-        <textarea name="remarks"
-                  placeholder="Remarks about this update (optional)"
-                  rows="3"
-                  style="resize: none;">{{ asset_tool.remarks|default:'' }}</textarea>
+        <div class="form-field" style="grid-column: 1 / -1;">
+          <label for="remarks" class="field-label">Remarks</label>
+          <textarea id="remarks"
+                    name="remarks"
+                    placeholder="Remarks about this update (optional)"
+                    rows="3"
+                    style="resize: none;">{{ asset_tool.remarks|default:'' }}</textarea>
+        </div>
+
       </div>
 
       <!-- ===========================

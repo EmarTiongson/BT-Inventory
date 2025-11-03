@@ -1,5 +1,10 @@
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
 /* ========================================================== */
-/* --- ASSET & TOOLS HISTORY PAGE --- */
+/* --- HISTORY PAGE BASE STYLES --- */
 /* ========================================================== */
 
 .history-container {
@@ -15,7 +20,7 @@
 }
 
 /* ========================================================== */
-/* --- TABLE STYLING --- */
+/* --- HISTORY TABLE - LIGHT MODE (DEFAULT) --- */
 /* ========================================================== */
 
 .history-table {
@@ -33,14 +38,10 @@
 .history-table td {
   padding: 12px 15px;
   text-align: left;
-  border-right: 1px solid #e2e8f0;
+  border: 1px solid #e2e8f0;
 }
 
-.history-table th:last-child,
-.history-table td:last-child {
-  border-right: none;
-}
-
+/* Table Header */
 .history-table thead th {
   font-weight: 600;
   text-transform: uppercase;
@@ -51,27 +52,30 @@
   border-bottom: 2px solid #cbd5e1;
 }
 
-/* Alternating Rows */
+/* Table Body - Light Mode Alternating Rows */
 .history-table tbody td {
   color: #0f172a;
   border-bottom: 1px solid #e2e8f0;
-}
+} 
 
+/* ODD ROWS - WHITE (1st, 3rd, 5th, etc.) */
 .history-table tbody tr:nth-child(odd) td {
   background-color: #ffffff;
 }
 
+/* EVEN ROWS - LIGHT GREY (2nd, 4th, 6th, etc.) */
 .history-table tbody tr:nth-child(even) td {
   background-color: #dce8f3;
 }
 
+/* HOVER STATE - Medium Grey */
 .history-table tbody tr:hover td {
   background-color: #e5e7eb !important;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
-/* Empty state */
+/* Empty state message */
 .history-table tbody td[colspan] {
   color: #64748b;
   text-align: center;
@@ -81,56 +85,146 @@
 }
 
 /* ========================================================== */
-/* --- TYPE STYLES --- */
+/* --- TYPE STYLES (IN/OUT/UPDATE) --- */
 /* ========================================================== */
 
 .in-type {
-  color: #16a34a; /* green */
+  color: #16a34a;
   font-weight: bold;
 }
 
 .out-type {
-  color: #dc2626; /* red */
+  color: #dc2626;
   font-weight: bold;
 }
 
 .update-type {
-  color: #e67e22; /* orange */
+  color: #e67e22;
   font-weight: bold;
 }
 
 /* ========================================================== */
-/* --- RETURN BUTTON --- */
+/* --- UNDONE/REVERTED ROW STYLES --- */
 /* ========================================================== */
 
-.return-btn-fixed {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
+.history-table tbody tr.undone td,
+.history-table tbody tr.reverted td {
+  background-color: #fde2e2 !important;
+  color: #1e293b !important;
+  font-style: italic;
+}
+
+/* ========================================================== */
+/* --- UNDO BUTTON --- */
+/* ========================================================== */
+
+.undo-btn {
+  background-color: #f97316;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.undo-btn:hover {
+  background-color: #ea580c;
+}
+
+/* ========================================================== */
+/* --- SERIAL TAG STYLING --- */
+/* ========================================================== */
+
+.serial-tag {
+  display: inline-block;
+  background-color: var(--tag-bg, #f3f4f6);
+  color: var(--tag-text, #111827);
+  border-radius: 8px;
+  padding: 2px 8px;
+  margin: 2px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* ========================================================== */
+/* --- CONVERT/ALLOCATE LINK STYLES --- */
+/* ========================================================== */
+
+.convert-allocate {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.convert-allocate:hover {
+  color: #e67e22;
+}
+
+.disabled-allocate {
+  color: gray;
+  cursor: not-allowed;
+  text-decoration: none;
+  opacity: 0.7;
+}
+
+/* ========================================================== */
+/* --- TOGGLE HISTORY BUTTON --- */
+/* ========================================================== */
+
+#toggleHistoryBtn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   padding: 12px 20px;
   border-radius: 10px;
   font-weight: 600;
-  text-decoration: none;
   font-size: 15px;
+  border: none;
   cursor: pointer;
   background: #134686;
   color: #fff;
   box-shadow: 0 4px 10px rgba(25, 55, 107, 0.3);
   transition: all 0.3s ease;
-  z-index: 1000;
+  margin-bottom: 15px;
 }
 
-.return-btn-fixed:hover {
+#toggleHistoryBtn:hover {
   background: #0062d1;
   transform: translateY(-2px);
   box-shadow: 0 6px 14px rgba(11, 99, 255, 0.4);
 }
 
 /* ========================================================== */
-/* --- DARK MODE --- */
+/* --- FIXED RETURN BUTTON --- */
+/* ========================================================== */
+
+.return-btn-fixed {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #134686;
+  color: #fff;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  transition: background 0.3s ease;
+  z-index: 1000;
+  height: 44px;
+  box-sizing: border-box;
+}
+
+.return-btn-fixed:hover {
+  background: #333;
+}
+
+/* ========================================================== */
+/* --- DARK MODE OVERRIDES --- */
 /* ========================================================== */
 
 body.dark-mode .page-title {
@@ -139,32 +233,31 @@ body.dark-mode .page-title {
 
 body.dark-mode .history-table {
   background: #1e293b;
-  border: 1px solid #334155;
+  border: 1px solid #475569;
 }
 
 body.dark-mode .history-table thead th {
-  background: #0f172a;
-  color: #cbd5e1;
+  background: #334155;
+  color: #e2e8f0;
+  border: 1px solid #475569;
   border-bottom: 2px solid #475569;
-  border-right: 1px solid #334155;
 }
 
 body.dark-mode .history-table tbody td {
-  color: #e2e8f0;
-  border-bottom: 1px solid #334155;
-  border-right: 1px solid #334155;
+  color: #cbd5e1;
+  border: 1px solid #475569;
 }
 
 body.dark-mode .history-table tbody tr:nth-child(odd) td {
-  background: #1e293b;
+  background: #293548;
 }
 
 body.dark-mode .history-table tbody tr:nth-child(even) td {
-  background-color: #0f172a;
+  background-color: #1e293b;
 }
 
 body.dark-mode .history-table tbody tr:hover td {
-  background-color: #334155 !important;
+  background-color: #3d4f66 !important;
 }
 
 body.dark-mode .history-table tbody td[colspan] {
@@ -172,13 +265,27 @@ body.dark-mode .history-table tbody td[colspan] {
   background: #1e293b !important;
 }
 
-/* Dark Mode Return Button */
+body.dark-mode .history-table tbody tr.undone td,
+body.dark-mode .history-table tbody tr.reverted td {
+  background-color: #7f1d1d !important;
+  color: #fecaca !important;
+}
+
 body.dark-mode .return-btn-fixed {
   background: #D96F32;
-  box-shadow: 0 4px 10px rgba(217, 111, 50, 0.3);
 }
 
 body.dark-mode .return-btn-fixed:hover {
   background: #c85a1f;
+}
+
+body.dark-mode #toggleHistoryBtn {
+  background: #D96F32;
+  box-shadow: 0 4px 10px rgba(217, 111, 50, 0.3);
+}
+
+body.dark-mode #toggleHistoryBtn:hover {
+  background: #c85a1f;
   box-shadow: 0 6px 14px rgba(217, 111, 50, 0.4);
+  transform: translateY(-2px);
 }

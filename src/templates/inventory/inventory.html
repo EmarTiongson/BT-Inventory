@@ -108,7 +108,7 @@
               onclick="window.location.href='{% url 'update_item' item.id %}'">Update</button>
             {% if request.user.role == 'superadmin' %}
               <button class="delete-btn action-btn" id="red-btn" data-item-id="{{ item.id }}">Delete</button>
-            {% endif %}
+            {% endif %} 
           </td>
         </tr>
         {% empty %}
