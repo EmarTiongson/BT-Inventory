@@ -5,6 +5,36 @@
 
 @import url('inventory.css');
 
+/* ===========================================
+   PAGE TITLE AND ADD BUTTON ALIGNMENT
+=========================================== */
+
+/* Create a flex container for title and button */
+.page-title-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  gap: 20px;
+}
+
+/* Page Title Styling */
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #000;
+  margin: 0;
+  flex: 1;
+}
+
+body.dark-mode .page-title {
+  color: #ffffff;
+}
+
+/* ===========================================
+   PROJECT SEARCH CONTAINER
+=========================================== */
+
 .project-search-container {
   width: 100%;
   max-width: 1000px;
@@ -18,19 +48,31 @@
 
 .dropdown-search input {
   width: 100%;
-  padding: 12px 15px;
-  border: 1px solid #ccc;
+  padding: 10px 15px;
   border-radius: 8px;
-  font-size: 15px;
-  outline: none;
-  transition: 0.2s ease-in-out;
+  font-size: 14px;
+  transition: all 0.3s ease;
   background-color: #fff;
-  color: #333;
+  color: #000;
+  border: 1px solid #ccc;
 }
 
+/* Focus states matching inventory.css */
 .dropdown-search input:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 6px rgba(0, 123, 255, 0.3);
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+}
+
+body.dark-mode .dropdown-search input {
+  background-color: #2a2a2a;
+  color: #fff;
+  border: 1px solid #555;
+}
+
+body.dark-mode .dropdown-search input:focus {
+  border-color: #D96F32;
+  box-shadow: 0 0 0 3px rgba(217, 111, 50, 0.25);
 }
 
 .dropdown-list {
@@ -54,11 +96,25 @@
   padding: 10px 15px;
   cursor: pointer;
   transition: background-color 0.2s ease;
-  color: #333;
+  color: #000;
+  font-size: 14px;
 }
 
 .dropdown-list li:hover {
   background-color: #f2f2f2;
+}
+
+body.dark-mode .dropdown-list {
+  background-color: #2a2a2a;
+  border-color: #555;
+}
+
+body.dark-mode .dropdown-list li {
+  color: #fff;
+}
+
+body.dark-mode .dropdown-list li:hover {
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
 /* Active dropdown */
@@ -67,7 +123,7 @@
 }
 
 /* ===========================================
-   PROJECT DETAILS SECTION - LIGHT MODE DEFAULT
+   PROJECT DETAILS SECTION
 =========================================== */
 
 .project-details-container {
@@ -76,19 +132,41 @@
   margin: 40px auto;
   padding: 20px;
   background-color: #fff;
-  border-radius: 8px;
-  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+}
+
+body.dark-mode .project-details-container {
+  background-color: transparent;
+  border-color: #555;
 }
 
 .project-header {
   margin-bottom: 30px;
 }
 
+.project-header p {
+  margin: 10px 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.project-header p strong {
+  color: #888;
+  font-weight: 600;
+  display: inline-block;
+  min-width: 150px;
+}
+
 .project-title-text {
   font-size: 24px;
   font-weight: 600;
-  color: #333;
-  margin: 0;
+  color: #000;
+  margin: 0 0 15px 0;
+}
+
+body.dark-mode .project-title-text {
+  color: #ffffff;
 }
 
 .project-section {
@@ -98,7 +176,7 @@
 .section-title {
   font-size: 14px;
   font-weight: 600;
-  color: #666;
+  color: #888;
   text-transform: uppercase;
   margin-bottom: 15px;
   letter-spacing: 0.5px;
@@ -106,34 +184,53 @@
 
 .remarks-text {
   font-size: 15px;
-  color: #333;
+  color: #000;
   line-height: 1.6;
   margin: 0;
 }
 
+body.dark-mode .remarks-text {
+  color: #fff;
+}
+
 /* ===========================================
-   BILLING CARDS - LIGHT MODE DEFAULT
+   BILLING CARDS (DR CARDS)
 =========================================== */
 
-.billing-list {
+.billing-list,
+.project-list {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
-.billing-card {
+.billing-card,
+.dr-card {
   background-color: #f9f9f9;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #ccc;
   border-radius: 8px;
   padding: 20px;
   transition: all 0.2s ease;
   cursor: pointer;
 }
 
-.billing-card:hover {
+.billing-card:hover,
+.dr-card:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transform: translateY(-2px);
   background-color: #f5f5f5;
+}
+
+body.dark-mode .billing-card,
+body.dark-mode .dr-card {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: #555;
+}
+
+body.dark-mode .billing-card:hover,
+body.dark-mode .dr-card:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .billing-card.unnamed {
@@ -141,11 +238,20 @@
   border-color: #ffcccc;
 }
 
+body.dark-mode .billing-card.unnamed {
+  background-color: rgba(255, 0, 0, 0.1);
+  border-color: #664444;
+}
+
 .billing-number {
   font-size: 20px;
   font-weight: 600;
-  color: #333;
+  color: #000;
   margin-bottom: 15px;
+}
+
+body.dark-mode .billing-number {
+  color: #ffffff;
 }
 
 .billing-details {
@@ -203,16 +309,37 @@
   color: #137333;
 }
 
+body.dark-mode .billing-type.down-payment {
+  background-color: rgba(33, 150, 243, 0.2);
+  color: #6db3ff;
+}
+
+body.dark-mode .billing-type.progress-billing {
+  background-color: rgba(255, 152, 0, 0.2);
+  color: #ffb366;
+}
+
+body.dark-mode .billing-type.retention {
+  background-color: rgba(0, 188, 212, 0.2);
+  color: #5ccccc;
+}
+
+body.dark-mode .billing-type.full-payment {
+  background-color: rgba(76, 175, 80, 0.2);
+  color: #6dd3aa;
+}
+
 .error-text {
   color: #cc0000;
   font-weight: 500;
 }
 
 /* ===========================================
-   MODAL - LIGHT MODE DEFAULT
+   MODAL STYLES (MATCHING INVENTORY.CSS)
 =========================================== */
 
-.modal {
+.modal,
+.modal-overlay {
   display: none;
   position: fixed;
   z-index: 2000;
@@ -220,11 +347,14 @@
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.6);
   animation: fadeIn 0.2s ease;
+  overflow-y: auto;
+  padding: 20px;
 }
 
-.modal.show {
+.modal.show,
+.modal-overlay.show {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -237,13 +367,32 @@
 
 .modal-content {
   background-color: #fff;
-  width: 90%;
-  max-width: 600px;
-  max-height: 90vh;
+  width: 95%;
+  max-width: 1400px;
+  max-height: 85vh;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   animation: slideUp 0.3s ease;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+body.dark-mode .modal-content {
+  background-color: #1f2937;
+  color: #f9fafb;
+}
+
+/* Small modal variant for Add Project form */
+.modal-content-small {
+  max-width: 600px;
+}
+
+/* Medium modal variant (if needed) */
+.modal-content-medium {
+  max-width: 900px;
 }
 
 @keyframes slideUp {
@@ -265,15 +414,68 @@
   border-bottom: 1px solid #e0e0e0;
   background-color: #fafafa;
   gap: 15px;
+  margin-bottom: 20px;
+}
+
+body.dark-mode .modal-header {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: #555;
+}
+
+/* For modals without modal-header, add padding to h2 */
+.modal-content > h2 {
+  padding: 25px 60px 15px 25px;
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.modal-content > .close-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+  background: none;
+  border: none;
+  font-size: 32px;
+  cursor: pointer;
+  color: #666;
+  line-height: 1;
+  padding: 5px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.modal-content > .close-button:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #333;
+}
+
+body.dark-mode .modal-content > .close-button {
+  color: #888;
+}
+
+body.dark-mode .modal-content > .close-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
 }
 
 .modal-title {
   font-size: 24px;
   font-weight: 600;
-  color: #333;
+  color: #000;
   margin: 0;
   flex: 1;
   text-align: center;
+}
+
+body.dark-mode .modal-title {
+  color: #ffffff;
 }
 
 .modal-nav-btn {
@@ -294,7 +496,17 @@
   color: #333;
 }
 
-.modal-close {
+body.dark-mode .modal-nav-btn {
+  color: #888;
+}
+
+body.dark-mode .modal-nav-btn:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+}
+
+.modal-close,
+.close-button {
   background: none;
   border: none;
   font-size: 32px;
@@ -309,17 +521,36 @@
   justify-content: center;
   border-radius: 6px;
   transition: all 0.2s ease;
+  float: right;
 }
 
-.modal-close:hover {
+.modal-close:hover,
+.close-button:hover {
   background-color: #e0e0e0;
   color: #333;
 }
 
+body.dark-mode .modal-close,
+body.dark-mode .close-button {
+  color: #888;
+}
+
+body.dark-mode .modal-close:hover,
+body.dark-mode .close-button:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+}
+
 .modal-body {
-  padding: 25px;
-  max-height: calc(90vh - 80px);
+  padding: 0;
+  overflow-x: auto;
   overflow-y: auto;
+  flex: 1;
+}
+
+.table-wrapper {
+  padding: 0 25px 25px 25px;
+  overflow-x: auto;
 }
 
 .modal-field {
@@ -338,14 +569,22 @@
 
 .modal-value {
   font-size: 15px;
-  color: #333;
+  color: #000;
   line-height: 1.5;
+}
+
+body.dark-mode .modal-value {
+  color: #fff;
 }
 
 .modal-amount {
   font-size: 18px;
   font-weight: 600;
-  color: #333;
+  color: #000;
+}
+
+body.dark-mode .modal-amount {
+  color: #ffffff;
 }
 
 .modal-project-link {
@@ -361,6 +600,16 @@
   border-color: #ccc;
 }
 
+body.dark-mode .modal-project-link {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: #555;
+}
+
+body.dark-mode .modal-project-link:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: #666;
+}
+
 .modal-project-info {
   display: flex;
   flex-direction: column;
@@ -370,7 +619,11 @@
 .modal-project-title {
   font-size: 15px;
   font-weight: 600;
-  color: #333;
+  color: #000;
+}
+
+body.dark-mode .modal-project-title {
+  color: #ffffff;
 }
 
 .modal-project-details {
@@ -378,6 +631,10 @@
   gap: 10px;
   font-size: 13px;
   color: #666;
+}
+
+body.dark-mode .modal-project-details {
+  color: #888;
 }
 
 .modal-project-label {
@@ -388,150 +645,429 @@
 }
 
 /* ===========================================
-   DARK MODE OVERRIDES
+   TRANSACTION TABLE (DR DETAILS)
 =========================================== */
 
-body.dark-mode .dropdown-search input {
-  background-color: #232938;
+.transaction-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 14px;
+  min-width: 1200px;
+}
+
+.transaction-table th,
+.transaction-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border: 1px solid #ccc;
+  vertical-align: middle;
+}
+
+.transaction-table th {
+  background-color: #f2f2f2;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  color: #000;
+}
+
+.transaction-table td {
+  color: #000;
+  background-color: #fff;
+}
+
+.transaction-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.transaction-table tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* Dark Mode for Transaction Table */
+body.dark-mode .transaction-table th {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  border-color: #555;
+}
+
+body.dark-mode .transaction-table td {
+  border-color: #555;
+  background-color: transparent;
   color: #fff;
-  border-color: #2d3548;
 }
 
-body.dark-mode .dropdown-list {
-  background-color: #232938;
-  border-color: #2d3548;
+body.dark-mode .transaction-table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
-body.dark-mode .dropdown-list li {
-  color: #e1e4ea;
+/* Serial Numbers Expansion Row */
+.serials-row td {
+  background: #f9fafb;
+  border-top: 1px solid #ddd;
+  padding: 10px 15px;
 }
 
-body.dark-mode .dropdown-list li:hover {
-  background-color: #2a3142;
+body.dark-mode .serials-row td {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: #555;
 }
 
-body.dark-mode .project-details-container {
-  background-color: #1a1f2e;
-  border-color: #2d3548;
+.serials-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-body.dark-mode .project-title-text {
-  color: #ffffff;
+.serial-search {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 200px;
+  outline: none;
+  transition: all 0.3s ease;
+  background-color: #fff;
+  color: #000;
 }
 
-body.dark-mode .section-title {
-  color: #8b92a8;
+.serial-search:focus {
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
 }
 
-body.dark-mode .remarks-text {
-  color: #e1e4ea;
+body.dark-mode .serial-search {
+  background-color: #2a2a2a;
+  color: #fff;
+  border-color: #555;
 }
 
-body.dark-mode .billing-card {
-  background-color: #232938;
-  border-color: #2d3548;
+body.dark-mode .serial-search:focus {
+  border-color: #D96F32;
+  box-shadow: 0 0 0 3px rgba(217, 111, 50, 0.25);
 }
 
-body.dark-mode .billing-card:hover {
-  background-color: #2a3142;
+.serial-list {
+  max-height: 150px;
+  overflow-y: auto;
+  padding: 0;
+  margin: 0;
+  list-style: none;
 }
 
-body.dark-mode .billing-card.unnamed {
-  background-color: #3a2525;
-  border-color: #664444;
+.serial-list li {
+  padding: 4px 6px;
+  border-bottom: 1px solid #e0e0e0;
+  color: #000;
+  font-size: 14px;
 }
 
-body.dark-mode .billing-number {
-  color: #ffffff;
+.serial-list li:last-child {
+  border-bottom: none;
 }
 
-body.dark-mode .billing-label {
-  color: #8b92a8;
+body.dark-mode .serial-list li {
+  border-bottom-color: #555;
+  color: #fff;
 }
 
-body.dark-mode .billing-type.down-payment {
-  background-color: #1a3a4a;
-  color: #6db3ff;
+/* View Serials Button */
+.view-serials-btn {
+  padding: 6px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #2196F3;
+  color: white;
 }
 
-body.dark-mode .billing-type.progress-billing {
-  background-color: #3a2f1a;
-  color: #ffb366;
+.view-serials-btn:hover {
+  background: #1976D2;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
 }
 
-body.dark-mode .billing-type.retention {
-  background-color: #1a3a3a;
-  color: #5ccccc;
+/* --- Alternative: Dropdown Style for Serials (if needed) --- */
+.serials-cell {
+  position: relative;
+  text-align: center;
 }
 
-body.dark-mode .billing-type.full-payment {
-  background-color: #1a3a2a;
+.serials-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.serials-list-container {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 220px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 10px;
+  display: none;
+  z-index: 9999;
+  margin-top: 8px;
+  max-height: 250px;
+  overflow: hidden;
+}
+
+.serials-list-container.show {
+  display: block;
+  animation: dropdownSlideIn 0.2s ease;
+}
+
+@keyframes dropdownSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Dropdown arrow pointer */
+.serials-list-container::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid #ccc;
+}
+
+.serials-list-container::after {
+  content: '';
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 7px solid #ffffff;
+}
+
+body.dark-mode .serials-list-container {
+  background: #2a2a2a;
+  border-color: #555;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-mode .serials-list-container::before {
+  border-bottom-color: #555;
+}
+
+body.dark-mode .serials-list-container::after {
+  border-bottom-color: #2a2a2a;
+}
+
+.view-serials-link {
+  color: #4CAF50;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.view-serials-link:hover {
+  color: #45a049;
+  text-decoration: underline;
+}
+
+body.dark-mode .view-serials-link {
   color: #6dd3aa;
 }
 
-body.dark-mode .modal-content {
-  background-color: #1a1f2e;
-}
-
-body.dark-mode .modal-header {
-  background-color: #232938;
-  border-color: #2d3548;
-}
-
-body.dark-mode .modal-title {
-  color: #ffffff;
-}
-
-body.dark-mode .modal-nav-btn,
-body.dark-mode .modal-close {
-  color: #8b92a8;
-}
-
-body.dark-mode .modal-nav-btn:hover,
-body.dark-mode .modal-close:hover {
-  background-color: #2a3142;
-  color: #ffffff;
-}
-
-body.dark-mode .modal-label {
-  color: #8b92a8;
-}
-
-body.dark-mode .modal-value {
-  color: #e1e4ea;
-}
-
-body.dark-mode .modal-amount {
-  color: #ffffff;
-}
-
-body.dark-mode .modal-project-link {
-  background-color: #232938;
-  border-color: #2d3548;
-}
-
-body.dark-mode .modal-project-link:hover {
-  background-color: #2a3142;
-  border-color: #3a4358;
-}
-
-body.dark-mode .modal-project-title {
-  color: #ffffff;
-}
-
-body.dark-mode .modal-project-label {
-  color: #8b92a8;
-}
-
-body.dark-mode .modal-project-details {
-  color: #e1e4ea;
+body.dark-mode .view-serials-link:hover {
+  color: #5ccccc;
 }
 
 /* ===========================================
-   RESPONSIVE
+   ADD PROJECT SECTION
+=========================================== */
+
+.add-project-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0; /* Removed margin since it's in wrapper now */
+}
+
+.add-project-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.add-project-btn:hover {
+  background: #45a049;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.add-project-btn i {
+  font-size: 16px;
+}
+
+/* Modal Form Styling */
+.modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 0 25px 25px 25px;
+}
+
+.modal form label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.modal form input,
+.modal form textarea,
+.modal form select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  background-color: #fff;
+  color: #000;
+  border: 1px solid #ccc;
+}
+
+.modal form input:focus,
+.modal form textarea:focus,
+.modal form select:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+}
+
+body.dark-mode .modal form input,
+body.dark-mode .modal form textarea,
+body.dark-mode .modal form select {
+  background-color: #2a2a2a;
+  color: #fff;
+  border: 1px solid #555;
+}
+
+body.dark-mode .modal form input:focus,
+body.dark-mode .modal form textarea:focus,
+body.dark-mode .modal form select:focus {
+  border-color: #D96F32;
+  box-shadow: 0 0 0 3px rgba(217, 111, 50, 0.25);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 1rem;
+}
+
+.cancel-btn {
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #4b5563;
+  color: #fff;
+}
+
+.cancel-btn:hover {
+  background: #6b7280;
+}
+
+body.light-mode .cancel-btn {
+  background-color: #e5e7eb;
+  color: #111827;
+}
+
+body.light-mode .cancel-btn:hover {
+  background-color: #d1d5db;
+}
+
+.save-btn {
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: #4CAF50;
+  color: white;
+}
+
+.save-btn:hover {
+  background-color: #45a049;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
+
+
+
+
+/* ===========================================
+   RESPONSIVE DESIGN
 =========================================== */
 
 @media (max-width: 768px) {
+  /* Page Title and Button responsive */
+  .page-title-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+  }
+  
+  .page-title {
+    text-align: center;
+    font-size: 18px;
+  }
+  
+  .add-project-container {
+    justify-content: stretch;
+  }
+  
+  .add-project-btn {
+    width: 100%;
+  }
+
   .billing-row {
     grid-template-columns: 1fr;
     gap: 5px;
@@ -556,5 +1092,464 @@ body.dark-mode .modal-project-details {
 
   .modal-title {
     font-size: 20px;
+  }
+
+  .transaction-table {
+    font-size: 12px;
+  }
+
+  .transaction-table th,
+  .transaction-table td {
+    padding: 8px 10px;
+  }
+}
+
+/* ==============================
+   Upload DR Modal Styles
+   ============================== */
+
+/* Modal backdrop */
+#uploadDrModal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5); /* semi-transparent background */
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Modal content box */
+#uploadDrModal .modal-content {
+  background-color: #fff;
+  padding: 25px 30px;
+  border-radius: 12px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  position: relative;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Modal fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Close button (X) */
+#closeUploadDrModal {
+  position: absolute;
+  right: 15px;
+  top: 10px;
+  font-size: 22px;
+  font-weight: bold;
+  color: #444;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+#closeUploadDrModal:hover {
+  color: red;
+}
+
+/* Modal title */
+#uploadDrModal h2 {
+  text-align: center;
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 20px;
+}
+
+/* Form labels */
+#uploadDrModal label {
+  display: block;
+  font-weight: 600;
+  margin-top: 10px;
+  margin-bottom: 4px;
+  color: #333;
+}
+
+/* Form inputs */
+#uploadDrModal input[type="text"],
+#uploadDrModal input[type="date"],
+#uploadDrModal input[type="file"] {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+  transition: 0.2s;
+}
+
+#uploadDrModal input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 4px rgba(0, 123, 255, 0.4);
+}
+
+/* Upload button inside modal */
+#uploadDrModal button[type="submit"] {
+  display: block;
+  width: 100%;
+  padding: 10px 0;
+  margin-top: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+#uploadDrModal button[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+/* ==============================
+   Upload DR Button on Page
+   ============================== */
+
+#openUploadDrModalBtn {
+  display: inline-block;
+  background-color: #28a745;
+  color: white;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 10px;
+  transition: background-color 0.2s ease;
+}
+
+#openUploadDrModalBtn:hover {
+  background-color: #218838;
+}
+
+
+.dr-image-container {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.dr-image-preview {
+  width: 100%;
+  max-height: 250px;
+  object-fit: contain;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.no-image {
+  color: #888;
+  font-style: italic;
+}
+
+/* ===========================================
+   BUTTON STACK - Both buttons side by side
+=========================================== */
+
+.button-stack {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.add-project-btn,
+.upload-dr-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.add-project-btn {
+  background: #4CAF50;
+}
+
+.add-project-btn:hover {
+  background: #45a049;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.upload-dr-btn {
+  background: #2196F3;
+}
+
+.upload-dr-btn:hover {
+  background: #1976D2;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+
+/* ===========================================
+   Upload DR Modal - UNIFIED STYLING
+=========================================== */
+
+#uploadDrModal {
+  display: none;
+  position: fixed;
+  z-index: 2000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  animation: fadeIn 0.2s ease;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+#uploadDrModal.show {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#uploadDrModal .modal-content {
+  background-color: #fff;
+  width: 95%;
+  max-width: 600px;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.3s ease;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+body.dark-mode #uploadDrModal .modal-content {
+  background-color: #1f2937;
+  color: #f9fafb;
+}
+
+#uploadDrModal .modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 25px;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #fafafa;
+}
+
+body.dark-mode #uploadDrModal .modal-header {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: #555;
+}
+
+#uploadDrModal h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #000;
+  margin: 0;
+}
+
+body.dark-mode #uploadDrModal h2 {
+  color: #ffffff;
+}
+
+#closeUploadDrModal {
+  background: none;
+  border: none;
+  font-size: 32px;
+  cursor: pointer;
+  color: #666;
+  line-height: 1;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+#closeUploadDrModal:hover {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+body.dark-mode #closeUploadDrModal {
+  color: #888;
+}
+
+body.dark-mode #closeUploadDrModal:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+}
+
+#uploadDrModal .modal-body {
+  padding: 0;
+  overflow-y: auto;
+  flex: 1;
+}
+
+#uploadDrModal form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 25px;
+}
+
+#uploadDrModal label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+#uploadDrModal input[type="text"],
+#uploadDrModal input[type="date"],
+#uploadDrModal input[type="file"] {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  background-color: #fff;
+  color: #000;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+#uploadDrModal input:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+}
+
+body.dark-mode #uploadDrModal input {
+  background-color: #2a2a2a;
+  color: #fff;
+  border: 1px solid #555;
+}
+
+body.dark-mode #uploadDrModal input:focus {
+  border-color: #D96F32;
+  box-shadow: 0 0 0 3px rgba(217, 111, 50, 0.25);
+}
+
+#uploadDrModal .modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+#uploadDrModal button[type="submit"] {
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: #2196F3;
+  color: white;
+  font-size: 14px;
+}
+
+#uploadDrModal button[type="submit"]:hover {
+  background-color: #1976D2;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+}
+
+/* ===========================================
+   DR IMAGE GALLERY
+=========================================== */
+
+.dr-image-container {
+  margin-top: 15px;
+}
+
+.dr-images-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.dr-image-preview {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #e0e0e0;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.dr-image-preview:hover {
+  border-color: #4CAF50;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+body.dark-mode .dr-image-preview {
+  border-color: #555;
+}
+
+body.dark-mode .dr-image-preview:hover {
+  border-color: #D96F32;
+}
+
+.no-image {
+  color: #888;
+  font-style: italic;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Responsive for buttons */
+@media (max-width: 768px) {
+  .button-stack {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .add-project-btn,
+  .upload-dr-btn {
+    width: 100%;
+  }
+  
+  .dr-images-gallery {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+  
+  .dr-image-preview {
+    height: 100px;
   }
 }

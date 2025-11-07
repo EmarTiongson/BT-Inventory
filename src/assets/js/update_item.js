@@ -303,19 +303,19 @@ saveSerialsBtn.addEventListener('click', () => {
     }
 
     // ALLOCATE case
-    if (nowHasAlloc) {
-      inField.disabled = true;
-      outField.disabled = true;
-      allocateField.disabled = false;
+if (nowHasAlloc) {
+  inField.disabled = true;
+  outField.disabled = true;
+  allocateField.disabled = false;
 
-      if (poSupplier) poSupplier.disabled = false;
-      if (poClient) poClient.disabled = false;
-      if (drInput) drInput.disabled = true;
+  if (poSupplier) poSupplier.disabled = false;
+  if (poClient) poClient.disabled = false;
+  if (drInput) drInput.disabled = false; // ✅ now enabled for Allocate too!
 
-      inField.value = '';
-      outField.value = '';
-      return;
-    }
+  inField.value = '';
+  outField.value = '';
+  return;
+}
 
     // No values present — reset to default
     inField.disabled = false;

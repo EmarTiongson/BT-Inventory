@@ -1,246 +1,416 @@
-// Store billing data for navigation
-let currentBillingIndex = 0;
-let billingData = [];
+// ===============================
+// Modal Functionality
+// ===============================
 
-// Filter projects in the dropdown
-function filterProjects() {
-  const input = document.getElementById('projectSearchInput');
-  const filter = input.value.toUpperCase();
-  const ul = document.getElementById('projectList');
-  const li = ul.getElementsByTagName('li');
+const addProjectModal = document.getElementById('addProjectModal');
+const addProjectForm = document.getElementById('addProjectForm');
+const projectList = document.getElementById('projectList');
+const projectSearchInput = document.getElementById('projectSearchInput');
 
-  // Show dropdown when typing
-  if (filter.length > 0) {
-    ul.style.display = 'block';
+function openAddProjectModal() {
+  addProjectModal.style.display = 'flex';
+}
+
+function closeAddProjectModal() {
+  addProjectModal.style.display = 'none';
+  addProjectForm.reset();
+}
+
+window.addEventListener('click', function (e) {
+  if (e.target === addProjectModal) closeAddProjectModal();
+});
+
+// ===============================
+// Add Project Form Handler (AJAX)
+// ===============================
+
+addProjectForm.addEventListener('submit', async function (e) {
+  e.preventDefault();
+
+  const title = document.getElementById('newProjectTitle').value.trim();
+  const po = document.getElementById('newPoNumber').value.trim();
+  const remarks = document.getElementById('newProjectRemarks').value.trim();
+  const location = document.getElementById('newProjectLocation').value.trim();
+  const date = document.getElementById('newProjectDate').value;
+
+  if (!title || !po) {
+    alert("Please enter both Project Title and P.O Number.");
+    return;
   }
 
-  // Loop through all list items and hide those that don't match
+  try {
+    const formData = new FormData();
+    formData.append('project_title', title);
+    formData.append('po_number', po);
+    formData.append('remarks', remarks);
+    formData.append('location', location);
+    formData.append('date', date);
+
+    // Get CSRF token from Django cookie
+    const csrftoken = getCookie('csrftoken');
+
+    const response = await fetch('/add_project/', {
+      method: 'POST',
+      headers: { 'X-CSRFToken': csrftoken },
+      body: formData
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      await loadProjects(); // Reload the full list from backend
+      alert("✅ Project saved successfully!");
+      addProjectForm.reset();
+      closeAddProjectModal();
+    } else {
+      alert("⚠️ " + (data.error || "Failed to save project."));
+    }
+  } catch (err) {
+    console.error(err);
+    alert("❌ An error occurred while saving the project.");
+  }
+});
+
+// ===============================
+// CSRF Helper
+// ===============================
+
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === name + '=') {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+
+// ===============================
+// Dropdown Search Functionality
+// ===============================
+
+function filterProjects() {
+  const filter = projectSearchInput.value.toUpperCase();
+  const li = projectList.getElementsByTagName('li');
+
   for (let i = 0; i < li.length; i++) {
     const txtValue = li[i].textContent || li[i].innerText;
-    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-      li[i].style.display = '';
-    } else {
-      li[i].style.display = 'none';
-    }
+    li[i].style.display = txtValue.toUpperCase().includes(filter) ? "" : "none";
   }
 }
 
-// Show all projects when clicking on input
 function showAllProjects() {
-  const ul = document.getElementById('projectList');
-  const li = ul.getElementsByTagName('li');
-  
-  // Show all items
-  for (let i = 0; i < li.length; i++) {
-    li[i].style.display = '';
-  }
-  
-  ul.style.display = 'block';
+  projectList.style.display = "block";
 }
 
-// Hide dropdown when clicking outside
-document.addEventListener('click', function(event) {
-  const searchContainer = document.querySelector('.dropdown-search');
-  const input = document.getElementById('projectSearchInput');
-  const ul = document.getElementById('projectList');
-  
-  if (!searchContainer.contains(event.target)) {
-    ul.style.display = 'none';
-  }
-});
+// ===============================
+// Project Selection
+// ===============================
 
-// Select a project and display its details
-function selectProject(projectName) {
-  const input = document.getElementById('projectSearchInput');
-  const ul = document.getElementById('projectList');
-  const detailsContainer = document.getElementById('projectDetailsContainer');
-  
-  // Set the input value to the selected project
-  input.value = projectName;
-  
-  // Hide the dropdown
-  ul.style.display = 'none';
-  
-  // Show the project details container
-  detailsContainer.style.display = 'block';
-  
-  // Update project title (you can fetch actual data from your backend here)
-  const projectTitle = projectName.substring(projectName.indexOf(' ') + 1);
-  document.getElementById('projectTitle').textContent = projectTitle;
-  
-  // Initialize billing data for this project
-  initializeBillingData();
-  
-  // Scroll to the details section
-  detailsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+function selectProject(displayName, el) {
+  projectSearchInput.value = displayName;
+  projectList.style.display = "none";
+
+  // ✅ FIX: Use dataset.id which now contains the PO number
+  const projectId = el.dataset.id;
+  console.log('Selected project ID:', projectId); // Debug log
+  displayProjectDetails(projectId);
 }
 
-// Initialize billing data from the cards
-function initializeBillingData() {
-  billingData = [
-    {
-      bsNumber: '4670',
-      type: 'DOWN PAYMENT',
-      typeClass: 'down-payment',
-      bsDate: '5/25/2023',
-      aging: '6/24/2023',
-      billedAmount: '₱49,370.15',
-      status: true,
-      projectTitle: '4120100131 PHC PLANT 1 CCTV VIEWING (CANTEEN...)',
-      projectShortTitle: 'PHC PLANT 1 CCTV VIEWING (...',
-      projectPo: '4120100135'
-    },
-    {
-      bsNumber: '4823',
-      type: 'PROGRESS BILLING 1',
-      typeClass: 'progress-billing',
-      bsDate: '10/23/2023',
-      aging: '11/22/2023',
-      billedAmount: '₱49,370.15',
-      status: true,
-      projectTitle: '4120100131 PHC PLANT 1 CCTV VIEWING (CANTEEN...)',
-      projectShortTitle: 'PHC PLANT 1 CCTV VIEWING (...',
-      projectPo: '4120100135'
-    },
-    {
-      bsNumber: '2622',
-      type: 'RETENTION',
-      typeClass: 'retention',
-      bsDate: '5/14/2024',
-      aging: '6/13/2024',
-      billedAmount: '₱49,370.15',
-      status: true,
-      projectTitle: '4120100131 PHC PLANT 1 CCTV VIEWING (CANTEEN...)',
-      projectShortTitle: 'PHC PLANT 1 CCTV VIEWING (...',
-      projectPo: '4120100135'
-    },
-    {
-      bsNumber: '4849',
-      type: 'FULL PAYMENT',
-      typeClass: 'full-payment',
-      bsDate: '11/22/2023',
-      aging: '12/22/2023',
-      billedAmount: '₱49,370.15',
-      status: true,
-      projectTitle: '4120100131 PHC PLANT 1 CCTV VIEWING (CANTEEN...)',
-      projectShortTitle: 'PHC PLANT 1 CCTV VIEWING (...',
-      projectPo: '4120100135'
+// ===============================
+// Project Details Display (Dynamic)
+// ===============================
+
+async function displayProjectDetails(projectId) {
+  try {
+    console.log('Fetching project details for:', projectId);
+    
+    const response = await fetch(`/get_project_details/${encodeURIComponent(projectId)}/`);
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Error response:', errorData);
+      throw new Error(errorData.error || `HTTP ${response.status}`);
     }
-  ];
-}
+    
+    const data = await response.json();
+    console.log('Received data:', data);
 
-// Open billing modal
-function openBillingModal(bsNumber, type, bsDate, aging, billedAmount, status, projectTitle, projectShortTitle, projectPo) {
-  // Find the index of this billing in the data array
-  currentBillingIndex = billingData.findIndex(b => b.bsNumber === bsNumber);
-  
-  // Update modal content
-  updateModalContent(currentBillingIndex);
-  
-  // Show modal
-  const modal = document.getElementById('billingModal');
-  modal.classList.add('show');
-  document.body.style.overflow = 'hidden';
-}
+    const container = document.getElementById('projectDetailsContainer');
+    const title = document.getElementById('projectTitle');
+    const po = document.getElementById('projectPo');
+    const remarks = document.getElementById('projectRemarks');
+    const location = document.getElementById('projectLocation');
+    const date = document.getElementById('projectDate');
+    const list = document.getElementById('projectListContainer');
 
-// Update modal content
-function updateModalContent(index) {
-  if (index < 0 || index >= billingData.length) return;
-  
-  const billing = billingData[index];
-  
-  document.getElementById('modalBsNumber').textContent = billing.bsNumber;
-  document.getElementById('modalBsNumberValue').textContent = billing.bsNumber;
-  document.getElementById('modalProjectTitle').textContent = billing.projectTitle;
-  document.getElementById('modalProjectShortTitle').textContent = billing.projectShortTitle;
-  document.getElementById('modalProjectPo').textContent = billing.projectPo;
-  document.getElementById('modalBsDate').textContent = billing.bsDate;
-  document.getElementById('modalAging').textContent = billing.aging;
-  document.getElementById('modalBilledAmount').textContent = billing.billedAmount;
-  
-  // Update status
-  const statusElement = document.getElementById('modalStatus');
-  statusElement.textContent = billing.status ? '✓' : '';
-  
-  // Update billing type
-  const billingTypeElement = document.getElementById('modalBillingType');
-  billingTypeElement.textContent = billing.type;
-  billingTypeElement.className = 'billing-type ' + billing.typeClass;
-}
+    container.style.display = 'block';
 
-// Close billing modal
-function closeBillingModal() {
-  const modal = document.getElementById('billingModal');
-  modal.classList.remove('show');
-  document.body.style.overflow = 'auto';
-}
+    title.textContent = data.title;
+    po.textContent = data.po_no;
+    remarks.textContent = data.remarks || 'No remarks yet.';
+    location.textContent = data.location || 'N/A';
+    date.textContent = data.date || 'N/A';
 
-// Navigate to previous billing
-function previousBilling() {
-  if (currentBillingIndex > 0) {
-    currentBillingIndex--;
-    updateModalContent(currentBillingIndex);
+    // Clear old DRs
+    list.innerHTML = '';
+
+    if (data.drs && data.drs.length > 0) {
+      data.drs.forEach(dr => {
+        const card = document.createElement('div');
+        card.classList.add('dr-card');
+
+        // Build images HTML
+        let imagesHtml = '';
+        if (dr.images && dr.images.length > 0) {
+          imagesHtml = '<div class="dr-images-gallery">';
+          dr.images.forEach(imgUrl => {
+            imagesHtml += `<img src="${imgUrl}" alt="DR ${dr.dr_no}" class="dr-image-preview">`;
+          });
+          imagesHtml += '</div>';
+        } else {
+          imagesHtml = '<p class="no-image">No images uploaded</p>';
+        }
+
+        card.innerHTML = `
+          <p><strong>DR No:</strong> ${dr.dr_no}</p>
+          <p><strong>P.O. No:</strong> ${dr.po_number}</p>
+          <p><strong>Date:</strong> ${dr.date_created}</p>
+          <div class="dr-image-container">
+            ${imagesHtml}
+          </div>
+        `;
+
+        // Open DR details modal when clicked
+        card.addEventListener('click', () => showDrDetails(dr.dr_no));
+
+        list.appendChild(card);
+      });
+    } else {
+      list.innerHTML = `<div class="dr-card"><p>No DRs found for this project.</p></div>`;
+    }
+  } catch (err) {
+    console.error("Failed to load project details:", err);
+    alert("❌ Could not load project details: " + err.message);
   }
 }
 
-// Navigate to next billing
-function nextBilling() {
-  if (currentBillingIndex < billingData.length - 1) {
-    currentBillingIndex++;
-    updateModalContent(currentBillingIndex);
-  }
+// ===============================
+// DR Details Modal Functionality
+// ===============================
+
+const drModal = document.getElementById('drDetailsModal');
+const closeDrModal = document.getElementById('closeDrModal');
+const drDetailsBody = document.getElementById('drDetailsBody');
+
+if (closeDrModal) {
+  closeDrModal.addEventListener('click', () => drModal.style.display = 'none');
 }
 
-// Close modal when clicking outside
-document.addEventListener('click', function(event) {
-  const modal = document.getElementById('billingModal');
-  if (event.target === modal) {
-    closeBillingModal();
-  }
+window.addEventListener('click', e => {
+  if (e.target === drModal) drModal.style.display = 'none';
 });
 
-// Close modal with ESC key
-document.addEventListener('keydown', function(event) {
-  if (event.key === 'Escape') {
-    closeBillingModal();
-  }
-});
+async function showDrDetails(drNo) {
+  try {
+    const poClient = document.getElementById('projectPo').textContent.trim();
+    const response = await fetch(
+      `/get_dr_details/${encodeURIComponent(drNo)}/?po_client=${encodeURIComponent(poClient)}`
+    );
 
-// Example function to dynamically load billing data (you can connect this to your Django backend)
-function loadBillingData(billingArray) {
-  billingData = billingArray;
-  const billingList = document.getElementById('billingList');
-  billingList.innerHTML = '';
-  
-  billingArray.forEach((billing, index) => {
-    const card = document.createElement('div');
-    card.className = 'billing-card' + (billing.unnamed ? ' unnamed' : '');
-    card.onclick = function() {
-      currentBillingIndex = index;
-      updateModalContent(index);
-      const modal = document.getElementById('billingModal');
-      modal.classList.add('show');
-      document.body.style.overflow = 'hidden';
-    };
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+
+    drDetailsBody.innerHTML = '';
+
+    if (data.transactions && data.transactions.length > 0) {
+      data.transactions.forEach(tx => {
+        const row = document.createElement('tr');
+
+        // ✅ "View Serials" link if serial_numbers exist
+        const serialButton =
+          tx.serial_numbers && tx.serial_numbers.length > 0
+            ? `<div class="serials-wrapper">
+                 <a href="#" class="view-serials-link" data-update-id="${tx.id}">
+                   View Serials (${tx.serial_numbers.length})
+                 </a>
+               </div>`
+            : '—';
+
+        row.innerHTML = `
+          <td>${tx.date || '—'}</td>
+          <td>${tx.item__item_name || '—'}</td>
+          <td>${tx.transaction_type || '—'}</td>
+          <td>${tx.quantity || '—'}</td>
+          <td>${tx.stock_after_transaction || '—'}</td>
+          <td>${serialButton}</td>
+          <td>${tx.location || '—'}</td>
+          <td>${tx.po_supplier || '—'}</td>
+          <td>${tx.po_client || '—'}</td>
+          <td>${tx.dr_no || '—'}</td>
+          <td>${tx.remarks || '—'}</td>
+          <td>${tx.updated_by_user || '—'}</td>
+        `;
+        drDetailsBody.appendChild(row);
+      });
+
+      // ✅ Attach serial dropdown functionality
+      if (window.SerialDropdown) {
+        window.SerialDropdown.attach('.view-serials-link');
+      }
+    } else {
+      drDetailsBody.innerHTML = `<tr><td colspan="12">No transactions found for this D.R.</td></tr>`;
+    }
+
+    drModal.style.display = 'flex';
+  } catch (err) {
+    console.error('Failed to load DR details:', err);
+    alert('❌ Could not load DR details.');
+  }
+}
+
+// ===============================
+// Load Projects List
+// ===============================
+
+document.addEventListener("DOMContentLoaded", loadProjects);
+
+async function loadProjects() {
+  try {
+    console.log('Loading projects...'); // Debug log
     
-    card.innerHTML = `
-      <div class="billing-number">${billing.bsNumber}</div>
-      <div class="billing-details">
-        <div class="billing-row">
-          <span class="billing-label">STATUS</span>
-          <span class="billing-label">TYPE OF BILLING</span>
-          <span class="billing-label">BS DATE</span>
-          <span class="billing-label">AGING</span>
-        </div>
-        <div class="billing-row">
-          <span class="status-icon">${billing.status ? '✓' : ''}</span>
-          <span class="billing-type ${billing.typeClass}">${billing.type}</span>
-          <span>${billing.bsDate}</span>
-          <span ${billing.aging === '#ERROR' ? 'class="error-text"' : ''}>${billing.aging}</span>
-        </div>
-      </div>
-    `;
+    const response = await fetch('/api/projects/');
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+
+    console.log('Projects loaded:', data); // Debug log
+
+    projectList.innerHTML = '';
+    const seen = new Set();
+
+    data.projects.forEach(p => {
+      const key = p.display.trim().toLowerCase();
+
+      if (!seen.has(key)) {
+        seen.add(key);
+
+        const li = document.createElement('li');
+        li.textContent = p.display;
+        li.dataset.id = p.id; // ✅ This is now the PO number (string)
+        li.dataset.display = p.display;
+        li.onclick = () => selectProject(p.display, li);
+        projectList.appendChild(li);
+      }
+    });
     
-    billingList.appendChild(card);
+    console.log('Projects list updated, total:', seen.size); // Debug log
+  } catch (err) {
+    console.error("Failed to load projects:", err);
+    alert("❌ Failed to load projects: " + err.message);
+  }
+}
+
+// ===============================
+// Upload DR Modal + Form Handling (Safe)
+// ===============================
+
+const uploadDrModal = document.getElementById('uploadDrModal');
+const openUploadDrModalBtn = document.getElementById('openUploadDrModalBtn');
+const closeUploadDrModal = document.getElementById('closeUploadDrModal');
+const uploadDrForm = document.getElementById('uploadDrForm');
+
+// ✅ Open modal safely
+if (openUploadDrModalBtn && uploadDrModal) {
+  openUploadDrModalBtn.addEventListener('click', () => {
+    uploadDrModal.style.display = 'flex';
   });
+}
+
+// ✅ Close modal safely
+if (closeUploadDrModal && uploadDrModal && uploadDrForm) {
+  closeUploadDrModal.addEventListener('click', () => {
+    uploadDrModal.style.display = 'none';
+    uploadDrForm.reset();
+  });
+}
+
+// ✅ Close when clicking outside
+window.addEventListener('click', (e) => {
+  if (e.target === uploadDrModal) {
+    uploadDrModal.style.display = 'none';
+    if (uploadDrForm) uploadDrForm.reset();
+  }
+});
+
+// ✅ Handle form submission safely
+if (uploadDrForm) {
+  uploadDrForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const po_number = document.getElementById('po_number')?.value.trim();
+    const dr_number = document.getElementById('dr_number')?.value.trim();
+    const uploaded_date = document.getElementById('uploaded_date')?.value;
+    const images = document.getElementById('images')?.files;
+
+    if (!po_number || !dr_number || !uploaded_date) {
+      alert("⚠️ Please fill out all fields.");
+      return;
+    }
+
+    if (!images || images.length < 1) {
+      alert("⚠️ Please upload at least one image.");
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append('po_number', po_number);
+      formData.append('dr_number', dr_number);
+      formData.append('uploaded_date', uploaded_date);
+
+      for (let i = 0; i < images.length; i++) {
+        formData.append('images', images[i]);
+      }
+
+      const csrftoken = getCookie('csrftoken');
+
+      const response = await fetch('/upload_dr/', {
+        method: 'POST',
+        headers: { 'X-CSRFToken': csrftoken },
+        credentials: 'same-origin',
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert("✅ DR and Images uploaded successfully!");
+        uploadDrModal.style.display = 'none';
+        uploadDrForm.reset();
+        
+        // Reload the current project if one is selected
+        const selectedPo = document.getElementById('projectPo')?.textContent.trim();
+        if (selectedPo) {
+          displayProjectDetails(selectedPo);
+        }
+      } else {
+        alert("❌ Upload failed: " + (data.error || "Unknown error"));
+      }
+    } catch (err) {
+      console.error(err);
+      alert("❌ An error occurred while uploading the D.R.");
+    }
+  });
+}
+
+function openUploadDrModal() {
+  const uploadDrModal = document.getElementById('uploadDrModal');
+  if (uploadDrModal) {
+    uploadDrModal.style.display = 'flex';
+  }
 }

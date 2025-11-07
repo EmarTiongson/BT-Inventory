@@ -1,11 +1,18 @@
+import traceback
+from datetime import datetime
+
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db import transaction
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.utils.dateparse import parse_date
 
-from .models import AssetTool, AssetUpdate
+from inventory.models import Item, ItemUpdate
+
+from .models import AssetTool, AssetUpdate, Project
 
 User = get_user_model()
 
@@ -51,11 +58,6 @@ def admin_view(request):
     users = User.objects.all().order_by("id")
     context = {"users": users}
     return render(request, "app_core/admin.html", context)
-
-
-@login_required
-def project_summary_view(request):
-    return render(request, "app_core/project_summary.html")
 
 
 @login_required
@@ -232,3 +234,222 @@ def asset_history(request, asset_id):
     }
 
     return render(request, "app_core/asset_history.html", context)
+
+
+def project_summary_view(request):
+    projects = Project.objects.all().order_by("project_title")
+    selected_project_id = request.GET.get("project_id")
+    selected_project = None
+    drs = []
+
+    if selected_project_id:
+        selected_project = get_object_or_404(Project, id=selected_project_id)
+        # Fetch all DRs (ItemUpdates) connected to the project's P.O.
+        drs = ItemUpdate.objects.filter(po_client=selected_project.po_no).order_by("-date").distinct("dr_no")  # one entry per DR number
+
+    context = {
+        "projects": projects,
+        "selected_project": selected_project,
+        "drs": drs,
+    }
+    return render(request, "app_core/project_summary.html", context)
+
+
+def project_drs_api(request, project_id):
+    """API endpoint: returns all DRs belonging to a specific project (by P.O.)"""
+    project = get_object_or_404(Project, id=project_id)
+    drs = ItemUpdate.objects.filter(po_client=project.po_no).order_by("-date").distinct("dr_no")
+
+    data = [
+        {
+            "dr_no": dr.dr_no,
+            "remarks": dr.remarks,
+            "location": dr.location,
+            "date": dr.date.strftime("%Y-%m-%d") if dr.date else "",
+        }
+        for dr in drs
+    ]
+    return JsonResponse(data, safe=False)
+
+
+def add_project(request):
+    if request.method == "POST":
+        data = request.POST
+        title = data.get("project_title")
+        po = data.get("po_number")
+        remarks = data.get("remarks", "")
+        location = data.get("location", "")
+        date = data.get("date")
+
+        if not title or not po:
+            return JsonResponse({"success": False, "error": "Missing required fields."}, status=400)
+
+        project = Project.objects.create(project_title=title, po_no=po, remarks=remarks, location=location, created_date=parse_date(date))
+
+        return JsonResponse({"success": True, "project_name": f"{project.po_no} {project.project_title}"})
+
+    return JsonResponse({"success": False, "error": "Invalid request method."}, status=405)
+
+
+def get_projects(request):
+    projects = Project.objects.all().order_by("project_title")
+    data = [{"id": p.id, "display": f"{p.po_no} | {p.project_title}"} for p in projects]
+    return JsonResponse({"projects": data})
+
+
+def get_project_details(request, project_id):
+    try:
+        project = Project.objects.get(id=project_id)
+    except Project.DoesNotExist:
+        return JsonResponse({"success": False, "error": "Project not found"}, status=404)
+
+    drs = ItemUpdate.objects.filter(po_client=project.po_no).values("dr_no", "date").order_by("-date").distinct()
+
+    return JsonResponse(
+        {
+            "success": True,
+            "id": project.id,
+            "title": project.project_title,
+            "po_no": project.po_no,
+            "remarks": project.remarks or "No remarks available.",
+            "location": project.location or "N/A",
+            "date": project.created_date.strftime("%Y-%m-%d") if project.created_date else "N/A",
+            "drs": [{"dr_no": dr["dr_no"], "date_created": dr["date"].strftime("%Y-%m-%d") if dr["date"] else ""} for dr in drs],
+        }
+    )
+
+
+def get_dr_details(request, dr_no):
+    """
+    Returns all transactions under a specific DR number,
+    including their serial numbers directly from ItemUpdate.
+    """
+    try:
+        po_client = request.GET.get("po_client")
+
+        qs = ItemUpdate.objects.filter(dr_no=dr_no)
+        if po_client:
+            qs = qs.filter(po_client=po_client)
+
+        transactions = []
+        for tx in qs.order_by("-date"):
+            # Parse serial_numbers properly (JSON or comma string)
+            serials_raw = tx.serial_numbers
+            if isinstance(serials_raw, str):
+                try:
+                    import json
+
+                    serials = json.loads(serials_raw)
+                except json.JSONDecodeError:
+                    serials = [s.strip() for s in serials_raw.split(",") if s.strip()]
+            elif isinstance(serials_raw, list):
+                serials = serials_raw
+            else:
+                serials = []
+
+            transactions.append(
+                {
+                    "id": tx.id,
+                    "item_id": tx.item_id,
+                    "item_name": tx.item.item_name,
+                    "date": tx.date.strftime("%Y-%m-%d") if tx.date else "",
+                    "transaction_type": tx.transaction_type,
+                    "quantity": tx.quantity,
+                    "stock_after_transaction": tx.stock_after_transaction,
+                    "location": tx.location,
+                    "po_supplier": tx.po_supplier,
+                    "po_client": tx.po_client,
+                    "dr_no": tx.dr_no,
+                    "remarks": tx.remarks,
+                    "updated_by_user": tx.updated_by_user,
+                    "serial_numbers": serials or [],  # ✅ correct serials for this transaction
+                }
+            )
+
+        return JsonResponse({"transactions": transactions})
+
+    except Exception as e:
+        print("❌ Error in get_dr_details:", e)
+        return JsonResponse({"error": str(e)}, status=500)
+
+
+# ===================================
+# Serial Numbers View
+# ===================================
+def get_serials(request, update_id):
+    """
+    Returns the serial numbers involved in a specific ItemUpdate transaction.
+    """
+    try:
+        update = ItemUpdate.objects.get(id=update_id)
+        serials = update.serial_numbers or []  # safely handle None
+        return JsonResponse({"serial_numbers": serials})
+    except ItemUpdate.DoesNotExist:
+        return JsonResponse({"error": "Transaction not found."}, status=404)
+    except Exception as e:
+        print("❌ Error fetching serials:", e)
+        return JsonResponse({"error": str(e)}, status=500)
+
+
+@login_required
+@transaction.atomic
+def upload_dr(request):
+    """
+    Upload DR images and associate them with a project (PO number).
+    Creates multiple ItemUpdate entries - one for each image.
+    """
+    if request.method == "POST":
+        try:
+            po_number = request.POST.get("po_number", "").strip()
+            dr_number = request.POST.get("dr_number", "").strip()
+            uploaded_date_str = request.POST.get("uploaded_date", "").strip()
+            images = request.FILES.getlist("images")
+
+            if not all([po_number, dr_number, uploaded_date_str]):
+                return JsonResponse({"success": False, "error": "All fields are required"})
+
+            if not images or len(images) == 0:
+                return JsonResponse({"success": False, "error": "Please upload at least one image"})
+
+            uploaded_date = timezone.now()
+            if uploaded_date_str:
+                try:
+                    date_part = datetime.strptime(uploaded_date_str, "%Y-%m-%d").date()
+                    current_time = timezone.localtime().time()
+                    uploaded_date = timezone.make_aware(datetime.combine(date_part, current_time), timezone.get_current_timezone())
+                except ValueError:
+                    pass
+
+            # Create an item for each DR image
+            for idx, image in enumerate(images):
+                # Create a unique item for this DR image
+                item = Item.objects.create(
+                    item_name=f"DR_{dr_number}_IMG_{idx+1}",
+                    description=f"DR Image {idx+1} for {dr_number}",
+                    image=image,
+                    user=request.user,
+                    total_stock=0,
+                    allocated_quantity=0,
+                    is_deleted=True,  # Hide from regular inventory
+                )
+
+                # Create an update to link this image to the DR
+                ItemUpdate.objects.create(
+                    item=item,
+                    transaction_type="IN",
+                    quantity=0,
+                    date=uploaded_date,
+                    dr_no=dr_number,
+                    po_client=po_number,
+                    remarks=f"DR Image Upload: {dr_number}",
+                    user=request.user,
+                    updated_by_user=request.user.username,
+                )
+
+            return JsonResponse({"success": True, "message": f"{len(images)} image(s) uploaded successfully"})
+
+        except Exception as e:
+            traceback.print_exc()
+            return JsonResponse({"success": False, "error": str(e)})
+
+    return JsonResponse({"success": False, "error": "Invalid request method"})

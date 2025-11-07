@@ -1,30 +1,29 @@
-/* --- Dropdown Styling for Serials --- */
+--- Dropdown Styling for Serials ---
 .serials-cell {
   position: relative;
   text-align: center;
 }
 
+/* --- Serial Dropdown Positioning CSS --- */
 .serials-wrapper {
   position: relative;
   display: inline-block;
 }
 
 .serials-list-container {
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
+  /* KEY FIX: position: fixed breaks it out of any parent overflow */
+  position: fixed; 
+  /* The top/left position will be set dynamically by JavaScript */
   background: #ffffff;
   border: 1px solid #d1d5db;
   border-radius: 8px;
-  width: 180px;
+  width: 180px; /* Fixed width for calculation */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
   padding: 8px;
   display: none;
   z-index: 9999;
-  margin-top: 5px;
   max-height: 200px;
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 .serials-list-container.show {
@@ -61,6 +60,7 @@
   border-bottom: none;
 }
 
+
 .view-serials-link {
   color: green;
   text-decoration: none;
@@ -96,30 +96,32 @@ body.dark-mode .serials-list li {
 }
 
 .serials-wrapper {
+  /* Keep position: relative so the button can be wrapped */
   position: relative;
   display: inline-block;
 }
 
 .serials-list-container {
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
+  /* KEY CHANGE: Use fixed position to escape parent overflow */
+  position: fixed; 
+  
+  /* REMOVED: top: 100%; left: 50%; transform: translateX(-50%); 
+     These are now calculated by JavaScript's positionSerialDropdown */
+  
   background: #ffffff;
   border: 1px solid #d1d5db;
   border-radius: 8px;
-  width: 180px;
+  width: 180px; /* Fixed width used for JS calculation */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
   padding: 8px;
   display: none;
-  z-index: 9999;
-  margin-top: 5px;
+  z-index: 9999; /* High z-index to ensure it sits on top */
+  max-height: 200px;
+  overflow-y: auto;
 }
 
 .serials-list-container.show {
   display: block;
-  overflow-y: auto;
-  max-height: 200px;
 }
 
 .serial-search {
@@ -159,6 +161,23 @@ body.dark-mode .serials-list li {
 
 .view-serials-link:hover {
   text-decoration: underline;
+}
+
+/* Dark mode styles for serial dropdown (Kept as is) */
+body.dark-mode .serials-list-container {
+  background: #2a2a2a;
+  border-color: #3a3a3a;
+}
+
+body.dark-mode .serial-search {
+  background: #1a1a1a;
+  border-color: #3a3a3a;
+  color: #e0e0e0;
+}
+
+body.dark-mode .serials-list li {
+  border-bottom-color: #3a3a3a;
+  color: #e0e0e0;
 }
 
 /* Dark mode styles for serial dropdown */

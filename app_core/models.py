@@ -72,3 +72,27 @@ class AssetUpdate(models.Model):
 
     def __str__(self):
         return f"Update for {self.asset.tool_name} on {self.transaction_date.strftime('%Y-%m-%d %H:%M:%S')}"
+
+
+class Project(models.Model):
+    project_title = models.CharField(max_length=255)
+    po_no = models.CharField(max_length=50, verbose_name="P.O. No.")
+    remarks = models.TextField(blank=True, null=True)
+    location = models.CharField(max_length=255, blank=True, null=True)
+    created_date = models.DateField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.po_no} - {self.project_title}"
+
+    class Meta:
+        unique_together = ("project_title", "po_no")
+
+
+class UploadedDR(models.Model):
+    dr_number = models.CharField(max_length=100)  # required
+    po_number = models.CharField(max_length=100)  # required
+    image = models.ImageField(upload_to="uploaded_drs/")  # at least one image required
+    uploaded_date = models.DateField()  # manually entered date
+
+    def __str__(self):
+        return f"DR: {self.dr_number} | PO: {self.po_number} | {self.image.name}"
