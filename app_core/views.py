@@ -1,16 +1,16 @@
-import traceback
 from datetime import datetime
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db import transaction
+from django.db.models import Max
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.dateparse import parse_date
 
-from inventory.models import Item, ItemUpdate
+from inventory.models import ItemUpdate
 
 from .models import AssetTool, AssetUpdate, Project, UploadedDR
 
@@ -307,8 +307,15 @@ def get_project_details(request, project_id):
     # ✅ Normalize PO number for comparison
     po_no = project.po_no.strip()
 
-    # ✅ Get all DRs related to this project (based on PO)
-    drs = ItemUpdate.objects.filter(po_client=po_no).values("dr_no", "date").order_by("-date").distinct()
+    # Group by DR No. and get the latest date for each
+    drs = (
+        ItemUpdate.objects.filter(po_client=po_no)
+        .exclude(dr_no__isnull=True)
+        .exclude(dr_no__exact="")
+        .values("dr_no")
+        .annotate(date=Max("date"))
+        .order_by("-date")
+    )
 
     # ✅ Get all uploaded DR images that match this project's P.O.
     uploaded_drs = UploadedDR.objects.filter(po_number__iexact=po_no)
@@ -355,7 +362,12 @@ def get_dr_details(request, dr_no):
     try:
         po_client = request.GET.get("po_client")
 
-        qs = ItemUpdate.objects.filter(dr_no=dr_no)
+        qs = (
+            ItemUpdate.objects.filter(dr_no=dr_no)
+            .exclude(transaction_type__in=["ALLOCATED", "UPLOAD"])
+            .exclude(undone=True)
+            .exclude(item__isnull=True)  # ensure valid item reference
+        )
         if po_client:
             qs = qs.filter(po_client=po_client)
 
@@ -423,61 +435,41 @@ def get_serials(request, update_id):
 @transaction.atomic
 def upload_dr(request):
     """
-    Upload DR images and associate them with a project (PO number).
-    Creates multiple ItemUpdate entries - one for each image.
+    Handles DR image uploads without creating ItemUpdate entries.
     """
-    if request.method == "POST":
+    try:
+        po_number = request.POST.get("po_number", "").strip()
+        dr_number = request.POST.get("dr_number", "").strip()
+        uploaded_date = request.POST.get("uploaded_date", "").strip()
+        images = request.FILES.getlist("images")
+
+        if not po_number or not dr_number or not uploaded_date:
+            return JsonResponse({"success": False, "error": "Missing required fields."})
+
+        if not images:
+            return JsonResponse({"success": False, "error": "Please upload at least one image."})
+
+        # Convert date string safely
         try:
-            po_number = request.POST.get("po_number", "").strip()
-            dr_number = request.POST.get("dr_number", "").strip()
-            uploaded_date_str = request.POST.get("uploaded_date", "").strip()
-            images = request.FILES.getlist("images")
+            uploaded_date = datetime.strptime(uploaded_date, "%Y-%m-%d").date()
+        except ValueError:
+            return JsonResponse({"success": False, "error": "Invalid date format (expected YYYY-MM-DD)."})
 
-            if not all([po_number, dr_number, uploaded_date_str]):
-                return JsonResponse({"success": False, "error": "All fields are required"})
+        # ✅ Normalize DR and PO for consistent matching
+        normalized_dr = dr_number.strip().lower()
+        normalized_po = po_number.strip().lower()
 
-            if not images or len(images) == 0:
-                return JsonResponse({"success": False, "error": "Please upload at least one image"})
+        # ✅ Save each uploaded image in UploadedDR model only
+        for img in images:
+            UploadedDR.objects.create(
+                po_number=normalized_po,
+                dr_number=normalized_dr,
+                uploaded_date=uploaded_date,
+                image=img,
+            )
 
-            uploaded_date = timezone.now()
-            if uploaded_date_str:
-                try:
-                    date_part = datetime.strptime(uploaded_date_str, "%Y-%m-%d").date()
-                    current_time = timezone.localtime().time()
-                    uploaded_date = timezone.make_aware(datetime.combine(date_part, current_time), timezone.get_current_timezone())
-                except ValueError:
-                    pass
+        return JsonResponse({"success": True, "message": "DR and images uploaded successfully!"})
 
-            # Create an item for each DR image
-            for idx, image in enumerate(images):
-                # Create a unique item for this DR image
-                item = Item.objects.create(
-                    item_name=f"DR_{dr_number}_IMG_{idx+1}",
-                    description=f"DR Image {idx+1} for {dr_number}",
-                    image=image,
-                    user=request.user,
-                    total_stock=0,
-                    allocated_quantity=0,
-                    is_deleted=True,  # Hide from regular inventory
-                )
-
-                # Create an update to link this image to the DR
-                ItemUpdate.objects.create(
-                    item=item,
-                    transaction_type="IN",
-                    quantity=0,
-                    date=uploaded_date,
-                    dr_no=dr_number,
-                    po_client=po_number,
-                    remarks=f"DR Image Upload: {dr_number}",
-                    user=request.user,
-                    updated_by_user=request.user.username,
-                )
-
-            return JsonResponse({"success": True, "message": f"{len(images)} image(s) uploaded successfully"})
-
-        except Exception as e:
-            traceback.print_exc()
-            return JsonResponse({"success": False, "error": str(e)})
-
-    return JsonResponse({"success": False, "error": "Invalid request method"})
+    except Exception as e:
+        print("❌ Error in upload_dr:", e)
+        return JsonResponse({"success": False, "error": str(e)})

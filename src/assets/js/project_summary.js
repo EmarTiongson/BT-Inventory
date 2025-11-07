@@ -275,7 +275,7 @@ async function showDrDetails(drNo) {
 
         row.innerHTML = `
           <td>${tx.date || '—'}</td>
-          <td>${tx.item__item_name || '—'}</td>
+          <td>${tx.item_name || '—'}</td>
           <td>${tx.quantity || '—'}</td>
           <td>${serialButton}</td>
           <td>${tx.location || '—'}</td>
