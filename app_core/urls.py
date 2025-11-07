@@ -2,7 +2,6 @@ from django.urls import path
 
 from . import views
 
-print("✅ app_core.urls loaded successfully")
 urlpatterns = [
     # Dashboard route
     path("dashboard/", views.dashboard_view, name="dashboard"),

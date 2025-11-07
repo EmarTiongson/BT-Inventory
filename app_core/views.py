@@ -12,7 +12,7 @@ from django.utils.dateparse import parse_date
 
 from inventory.models import Item, ItemUpdate
 
-from .models import AssetTool, AssetUpdate, Project
+from .models import AssetTool, AssetUpdate, Project, UploadedDR
 
 User = get_user_model()
 
@@ -237,6 +237,7 @@ def asset_history(request, asset_id):
 
 
 def project_summary_view(request):
+
     projects = Project.objects.all().order_by("project_title")
     selected_project_id = request.GET.get("project_id")
     selected_project = None
@@ -303,18 +304,45 @@ def get_project_details(request, project_id):
     except Project.DoesNotExist:
         return JsonResponse({"success": False, "error": "Project not found"}, status=404)
 
-    drs = ItemUpdate.objects.filter(po_client=project.po_no).values("dr_no", "date").order_by("-date").distinct()
+    # ✅ Normalize PO number for comparison
+    po_no = project.po_no.strip()
+
+    # ✅ Get all DRs related to this project (based on PO)
+    drs = ItemUpdate.objects.filter(po_client=po_no).values("dr_no", "date").order_by("-date").distinct()
+
+    # ✅ Get all uploaded DR images that match this project's P.O.
+    uploaded_drs = UploadedDR.objects.filter(po_number__iexact=po_no)
+    dr_image_map = {}
+
+    for dr in uploaded_drs:
+        normalized_dr_no = dr.dr_number.strip().lower()
+        dr_image_map.setdefault(normalized_dr_no, []).append(dr.image.url)
+
+    # ✅ Build response safely
+    dr_list = []
+    for dr in drs:
+        dr_no = (dr["dr_no"] or "").strip()
+        normalized_dr_no = dr_no.lower()
+
+        dr_list.append(
+            {
+                "dr_no": dr_no,
+                "date_created": dr["date"].strftime("%Y-%m-%d") if dr["date"] else "",
+                "images": dr_image_map.get(normalized_dr_no, []),
+                "po_number": po_no,
+            }
+        )
 
     return JsonResponse(
         {
             "success": True,
             "id": project.id,
             "title": project.project_title,
-            "po_no": project.po_no,
+            "po_no": po_no,
             "remarks": project.remarks or "No remarks available.",
             "location": project.location or "N/A",
             "date": project.created_date.strftime("%Y-%m-%d") if project.created_date else "N/A",
-            "drs": [{"dr_no": dr["dr_no"], "date_created": dr["date"].strftime("%Y-%m-%d") if dr["date"] else ""} for dr in drs],
+            "drs": dr_list,
         }
     )
 

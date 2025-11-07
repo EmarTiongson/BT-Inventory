@@ -194,144 +194,96 @@ body.dark-mode .remarks-text {
 }
 
 /* ===========================================
-   BILLING CARDS (DR CARDS)
+    BILLING CARDS (DR CARDS) - REVISED FOR IMAGE
 =========================================== */
 
 .billing-list,
 .project-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
 .billing-card,
 .dr-card {
-  background-color: #f9f9f9;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 20px;
-  transition: all 0.2s ease;
-  cursor: pointer;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    /* Ensure child elements stack vertically */
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Spacing between title, image, and table/details */
 }
 
 .billing-card:hover,
 .dr-card:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
-  background-color: #f5f5f5;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+    background-color: #f5f5f5;
 }
 
 body.dark-mode .billing-card,
 body.dark-mode .dr-card {
-  background-color: rgba(255, 255, 255, 0.05);
-  border-color: #555;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: #555;
 }
 
 body.dark-mode .billing-card:hover,
 body.dark-mode .dr-card:hover {
-  background-color: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    background-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-.billing-card.unnamed {
-  background-color: #fff5f5;
-  border-color: #ffcccc;
+/* --- DR Card Layout Specifics (TITLE, IMAGE, TABLE) --- */
+
+.dr-card-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #000;
+    margin: 0;
 }
 
-body.dark-mode .billing-card.unnamed {
-  background-color: rgba(255, 0, 0, 0.1);
-  border-color: #664444;
+body.dark-mode .dr-card-title {
+    color: #ffffff;
 }
 
-.billing-number {
-  font-size: 20px;
-  font-weight: 600;
-  color: #000;
-  margin-bottom: 15px;
+.dr-card-image-wrapper {
+    /* 2. IMAGE CONTAINER */
+    text-align: center;
+    max-height: 250px; /* Define a max height */
+    overflow: hidden;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    background-color: #fff; /* White background for image */
 }
 
-body.dark-mode .billing-number {
-  color: #ffffff;
+body.dark-mode .dr-card-image-wrapper {
+    border-color: #555;
+    background-color: #2a2a2a;
 }
 
-.billing-details {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.dr-card-image {
+    /* The actual image */
+    width: 100%;
+    height: 100%; /* Fill the wrapper height */
+    object-fit: contain; /* Shows the whole image without cropping */
+    display: block;
 }
 
-.billing-row {
-  display: grid;
-  grid-template-columns: 80px 200px 120px 120px;
-  gap: 15px;
-  align-items: center;
+.dr-card-table-wrapper {
+    /* 3. TABLE/SUMMARY CONTAINER */
+    border-top: 1px solid #e0e0e0;
+    padding-top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-.billing-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: #888;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.status-icon {
-  color: #2db92d;
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.billing-type {
-  padding: 4px 10px;
-  border-radius: 4px;
-  font-size: 13px;
-  font-weight: 500;
-  display: inline-block;
-}
-
-.billing-type.down-payment {
-  background-color: #e8f4f8;
-  color: #0066cc;
-}
-
-.billing-type.progress-billing {
-  background-color: #fff4e6;
-  color: #cc7a00;
-}
-
-.billing-type.retention {
-  background-color: #e6f7f7;
-  color: #008080;
-}
-
-.billing-type.full-payment {
-  background-color: #e6f4ea;
-  color: #137333;
-}
-
-body.dark-mode .billing-type.down-payment {
-  background-color: rgba(33, 150, 243, 0.2);
-  color: #6db3ff;
-}
-
-body.dark-mode .billing-type.progress-billing {
-  background-color: rgba(255, 152, 0, 0.2);
-  color: #ffb366;
-}
-
-body.dark-mode .billing-type.retention {
-  background-color: rgba(0, 188, 212, 0.2);
-  color: #5ccccc;
-}
-
-body.dark-mode .billing-type.full-payment {
-  background-color: rgba(76, 175, 80, 0.2);
-  color: #6dd3aa;
-}
-
-.error-text {
-  color: #cc0000;
-  font-weight: 500;
+body.dark-mode .dr-card-table-wrapper {
+    border-top-color: #555;
 }
 
 /* ===========================================
@@ -1104,37 +1056,46 @@ body.light-mode .cancel-btn:hover {
   }
 }
 
-/* ==============================
-   Upload DR Modal Styles
-   ============================== */
+/* ===========================================
+   Upload DR Modal - FINAL UNIFICATION
+=========================================== */
 
-/* Modal backdrop */
+/* Modal Overlay */
 #uploadDrModal {
-  display: none; /* Hidden by default */
+  display: none;
   position: fixed;
-  z-index: 1000;
+  z-index: 2000;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.5); /* semi-transparent background */
-  justify-content: center;
-  align-items: center;
-  transition: all 0.3s ease-in-out;
+  background-color: rgba(0, 0, 0, 0.6);
+  animation: fadeIn 0.2s ease;
+  overflow-y: auto;
+  padding: 20px;
 }
 
-/* Modal content box */
-#uploadDrModal .modal-content {
-  background-color: #fff;
-  padding: 25px 30px;
-  border-radius: 12px;
-  width: 400px;
-  max-width: 90%;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  position: relative;
-  animation: fadeIn 0.3s ease;
+/* Show Modal (Flex-Centered) */
+#uploadDrModal.show {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+/* Modal Form Padding (Consistency Fix) */
+#uploadDrForm {
+  /* Safeguard to maintain consistent spacing inside modal body */
+  padding: 25px;
+}
+
+/* Upload Button (Ensure Correct Styling) */
+#uploadDrModal .modal-actions button[type="submit"] {
+  /* This rule ensures the submit button inherits .save-btn styling
+     in case other CSS selectors or IDs are overriding it.
+     If your HTML button uses class="save-btn", this is optional. */
+}
+
+
 
 /* Modal fade-in animation */
 @keyframes fadeIn {
@@ -1553,3 +1514,49 @@ body.dark-mode .dr-image-preview:hover {
     height: 100px;
   }
 }
+
+/* =============================== */
+/* Image Preview Modal Styles */
+/* =============================== */
+.image-preview-modal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.9);
+  justify-content: center;
+  align-items: center;
+}
+
+.image-preview-modal img.preview-image {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+}
+
+.close-preview {
+  position: absolute;
+  top: 30px;
+  right: 50px;
+  color: white;
+  font-size: 40px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.close-preview:hover {
+  color: #ccc;
+}
+
+.dr-number-display {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 10px;
+}
+

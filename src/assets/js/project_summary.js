@@ -129,15 +129,14 @@ function selectProject(displayName, el) {
 async function displayProjectDetails(projectId) {
   try {
     console.log('Fetching project details for:', projectId);
-    
+
     const response = await fetch(`/get_project_details/${encodeURIComponent(projectId)}/`);
-    
+
     if (!response.ok) {
       const errorData = await response.json();
-      console.error('Error response:', errorData);
       throw new Error(errorData.error || `HTTP ${response.status}`);
     }
-    
+
     const data = await response.json();
     console.log('Received data:', data);
 
@@ -149,56 +148,87 @@ async function displayProjectDetails(projectId) {
     const date = document.getElementById('projectDate');
     const list = document.getElementById('projectListContainer');
 
+    // Show the project details container
     container.style.display = 'block';
 
-    title.textContent = data.title;
-    po.textContent = data.po_no;
+    // Populate details
+    title.textContent = data.title || 'Untitled Project';
+    po.textContent = data.po_no || 'N/A';
     remarks.textContent = data.remarks || 'No remarks yet.';
     location.textContent = data.location || 'N/A';
     date.textContent = data.date || 'N/A';
 
-    // Clear old DRs
+    // Clear any previous DRs
     list.innerHTML = '';
 
+    // Check for DRs
     if (data.drs && data.drs.length > 0) {
       data.drs.forEach(dr => {
         const card = document.createElement('div');
         card.classList.add('dr-card');
 
-        // Build images HTML
+        // === Build DR Images ===
         let imagesHtml = '';
-        if (dr.images && dr.images.length > 0) {
-          imagesHtml = '<div class="dr-images-gallery">';
-          dr.images.forEach(imgUrl => {
-            imagesHtml += `<img src="${imgUrl}" alt="DR ${dr.dr_no}" class="dr-image-preview">`;
-          });
-          imagesHtml += '</div>';
+
+        if (dr.images) {
+          // ✅ Normalize images into an array, even if backend returns a single string
+          const imageList = Array.isArray(dr.images)
+            ? dr.images
+            : (typeof dr.images === 'string' && dr.images.trim() !== '' ? [dr.images] : []);
+
+          if (imageList.length > 0) {
+            imagesHtml = '<div class="dr-images-gallery">';
+            imageList.forEach(imgUrl => {
+              const fullUrl = imgUrl.startsWith('http')
+                ? imgUrl
+                : `${window.location.origin}${imgUrl}`;
+              imagesHtml += `
+                <img 
+                  src="${fullUrl}" 
+                  alt="DR ${dr.dr_no}" 
+                  class="dr-image-preview"
+                  onerror="this.style.display='none';"
+                >
+              `;
+            });
+            imagesHtml += '</div>';
+          } else {
+            imagesHtml = '<p class="no-image">No images uploaded</p>';
+          }
         } else {
           imagesHtml = '<p class="no-image">No images uploaded</p>';
         }
 
+        // === Build DR Card HTML ===
         card.innerHTML = `
-          <p><strong>DR No:</strong> ${dr.dr_no}</p>
-          <p><strong>P.O. No:</strong> ${dr.po_number}</p>
-          <p><strong>Date:</strong> ${dr.date_created}</p>
+          <p><strong>DR No:</strong> ${dr.dr_no || 'N/A'}</p>
+          <p><strong>P.O. No:</strong> ${dr.po_number || 'N/A'}</p>
+          <p><strong>Date:</strong> ${dr.date_created || 'N/A'}</p>
           <div class="dr-image-container">
             ${imagesHtml}
           </div>
         `;
 
-        // Open DR details modal when clicked
+        // Add click event to open DR details
         card.addEventListener('click', () => showDrDetails(dr.dr_no));
 
+        // Append card to the list
         list.appendChild(card);
       });
     } else {
-      list.innerHTML = `<div class="dr-card"><p>No DRs found for this project.</p></div>`;
+      // If no DRs found
+      list.innerHTML = `
+        <div class="dr-card">
+          <p>No DRs found for this project.</p>
+        </div>
+      `;
     }
   } catch (err) {
-    console.error("Failed to load project details:", err);
-    alert("❌ Could not load project details: " + err.message);
+    console.error('Failed to load project details:', err);
+    alert('❌ Could not load project details: ' + err.message);
   }
 }
+  
 
 // ===============================
 // DR Details Modal Functionality
@@ -225,10 +255,11 @@ async function showDrDetails(drNo) {
 
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data = await response.json();
-
+    document.getElementById('modalDrNumber').textContent = `${drNo}`;
     drDetailsBody.innerHTML = '';
 
     if (data.transactions && data.transactions.length > 0) {
+      
       data.transactions.forEach(tx => {
         const row = document.createElement('tr');
 
@@ -245,14 +276,10 @@ async function showDrDetails(drNo) {
         row.innerHTML = `
           <td>${tx.date || '—'}</td>
           <td>${tx.item__item_name || '—'}</td>
-          <td>${tx.transaction_type || '—'}</td>
           <td>${tx.quantity || '—'}</td>
-          <td>${tx.stock_after_transaction || '—'}</td>
           <td>${serialButton}</td>
           <td>${tx.location || '—'}</td>
-          <td>${tx.po_supplier || '—'}</td>
           <td>${tx.po_client || '—'}</td>
-          <td>${tx.dr_no || '—'}</td>
           <td>${tx.remarks || '—'}</td>
           <td>${tx.updated_by_user || '—'}</td>
         `;
@@ -414,3 +441,36 @@ function openUploadDrModal() {
     uploadDrModal.style.display = 'flex';
   }
 }
+
+// ===============================
+// Image Preview Modal Functionality
+// ===============================
+
+const imagePreviewModal = document.getElementById('imagePreviewModal');
+const previewImage = document.getElementById('previewImage');
+const closeImagePreview = document.getElementById('closeImagePreview');
+
+// ✅ When any DR image is clicked
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('dr-image-preview')) {
+    const src = e.target.src;
+    previewImage.src = src;
+    imagePreviewModal.style.display = 'flex';
+  }
+});
+
+// ✅ Close modal when clicking the X
+if (closeImagePreview) {
+  closeImagePreview.addEventListener('click', () => {
+    imagePreviewModal.style.display = 'none';
+    previewImage.src = '';
+  });
+}
+
+// ✅ Close modal when clicking outside the image
+window.addEventListener('click', (e) => {
+  if (e.target === imagePreviewModal) {
+    imagePreviewModal.style.display = 'none';
+    previewImage.src = '';
+  }
+});

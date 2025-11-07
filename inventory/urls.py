@@ -59,11 +59,3 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-    path("project-summary/", inventory_views.project_summary_view, name="project_summary"),
-    path("get_project_details/<str:project_id>/", inventory_views.get_project_details, name="get_project_details"),
-    path("api/projects/", inventory_views.api_projects, name="api_projects"),
-    path("add_project/", inventory_views.add_project, name="add_project"),
-    path("upload_dr/", inventory_views.upload_dr, name="upload_dr"),
-    path("get_dr_details/<str:dr_no>/", inventory_views.get_dr_details, name="get_dr_details"),
-    path("get_serials/<int:update_id>/", inventory_views.get_serials, name="get_serials"),

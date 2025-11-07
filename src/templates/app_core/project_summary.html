@@ -48,7 +48,7 @@
     <h2 id="projectTitle" class="project-title-text"></h2>
     <p><strong>P.O. Number:</strong> <span id="projectPo"></span></p>
     <p><strong>Location:</strong> <span id="projectLocation"></span></p>
-    <p><strong>Date:</strong> <span id="projectDate"></span></p>
+    <p><strong>Warranty Date:</strong> <span id="projectDate"></span></p>
   </div>
 
   <div class="project-section">
@@ -71,20 +71,17 @@
   <div class="modal-content">
     <span class="close-button" id="closeDrModal">&times;</span>
     <h2>Delivery Receipt Summary</h2>
+    <p id="modalDrNumber" class="dr-number-display"></p>
     <div class="table-wrapper">
       <table class="transaction-table">
         <thead>
           <tr>
-            <th>Date & Time</th>
+            <th>Date</th>
             <th>Item Name</th>
-            <th>Type</th>
             <th>Quantity</th>
-            <th>Total Stock</th>
             <th>Serial Numbers</th>
             <th>Location</th>
-            <th>P.O To Supplier</th>
             <th>P.O From Client</th>
-            <th>DR No.</th>
             <th>Remarks</th>
             <th>Transaction By</th>
           </tr>
@@ -142,10 +139,11 @@
       <h2>Upload D.R. and Images</h2>
       <button id="closeUploadDrModal" class="modal-close">&times;</button>
     </div>
+
     <div class="modal-body">
       <form id="uploadDrForm" enctype="multipart/form-data">
         {% csrf_token %}
-        
+
         <label for="po_number">P.O. Number:</label>
         <input type="text" id="po_number" name="po_number" required>
 
@@ -155,18 +153,33 @@
         <label for="uploaded_date">Date:</label>
         <input type="date" id="uploaded_date" name="uploaded_date" required>
 
-        <label for="images">Upload Images:</label>
+        <label for="images">Upload Image:</label>
         <input type="file" id="images" name="images" accept="image/*" multiple required>
-        <small style="color: #888; font-size: 12px;">You can select multiple images</small>
 
         <div class="modal-actions">
-          <button type="button" class="cancel-btn" onclick="document.getElementById('uploadDrModal').style.display='none'; document.getElementById('uploadDrForm').reset();">Cancel</button>
-          <button type="submit">Upload</button>
+          <button
+            type="button"
+            class="cancel-btn"
+            onclick="document.getElementById('uploadDrModal').style.display='none'; document.getElementById('uploadDrForm').reset();"
+          >
+            Cancel
+          </button>
+          <button type="submit" class="save-btn">Upload</button>
         </div>
       </form>
     </div>
   </div>
 </div>
+
+<!-- =============================== -->
+<!-- Image Preview Modal -->
+<!-- =============================== -->
+<div id="imagePreviewModal" class="image-preview-modal">
+  <span id="closeImagePreview" class="close-preview">&times;</span>
+  <img id="previewImage" class="preview-image" src="" alt="Preview">
+</div>
+
+
 
 {% block extra_js %}
 <script src="{% static 'js/project_summary.js' %}"></script>
