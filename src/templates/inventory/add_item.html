@@ -44,6 +44,10 @@
           <option value="pieces" {% if form_data.unit_of_quantity == 'pieces' %}selected{% endif %}>Pieces</option>
           <option value="rolls" {% if form_data.unit_of_quantity == 'rolls' %}selected{% endif %}>Rolls</option>
           <option value="meters" {% if form_data.unit_of_quantity == 'meters' %}selected{% endif %}>Meters</option>
+          <option value="gallons" {% if form_data.unit_of_quantity == 'gallons' %}selected{% endif %}>Gallons</option>
+          <option value="liters" {% if form_data.unit_of_quantity == 'liters' %}selected{% endif %}>Liters</option>
+          <option value="bottles" {% if form_data.unit_of_quantity == 'bottles' %}selected{% endif %}>Bottles</option>
+          <option value="cans" {% if form_data.unit_of_quantity == 'cans' %}selected{% endif %}>Cans</option>
         </select>
         <!-- <input type="text" name="part_no" placeholder="Part No." value="{{ form_data.part_no|default:'' }}"> --> 
       </div>

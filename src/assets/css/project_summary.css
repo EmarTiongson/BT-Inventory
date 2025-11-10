@@ -1,200 +1,218 @@
 /* ===========================================
-   PROJECT SUMMARY SEARCH BAR
-   Airtable-like dropdown
+    PROJECT SUMMARY SEARCH BAR
+    Airtable-like dropdown
 =========================================== */
 
 @import url('inventory.css');
 
 /* ===========================================
-   PAGE TITLE AND ADD BUTTON ALIGNMENT
+    PAGE TITLE AND ADD BUTTON ALIGNMENT
 =========================================== */
 
 /* Create a flex container for title and button */
 .page-title-wrapper {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-  gap: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    gap: 20px;
 }
 
 /* Page Title Styling */
 .page-title {
-  font-size: 28px;
-  font-weight: 700;
-  color: #000;
-  margin: 0;
-  flex: 1;
+    font-size: 28px;
+    font-weight: 700;
+    color: #000;
+    margin: 0;
+    flex: 1;
 }
 
 body.dark-mode .page-title {
-  color: #ffffff;
+    color: #ffffff;
 }
 
 /* ===========================================
-   PROJECT SEARCH CONTAINER
+    PROJECT SEARCH CONTAINER & INPUTS
 =========================================== */
 
 .project-search-container {
-  width: 100%;
-  max-width: 1000px;
-  margin: 30px auto 0 auto;
+    width: 100%;
+    max-width: 1000px;
+    margin: 30px auto 0 auto;
 }
 
 .dropdown-search {
-  position: relative;
-  width: 100%;
+    position: relative;
+    width: 100%;
 }
 
-.dropdown-search input {
-  width: 100%;
-  padding: 10px 15px;
-  border-radius: 8px;
-  font-size: 14px;
-  transition: all 0.3s ease;
-  background-color: #fff;
-  color: #000;
-  border: 1px solid #ccc;
+/* Common input styles used in search and modals */
+.dropdown-search input,
+.modal form input,
+.modal form textarea,
+.modal form select,
+.serial-search {
+    width: 100%;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #ccc;
 }
 
-/* Focus states matching inventory.css */
-.dropdown-search input:focus {
-  outline: none;
-  border-color: #4CAF50;
-  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+/* Consolidated Focus State */
+.dropdown-search input:focus,
+.modal form input:focus,
+.modal form textarea:focus,
+.modal form select:focus,
+.serial-search:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
 }
 
-body.dark-mode .dropdown-search input {
-  background-color: #2a2a2a;
-  color: #fff;
-  border: 1px solid #555;
+body.dark-mode .dropdown-search input,
+body.dark-mode .modal form input,
+body.dark-mode .modal form textarea,
+body.dark-mode .modal form select,
+body.dark-mode .serial-search {
+    background-color: #2a2a2a;
+    color: #fff;
+    border: 1px solid #555;
 }
 
-body.dark-mode .dropdown-search input:focus {
-  border-color: #D96F32;
-  box-shadow: 0 0 0 3px rgba(217, 111, 50, 0.25);
+/* Consolidated Dark Mode Focus State */
+body.dark-mode .dropdown-search input:focus,
+body.dark-mode .modal form input:focus,
+body.dark-mode .modal form textarea:focus,
+body.dark-mode .modal form select:focus,
+body.dark-mode .serial-search:focus {
+    border-color: #D96F32;
+    box-shadow: 0 0 0 3px rgba(217, 111, 50, 0.25);
 }
 
 .dropdown-list {
-  position: absolute;
-  top: 110%;
-  left: 0;
-  right: 0;
-  background-color: #fff;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  max-height: 250px;
-  overflow-y: auto;
-  list-style: none;
-  padding: 0;
-  margin: 5px 0 0;
-  display: none;
-  z-index: 1000;
+    position: absolute;
+    top: 110%;
+    left: 0;
+    right: 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    max-height: 250px;
+    overflow-y: auto;
+    list-style: none;
+    padding: 0;
+    margin: 5px 0 0;
+    display: none;
+    z-index: 1000;
 }
 
 .dropdown-list li {
-  padding: 10px 15px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  color: #000;
-  font-size: 14px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    color: #000;
+    font-size: 14px;
 }
 
 .dropdown-list li:hover {
-  background-color: #f2f2f2;
+    background-color: #f2f2f2;
 }
 
 body.dark-mode .dropdown-list {
-  background-color: #2a2a2a;
-  border-color: #555;
+    background-color: #2a2a2a;
+    border-color: #555;
 }
 
 body.dark-mode .dropdown-list li {
-  color: #fff;
+    color: #fff;
 }
 
 body.dark-mode .dropdown-list li:hover {
-  background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgba(255, 255, 255, 0.05);
 }
 
 /* Active dropdown */
 .dropdown-search.active .dropdown-list {
-  display: block;
+    display: block;
 }
 
 /* ===========================================
-   PROJECT DETAILS SECTION
+    PROJECT DETAILS SECTION
 =========================================== */
 
 .project-details-container {
-  width: 100%;
-  max-width: 1000px;
-  margin: 40px auto;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 12px;
-  border: 1px solid #ccc;
+    width: 100%;
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 12px;
+    border: 1px solid #ccc;
 }
 
 body.dark-mode .project-details-container {
-  background-color: transparent;
-  border-color: #555;
+    background-color: transparent;
+    border-color: #555;
 }
 
 .project-header {
-  margin-bottom: 30px;
+    margin-bottom: 30px;
 }
 
 .project-header p {
-  margin: 10px 0;
-  font-size: 14px;
-  line-height: 1.6;
+    margin: 10px 0;
+    font-size: 14px;
+    line-height: 1.6;
 }
 
 .project-header p strong {
-  color: #888;
-  font-weight: 600;
-  display: inline-block;
-  min-width: 150px;
+    color: #888;
+    font-weight: 600;
+    display: inline-block;
+    min-width: 150px;
 }
 
 .project-title-text {
-  font-size: 24px;
-  font-weight: 600;
-  color: #000;
-  margin: 0 0 15px 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: #000;
+    margin: 0 0 15px 0;
 }
 
 body.dark-mode .project-title-text {
-  color: #ffffff;
+    color: #ffffff;
 }
 
 .project-section {
-  margin-bottom: 35px;
+    margin-bottom: 35px;
 }
 
 .section-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #888;
-  text-transform: uppercase;
-  margin-bottom: 15px;
-  letter-spacing: 0.5px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    margin-bottom: 15px;
+    letter-spacing: 0.5px;
 }
 
 .remarks-text {
-  font-size: 15px;
-  color: #000;
-  line-height: 1.6;
-  margin: 0;
+    font-size: 15px;
+    color: #000;
+    line-height: 1.6;
+    margin: 0;
 }
 
 body.dark-mode .remarks-text {
-  color: #fff;
+    color: #fff;
 }
 
 /* ===========================================
-    BILLING CARDS (DR CARDS) - REVISED FOR IMAGE
+    BILLING CARDS (DR CARDS)
 =========================================== */
 
 .billing-list,
@@ -212,10 +230,9 @@ body.dark-mode .remarks-text {
     padding: 20px;
     transition: all 0.2s ease;
     cursor: pointer;
-    /* Ensure child elements stack vertically */
     display: flex;
     flex-direction: column;
-    gap: 15px; /* Spacing between title, image, and table/details */
+    gap: 15px;
 }
 
 .billing-card:hover,
@@ -237,8 +254,6 @@ body.dark-mode .dr-card:hover {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-/* --- DR Card Layout Specifics (TITLE, IMAGE, TABLE) --- */
-
 .dr-card-title {
     font-size: 20px;
     font-weight: 600;
@@ -251,13 +266,12 @@ body.dark-mode .dr-card-title {
 }
 
 .dr-card-image-wrapper {
-    /* 2. IMAGE CONTAINER */
     text-align: center;
-    max-height: 250px; /* Define a max height */
+    max-height: 250px;
     overflow: hidden;
     border-radius: 6px;
     border: 1px solid #ddd;
-    background-color: #fff; /* White background for image */
+    background-color: #fff;
 }
 
 body.dark-mode .dr-card-image-wrapper {
@@ -266,15 +280,13 @@ body.dark-mode .dr-card-image-wrapper {
 }
 
 .dr-card-image {
-    /* The actual image */
     width: 100%;
-    height: 100%; /* Fill the wrapper height */
-    object-fit: contain; /* Shows the whole image without cropping */
+    height: 100%;
+    object-fit: contain;
     display: block;
 }
 
 .dr-card-table-wrapper {
-    /* 3. TABLE/SUMMARY CONTAINER */
     border-top: 1px solid #e0e0e0;
     padding-top: 15px;
     display: flex;
@@ -287,1276 +299,908 @@ body.dark-mode .dr-card-table-wrapper {
 }
 
 /* ===========================================
-   MODAL STYLES (MATCHING INVENTORY.CSS)
+    MODAL STYLES (MATCHING INVENTORY.CSS)
 =========================================== */
 
 .modal,
 .modal-overlay {
-  display: none;
-  position: fixed;
-  z-index: 2000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
-  animation: fadeIn 0.2s ease;
-  overflow-y: auto;
-  padding: 20px;
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    animation: fadeIn 0.2s ease;
+    overflow-y: auto;
+    padding: 20px;
 }
 
 .modal.show,
 .modal-overlay.show {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .modal-content {
-  background-color: #fff;
-  width: 95%;
-  max-width: 1400px;
-  max-height: 85vh;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-  animation: slideUp 0.3s ease;
-  margin: auto;
-  display: flex;
-  flex-direction: column;
-  position: relative;
+    background-color: #fff;
+    width: 95%;
+    max-width: 1400px;
+    max-height: 85vh;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    animation: slideUp 0.3s ease;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    position: relative;
 }
 
 body.dark-mode .modal-content {
-  background-color: #1f2937;
-  color: #f9fafb;
+    background-color: #1f2937;
+    color: #f9fafb;
 }
 
-/* Small modal variant for Add Project form */
 .modal-content-small {
-  max-width: 600px;
+    max-width: 600px;
 }
 
-/* Medium modal variant (if needed) */
 .modal-content-medium {
-  max-width: 900px;
+    max-width: 900px;
 }
 
 @keyframes slideUp {
-  from {
-    transform: translateY(50px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 .modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 25px;
-  border-bottom: 1px solid #e0e0e0;
-  background-color: #fafafa;
-  gap: 15px;
-  margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 25px;
+    border-bottom: 1px solid #e0e0e0;
+    background-color: #fafafa;
+    gap: 15px;
+    margin-bottom: 20px;
 }
 
 body.dark-mode .modal-header {
-  background-color: rgba(255, 255, 255, 0.05);
-  border-color: #555;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: #555;
 }
 
-/* For modals without modal-header, add padding to h2 */
+/* Styles for h2 when modal-header is not used */
 .modal-content > h2 {
-  padding: 25px 60px 15px 25px;
-  margin: 0;
-  font-size: 24px;
-  font-weight: 600;
+    padding: 25px 60px 15px 25px;
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
 }
 
-.modal-content > .close-button {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  z-index: 10;
-  background: none;
-  border: none;
-  font-size: 32px;
-  cursor: pointer;
-  color: #666;
-  line-height: 1;
-  padding: 5px;
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 6px;
-  transition: all 0.2s ease;
-}
-
-.modal-content > .close-button:hover {
-  background-color: rgba(0, 0, 0, 0.1);
-  color: #333;
-}
-
-body.dark-mode .modal-content > .close-button {
-  color: #888;
-}
-
-body.dark-mode .modal-content > .close-button:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
-}
-
-.modal-title {
-  font-size: 24px;
-  font-weight: 600;
-  color: #000;
-  margin: 0;
-  flex: 1;
-  text-align: center;
-}
-
-body.dark-mode .modal-title {
-  color: #ffffff;
-}
-
-.modal-nav-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 8px;
-  border-radius: 6px;
-  color: #666;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-nav-btn:hover {
-  background-color: #e0e0e0;
-  color: #333;
-}
-
-body.dark-mode .modal-nav-btn {
-  color: #888;
-}
-
-body.dark-mode .modal-nav-btn:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-  color: #ffffff;
-}
-
+/* Consolidated Close Button Styles */
 .modal-close,
 .close-button {
-  background: none;
-  border: none;
-  font-size: 32px;
-  cursor: pointer;
-  color: #666;
-  line-height: 1;
-  padding: 0;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 6px;
-  transition: all 0.2s ease;
-  float: right;
+    background: none;
+    border: none;
+    font-size: 32px;
+    cursor: pointer;
+    color: #666;
+    line-height: 1;
+    padding: 5px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: all 0.2s ease;
 }
 
 .modal-close:hover,
 .close-button:hover {
-  background-color: #e0e0e0;
-  color: #333;
+    background-color: #e0e0e0;
+    color: #333;
 }
 
 body.dark-mode .modal-close,
 body.dark-mode .close-button {
-  color: #888;
+    color: #888;
 }
 
 body.dark-mode .modal-close:hover,
 body.dark-mode .close-button:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-  color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+}
+
+/* The standalone close button placed in the corner */
+.modal-content > .close-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 10;
+}
+
+body.dark-mode .modal-content > .close-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+.modal-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #000;
+    margin: 0;
+    flex: 1;
+    text-align: center;
+}
+
+body.dark-mode .modal-title {
+    color: #ffffff;
+}
+
+.modal-nav-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    color: #666;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-nav-btn:hover {
+    background-color: #e0e0e0;
+    color: #333;
+}
+
+body.dark-mode .modal-nav-btn {
+    color: #888;
+}
+
+body.dark-mode .modal-nav-btn:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
 }
 
 .modal-body {
-  padding: 0;
-  overflow-x: auto;
-  overflow-y: auto;
-  flex: 1;
+    padding: 0;
+    overflow-x: auto;
+    overflow-y: auto;
+    flex: 1;
 }
 
 .table-wrapper {
-  padding: 0 25px 25px 25px;
-  overflow-x: auto;
+    padding: 0 25px 25px 25px;
+    overflow-x: auto;
 }
 
 .modal-field {
-  margin-bottom: 25px;
+    margin-bottom: 25px;
 }
 
 .modal-label {
-  display: block;
-  font-size: 11px;
-  font-weight: 600;
-  color: #888;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 8px;
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
 }
 
 .modal-value {
-  font-size: 15px;
-  color: #000;
-  line-height: 1.5;
+    font-size: 15px;
+    color: #000;
+    line-height: 1.5;
 }
 
 body.dark-mode .modal-value {
-  color: #fff;
+    color: #fff;
 }
 
 .modal-amount {
-  font-size: 18px;
-  font-weight: 600;
-  color: #000;
+    font-size: 18px;
+    font-weight: 600;
+    color: #000;
 }
 
 body.dark-mode .modal-amount {
-  color: #ffffff;
+    color: #ffffff;
 }
 
 .modal-project-link {
-  background-color: #f9f9f9;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 15px;
-  transition: all 0.2s ease;
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 15px;
+    transition: all 0.2s ease;
 }
 
 .modal-project-link:hover {
-  background-color: #f5f5f5;
-  border-color: #ccc;
+    background-color: #f5f5f5;
+    border-color: #ccc;
 }
 
 body.dark-mode .modal-project-link {
-  background-color: rgba(255, 255, 255, 0.05);
-  border-color: #555;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: #555;
 }
 
 body.dark-mode .modal-project-link:hover {
-  background-color: rgba(255, 255, 255, 0.08);
-  border-color: #666;
+    background-color: rgba(255, 255, 255, 0.08);
+    border-color: #666;
 }
 
 .modal-project-info {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .modal-project-title {
-  font-size: 15px;
-  font-weight: 600;
-  color: #000;
+    font-size: 15px;
+    font-weight: 600;
+    color: #000;
 }
 
 body.dark-mode .modal-project-title {
-  color: #ffffff;
+    color: #ffffff;
 }
 
 .modal-project-details {
-  display: flex;
-  gap: 10px;
-  font-size: 13px;
-  color: #666;
+    display: flex;
+    gap: 10px;
+    font-size: 13px;
+    color: #666;
 }
 
 body.dark-mode .modal-project-details {
-  color: #888;
+    color: #888;
 }
 
 .modal-project-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: #888;
-  text-transform: uppercase;
+    font-size: 11px;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
 }
 
 /* ===========================================
-   TRANSACTION TABLE (DR DETAILS)
+    TRANSACTION TABLE (DR DETAILS)
 =========================================== */
 
 .transaction-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-  font-size: 14px;
-  min-width: 1200px;
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 14px;
+    min-width: 1200px;
 }
 
 .transaction-table th,
 .transaction-table td {
-  padding: 12px 15px;
-  text-align: left;
-  border: 1px solid #ccc;
-  vertical-align: middle;
+    padding: 12px 15px;
+    text-align: left;
+    border: 1px solid #ccc;
+    vertical-align: middle;
 }
 
 .transaction-table th {
-  background-color: #f2f2f2;
-  font-weight: 600;
-  text-transform: uppercase;
-  font-size: 13px;
-  letter-spacing: 0.5px;
-  color: #000;
+    background-color: #f2f2f2;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    color: #000;
 }
 
 .transaction-table td {
-  color: #000;
-  background-color: #fff;
+    color: #000;
+    background-color: #fff;
 }
 
 .transaction-table tbody tr {
-  transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease;
 }
 
 .transaction-table tbody tr:hover {
-  background-color: #f9f9f9;
+    background-color: #f9f9f9;
 }
 
-/* Dark Mode for Transaction Table */
 body.dark-mode .transaction-table th {
-  background-color: rgba(255, 255, 255, 0.08);
-  color: #ffffff;
-  border-color: #555;
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    border-color: #555;
 }
 
 body.dark-mode .transaction-table td {
-  border-color: #555;
-  background-color: transparent;
-  color: #fff;
+    border-color: #555;
+    background-color: transparent;
+    color: #fff;
 }
 
 body.dark-mode .transaction-table tbody tr:hover {
-  background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgba(255, 255, 255, 0.05);
 }
 
-/* Serial Numbers Expansion Row */
 .serials-row td {
-  background: #f9fafb;
-  border-top: 1px solid #ddd;
-  padding: 10px 15px;
+    background: #f9fafb;
+    border-top: 1px solid #ddd;
+    padding: 10px 15px;
 }
 
 body.dark-mode .serials-row td {
-  background: rgba(255, 255, 255, 0.03);
-  border-color: #555;
+    background: rgba(255, 255, 255, 0.03);
+    border-color: #555;
 }
 
 .serials-container {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
+/* Serial Search Input Styles (inherited common styles above) */
 .serial-search {
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-  width: 200px;
-  outline: none;
-  transition: all 0.3s ease;
-  background-color: #fff;
-  color: #000;
+    padding: 8px 12px;
+    width: 200px;
 }
 
-.serial-search:focus {
-  border-color: #4CAF50;
-  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
-}
-
-body.dark-mode .serial-search {
-  background-color: #2a2a2a;
-  color: #fff;
-  border-color: #555;
-}
-
-body.dark-mode .serial-search:focus {
-  border-color: #D96F32;
-  box-shadow: 0 0 0 3px rgba(217, 111, 50, 0.25);
-}
 
 .serial-list {
-  max-height: 150px;
-  overflow-y: auto;
-  padding: 0;
-  margin: 0;
-  list-style: none;
+    max-height: 150px;
+    overflow-y: auto;
+    padding: 0;
+    margin: 0;
+    list-style: none;
 }
 
 .serial-list li {
-  padding: 4px 6px;
-  border-bottom: 1px solid #e0e0e0;
-  color: #000;
-  font-size: 14px;
+    padding: 4px 6px;
+    border-bottom: 1px solid #e0e0e0;
+    color: #000;
+    font-size: 14px;
 }
 
 .serial-list li:last-child {
-  border-bottom: none;
+    border-bottom: none;
 }
 
 body.dark-mode .serial-list li {
-  border-bottom-color: #555;
-  color: #fff;
+    border-bottom-color: #555;
+    color: #fff;
 }
 
-/* View Serials Button */
 .view-serials-btn {
-  padding: 6px 16px;
-  border: none;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  background: #2196F3;
-  color: white;
+    padding: 6px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #2196F3;
+    color: white;
 }
 
 .view-serials-btn:hover {
-  background: #1976D2;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+    background: #1976D2;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
 }
 
-/* --- Alternative: Dropdown Style for Serials (if needed) --- */
 .serials-cell {
-  position: relative;
-  text-align: center;
+    position: relative;
+    text-align: center;
 }
 
 .serials-wrapper {
-  position: relative;
-  display: inline-block;
+    position: relative;
+    display: inline-block;
 }
 
 .serials-list-container {
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #ffffff;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  width: 220px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  padding: 10px;
-  display: none;
-  z-index: 9999;
-  margin-top: 8px;
-  max-height: 250px;
-  overflow: hidden;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    width: 220px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 10px;
+    display: none;
+    z-index: 9999;
+    margin-top: 8px;
+    max-height: 250px;
+    overflow: hidden;
 }
 
 .serials-list-container.show {
-  display: block;
-  animation: dropdownSlideIn 0.2s ease;
+    display: block;
+    animation: dropdownSlideIn 0.2s ease;
 }
 
 @keyframes dropdownSlideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
 }
 
-/* Dropdown arrow pointer */
 .serials-list-container::before {
-  content: '';
-  position: absolute;
-  top: -8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 8px solid transparent;
-  border-right: 8px solid transparent;
-  border-bottom: 8px solid #ccc;
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid #ccc;
 }
 
 .serials-list-container::after {
-  content: '';
-  position: absolute;
-  top: -7px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 7px solid transparent;
-  border-right: 7px solid transparent;
-  border-bottom: 7px solid #ffffff;
+    content: '';
+    position: absolute;
+    top: -7px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 7px solid #ffffff;
 }
 
 body.dark-mode .serials-list-container {
-  background: #2a2a2a;
-  border-color: #555;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    background: #2a2a2a;
+    border-color: #555;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 body.dark-mode .serials-list-container::before {
-  border-bottom-color: #555;
+    border-bottom-color: #555;
 }
 
 body.dark-mode .serials-list-container::after {
-  border-bottom-color: #2a2a2a;
+    border-bottom-color: #2a2a2a;
 }
 
 .view-serials-link {
-  color: #4CAF50;
-  text-decoration: none;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 500;
-  transition: all 0.2s ease;
+    color: #4CAF50;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s ease;
 }
 
 .view-serials-link:hover {
-  color: #45a049;
-  text-decoration: underline;
+    color: #45a049;
+    text-decoration: underline;
 }
 
 body.dark-mode .view-serials-link {
-  color: #6dd3aa;
+    color: #6dd3aa;
 }
 
 body.dark-mode .view-serials-link:hover {
-  color: #5ccccc;
+    color: #5ccccc;
 }
 
 /* ===========================================
-   ADD PROJECT SECTION
+    ADD PROJECT SECTION & BUTTON STACK
 =========================================== */
 
 .add-project-container {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 0; /* Removed margin since it's in wrapper now */
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 0;
 }
-
-.add-project-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px 20px;
-  background: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-}
-
-.add-project-btn:hover {
-  background: #45a049;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
-}
-
-.add-project-btn i {
-  font-size: 16px;
-}
-
-/* Modal Form Styling */
-.modal form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding: 0 25px 25px 25px;
-}
-
-.modal form label {
-  display: block;
-  font-size: 11px;
-  font-weight: 600;
-  color: #888;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 8px;
-}
-
-.modal form input,
-.modal form textarea,
-.modal form select {
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 8px;
-  font-size: 14px;
-  transition: all 0.3s ease;
-  background-color: #fff;
-  color: #000;
-  border: 1px solid #ccc;
-}
-
-.modal form input:focus,
-.modal form textarea:focus,
-.modal form select:focus {
-  outline: none;
-  border-color: #4CAF50;
-  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
-}
-
-body.dark-mode .modal form input,
-body.dark-mode .modal form textarea,
-body.dark-mode .modal form select {
-  background-color: #2a2a2a;
-  color: #fff;
-  border: 1px solid #555;
-}
-
-body.dark-mode .modal form input:focus,
-body.dark-mode .modal form textarea:focus,
-body.dark-mode .modal form select:focus {
-  border-color: #D96F32;
-  box-shadow: 0 0 0 3px rgba(217, 111, 50, 0.25);
-}
-
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 1rem;
-}
-
-.cancel-btn {
-  padding: 10px 14px;
-  border-radius: 8px;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  background: #4b5563;
-  color: #fff;
-}
-
-.cancel-btn:hover {
-  background: #6b7280;
-}
-
-body.light-mode .cancel-btn {
-  background-color: #e5e7eb;
-  color: #111827;
-}
-
-body.light-mode .cancel-btn:hover {
-  background-color: #d1d5db;
-}
-
-.save-btn {
-  padding: 10px 14px;
-  border-radius: 8px;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  background-color: #4CAF50;
-  color: white;
-}
-
-.save-btn:hover {
-  background-color: #45a049;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
-}
-
-
-
-
-
-/* ===========================================
-   RESPONSIVE DESIGN
-=========================================== */
-
-@media (max-width: 768px) {
-  /* Page Title and Button responsive */
-  .page-title-wrapper {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 15px;
-  }
-  
-  .page-title {
-    text-align: center;
-    font-size: 18px;
-  }
-  
-  .add-project-container {
-    justify-content: stretch;
-  }
-  
-  .add-project-btn {
-    width: 100%;
-  }
-
-  .billing-row {
-    grid-template-columns: 1fr;
-    gap: 5px;
-  }
-  
-  .billing-label {
-    margin-top: 10px;
-  }
-
-  .modal-content {
-    width: 95%;
-    max-height: 95vh;
-  }
-
-  .modal-header {
-    padding: 15px 20px;
-  }
-
-  .modal-body {
-    padding: 20px;
-  }
-
-  .modal-title {
-    font-size: 20px;
-  }
-
-  .transaction-table {
-    font-size: 12px;
-  }
-
-  .transaction-table th,
-  .transaction-table td {
-    padding: 8px 10px;
-  }
-}
-
-/* ===========================================
-   Upload DR Modal - FINAL UNIFICATION
-=========================================== */
-
-/* Modal Overlay */
-#uploadDrModal {
-  display: none;
-  position: fixed;
-  z-index: 2000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
-  animation: fadeIn 0.2s ease;
-  overflow-y: auto;
-  padding: 20px;
-}
-
-/* Show Modal (Flex-Centered) */
-#uploadDrModal.show {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Modal Form Padding (Consistency Fix) */
-#uploadDrForm {
-  /* Safeguard to maintain consistent spacing inside modal body */
-  padding: 25px;
-}
-
-/* Upload Button (Ensure Correct Styling) */
-#uploadDrModal .modal-actions button[type="submit"] {
-  /* This rule ensures the submit button inherits .save-btn styling
-     in case other CSS selectors or IDs are overriding it.
-     If your HTML button uses class="save-btn", this is optional. */
-}
-
-
-
-/* Modal fade-in animation */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-15px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Close button (X) */
-#closeUploadDrModal {
-  position: absolute;
-  right: 15px;
-  top: 10px;
-  font-size: 22px;
-  font-weight: bold;
-  color: #444;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-#closeUploadDrModal:hover {
-  color: red;
-}
-
-/* Modal title */
-#uploadDrModal h2 {
-  text-align: center;
-  margin-bottom: 15px;
-  color: #333;
-  font-size: 20px;
-}
-
-/* Form labels */
-#uploadDrModal label {
-  display: block;
-  font-weight: 600;
-  margin-top: 10px;
-  margin-bottom: 4px;
-  color: #333;
-}
-
-/* Form inputs */
-#uploadDrModal input[type="text"],
-#uploadDrModal input[type="date"],
-#uploadDrModal input[type="file"] {
-  width: 100%;
-  padding: 8px 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-  box-sizing: border-box;
-  margin-bottom: 10px;
-  transition: 0.2s;
-}
-
-#uploadDrModal input:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 4px rgba(0, 123, 255, 0.4);
-}
-
-/* Upload button inside modal */
-#uploadDrModal button[type="submit"] {
-  display: block;
-  width: 100%;
-  padding: 10px 0;
-  margin-top: 10px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  font-size: 15px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
-}
-
-#uploadDrModal button[type="submit"]:hover {
-  background-color: #0056b3;
-}
-
-/* ==============================
-   Upload DR Button on Page
-   ============================== */
-
-#openUploadDrModalBtn {
-  display: inline-block;
-  background-color: #28a745;
-  color: white;
-  padding: 10px 18px;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
-  font-weight: bold;
-  margin-top: 10px;
-  transition: background-color 0.2s ease;
-}
-
-#openUploadDrModalBtn:hover {
-  background-color: #218838;
-}
-
-
-.dr-image-container {
-  margin-top: 10px;
-  text-align: center;
-}
-
-.dr-image-preview {
-  width: 100%;
-  max-height: 250px;
-  object-fit: contain;
-  border-radius: 6px;
-  border: 1px solid #ddd;
-}
-
-.no-image {
-  color: #888;
-  font-style: italic;
-}
-
-/* ===========================================
-   BUTTON STACK - Both buttons side by side
-=========================================== */
 
 .button-stack {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
 }
 
+/* Consolidated Project/Upload Button Styles */
 .add-project-btn,
 .upload-dr-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px 20px;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
 }
 
 .add-project-btn {
-  background: #4CAF50;
+    background: #4CAF50;
 }
 
 .add-project-btn:hover {
-  background: #45a049;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    background: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
 }
 
 .upload-dr-btn {
-  background: #2196F3;
+    background: #2196F3;
 }
 
 .upload-dr-btn:hover {
-  background: #1976D2;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+    background: #1976D2;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+
+.add-project-btn i {
+    font-size: 16px;
+}
+
+/* Modal Form Styling (inherited common input styles above) */
+.modal form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 0 25px 25px 25px;
+}
+
+.modal form label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 1rem;
+}
+
+.cancel-btn {
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #4b5563;
+    color: #fff;
+}
+
+.cancel-btn:hover {
+    background: #6b7280;
+}
+
+body.light-mode .cancel-btn {
+    background-color: #e5e7eb;
+    color: #111827;
+}
+
+body.light-mode .cancel-btn:hover {
+    background-color: #d1d5db;
+}
+
+.save-btn {
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: #4CAF50;
+    color: white;
+}
+
+.save-btn:hover {
+    background-color: #45a049;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
 }
 
 /* ===========================================
-   Upload DR Modal - UNIFIED STYLING
+    DR IMAGE GALLERY & PREVIEW
 =========================================== */
 
-#uploadDrModal {
-  display: none;
-  position: fixed;
-  z-index: 2000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
-  animation: fadeIn 0.2s ease;
-  overflow-y: auto;
-  padding: 20px;
-}
-
-#uploadDrModal.show {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-#uploadDrModal .modal-content {
-  background-color: #fff;
-  width: 95%;
-  max-width: 600px;
-  border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-  animation: slideUp 0.3s ease;
-  margin: auto;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  overflow: hidden;
-}
-
-body.dark-mode #uploadDrModal .modal-content {
-  background-color: #1f2937;
-  color: #f9fafb;
-}
-
-#uploadDrModal .modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 25px;
-  border-bottom: 1px solid #e0e0e0;
-  background-color: #fafafa;
-}
-
-body.dark-mode #uploadDrModal .modal-header {
-  background-color: rgba(255, 255, 255, 0.05);
-  border-color: #555;
-}
-
-#uploadDrModal h2 {
-  font-size: 24px;
-  font-weight: 600;
-  color: #000;
-  margin: 0;
-}
-
-body.dark-mode #uploadDrModal h2 {
-  color: #ffffff;
-}
-
-#closeUploadDrModal {
-  background: none;
-  border: none;
-  font-size: 32px;
-  cursor: pointer;
-  color: #666;
-  line-height: 1;
-  padding: 0;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 6px;
-  transition: all 0.2s ease;
-}
-
-#closeUploadDrModal:hover {
-  background-color: #e0e0e0;
-  color: #333;
-}
-
-body.dark-mode #closeUploadDrModal {
-  color: #888;
-}
-
-body.dark-mode #closeUploadDrModal:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-  color: #ffffff;
-}
-
-#uploadDrModal .modal-body {
-  padding: 0;
-  overflow-y: auto;
-  flex: 1;
-}
-
-#uploadDrModal form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding: 25px;
-}
-
-#uploadDrModal label {
-  display: block;
-  font-size: 11px;
-  font-weight: 600;
-  color: #888;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 8px;
-}
-
-#uploadDrModal input[type="text"],
-#uploadDrModal input[type="date"],
-#uploadDrModal input[type="file"] {
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 8px;
-  font-size: 14px;
-  transition: all 0.3s ease;
-  background-color: #fff;
-  color: #000;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-}
-
-#uploadDrModal input:focus {
-  outline: none;
-  border-color: #4CAF50;
-  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
-}
-
-body.dark-mode #uploadDrModal input {
-  background-color: #2a2a2a;
-  color: #fff;
-  border: 1px solid #555;
-}
-
-body.dark-mode #uploadDrModal input:focus {
-  border-color: #D96F32;
-  box-shadow: 0 0 0 3px rgba(217, 111, 50, 0.25);
-}
-
-#uploadDrModal .modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-#uploadDrModal button[type="submit"] {
-  padding: 10px 14px;
-  border-radius: 8px;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  background-color: #2196F3;
-  color: white;
-  font-size: 14px;
-}
-
-#uploadDrModal button[type="submit"]:hover {
-  background-color: #1976D2;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
-}
-
-/* ===========================================
-   DR IMAGE GALLERY
-=========================================== */
-
+/* DR Image container for general display (re-used below) */
 .dr-image-container {
-  margin-top: 15px;
+    margin-top: 15px;
 }
 
 .dr-images-gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 10px;
-  margin-top: 10px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
 }
 
+/* DR Image Preview for thumbnails */
 .dr-image-preview {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 8px;
-  border: 2px solid #e0e0e0;
-  transition: all 0.3s ease;
-  cursor: pointer;
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid #e0e0e0;
+    transition: all 0.3s ease;
+    cursor: pointer;
 }
 
 .dr-image-preview:hover {
-  border-color: #4CAF50;
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-color: #4CAF50;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 body.dark-mode .dr-image-preview {
-  border-color: #555;
+    border-color: #555;
 }
 
 body.dark-mode .dr-image-preview:hover {
-  border-color: #D96F32;
+    border-color: #D96F32;
 }
 
 .no-image {
-  color: #888;
-  font-style: italic;
-  text-align: center;
-  padding: 20px;
+    color: #888;
+    font-style: italic;
+    text-align: center;
+    padding: 20px;
 }
 
-/* Responsive for buttons */
-@media (max-width: 768px) {
-  .button-stack {
-    flex-direction: column;
-    width: 100%;
-  }
-  
-  .add-project-btn,
-  .upload-dr-btn {
-    width: 100%;
-  }
-  
-  .dr-images-gallery {
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  }
-  
-  .dr-image-preview {
-    height: 100px;
-  }
-}
-
-/* =============================== */
 /* Image Preview Modal Styles */
-/* =============================== */
 .image-preview-modal {
-  display: none; /* Hidden by default */
-  position: fixed;
-  z-index: 9999;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.9);
-  justify-content: center;
-  align-items: center;
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.9);
+    justify-content: center;
+    align-items: center;
 }
 
 .image-preview-modal img.preview-image {
-  max-width: 90%;
-  max-height: 90%;
-  border-radius: 10px;
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
 }
 
 .close-preview {
-  position: absolute;
-  top: 30px;
-  right: 50px;
-  color: white;
-  font-size: 40px;
-  cursor: pointer;
-  transition: 0.3s;
+    position: absolute;
+    top: 30px;
+    right: 50px;
+    color: white;
+    font-size: 40px;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
 .close-preview:hover {
-  color: #ccc;
+    color: #ccc;
+}
+
+/* ===========================================
+    MODAL P.O / D.R. HEADER FIX
+=========================================== */
+
+.dr-number-display,
+.po-number-display {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #0f1724;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-bottom: 0;
+    padding-left: 25px;
+    padding-right: 60px;
+}
+
+.po-number-display {
+    padding-top: 25px;
+    padding-bottom: 5px;
 }
 
 .dr-number-display {
-  font-weight: bold;
-  font-size: 1.1rem;
-  color: #333;
-  margin-bottom: 10px;
+    padding-bottom: 15px;
+    margin-bottom: 10px;
 }
 
+body.dark-mode .dr-number-display,
+body.dark-mode .po-number-display {
+    color: #ffffff;
+}
+
+/* ===========================================
+    UPLOAD IMAGE FIELD
+=========================================== */
+
+/* This is the wrapper for the icon button and text you are currently working on */
+.upload-icon-wrapper-compact {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.upload-btn-icon {
+    padding: 8px 10px;
+    font-size: 18px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.upload-btn-icon:hover {
+    background-color: #0056b3;
+}
+
+.file-count {
+    font-size: 0.9em;
+    color: #ccc;
+}
+
+
+/* ===========================================
+    RESPONSIVE DESIGN
+=========================================== */
+
+@media (max-width: 768px) {
+    .page-title-wrapper {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+
+    .page-title {
+        text-align: center;
+        font-size: 18px;
+    }
+
+    .add-project-container {
+        justify-content: stretch;
+    }
+
+    .add-project-btn {
+        width: 100%;
+    }
+
+    .billing-row {
+        grid-template-columns: 1fr;
+        gap: 5px;
+    }
+
+    .billing-label {
+        margin-top: 10px;
+    }
+
+    .modal-content {
+        width: 95%;
+        max-height: 95vh;
+    }
+
+    .modal-header {
+        padding: 15px 20px;
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .modal-title {
+        font-size: 20px;
+    }
+
+    .transaction-table {
+        font-size: 12px;
+    }
+
+    .transaction-table th,
+    .transaction-table td {
+        padding: 8px 10px;
+    }
+
+    .button-stack {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .add-project-btn,
+    .upload-dr-btn {
+        width: 100%;
+    }
+
+    .dr-images-gallery {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+
+    .dr-image-preview {
+        height: 100px;
+    }
+}
+
+/* Container to manage alignment of info (left) and search (right) */
+.modal-header-controls {
+    display: flex;
+    justify-content: space-between; /* Pushes info to the left and search to the right */
+    align-items: center; /* Vertically centers the search bar with the info text */
+    margin-top: 10px;
+    margin-bottom: 20px; /* Provides spacing above the table */
+    padding: 0 10px; 
+}
+
+/* Container for PO/DR Numbers (Left Side) */
+.header-info p {
+    margin: 3px 0; /* Ensures consistent spacing between the PO and DR number */
+    font-size: 1.1em;
+}
+
+/* Style for the search bar container (Right Side) */
+.dr-search-container {
+    display: flex;
+    align-items: center;
+}
+
+/* Style for the search input field itself */
+#drItemSearchInput {
+    /* Adjust width to be suitable for the header area */
+    width: 280px; 
+    padding: 8px 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px; 
+    font-size: 14px; 
+    /* Use your primary color for a consistent look */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Focus state for user feedback */
+#drItemSearchInput:focus {
+    border-color: #007bff; /* Example focus color */
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+    outline: none;
+}

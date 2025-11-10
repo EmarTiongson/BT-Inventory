@@ -18,6 +18,10 @@ class Item(models.Model):
         ("pcs", "Pieces"),
         ("rolls", "Rolls"),
         ("meters", "Meters"),
+        ("gallons", "Gallons"),
+        ("litters", "Litters"),
+        ("bottles", "Bottles"),
+        ("cans", "Cans"),
     ]
 
     item_name = models.CharField(max_length=200)

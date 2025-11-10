@@ -8,17 +8,15 @@ const projectList = document.getElementById('projectList');
 const projectSearchInput = document.getElementById('projectSearchInput');
 
 function openAddProjectModal() {
+  addProjectModal.classList.add('show');
   addProjectModal.style.display = 'flex';
 }
 
 function closeAddProjectModal() {
+  addProjectModal.classList.remove('show');
   addProjectModal.style.display = 'none';
   addProjectForm.reset();
 }
-
-window.addEventListener('click', function (e) {
-  if (e.target === addProjectModal) closeAddProjectModal();
-});
 
 // ===============================
 // Add Project Form Handler (AJAX)
@@ -118,6 +116,7 @@ function selectProject(displayName, el) {
 
   // ✅ FIX: Use dataset.id which now contains the PO number
   const projectId = el.dataset.id;
+  document.getElementById("projectDetailsContainer").dataset.projectId = projectId;
   console.log('Selected project ID:', projectId); // Debug log
   displayProjectDetails(projectId);
 }
@@ -226,6 +225,8 @@ async function displayProjectDetails(projectId) {
   } catch (err) {
     console.error('Failed to load project details:', err);
     alert('❌ Could not load project details: ' + err.message);
+
+      
   }
 }
   
@@ -239,12 +240,11 @@ const closeDrModal = document.getElementById('closeDrModal');
 const drDetailsBody = document.getElementById('drDetailsBody');
 
 if (closeDrModal) {
-  closeDrModal.addEventListener('click', () => drModal.style.display = 'none');
+  closeDrModal.addEventListener('click', () => {
+    drModal.classList.remove('show');
+    drModal.style.display = 'none';
+  });
 }
-
-window.addEventListener('click', e => {
-  if (e.target === drModal) drModal.style.display = 'none';
-});
 
 async function showDrDetails(drNo) {
   try {
@@ -255,7 +255,8 @@ async function showDrDetails(drNo) {
 
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data = await response.json();
-    document.getElementById('modalDrNumber').textContent = `${drNo}`;
+    document.getElementById('modalDrNumber').textContent = `DR No: ${drNo}`;
+    document.getElementById('poNumberDisplay').textContent = `P.O No: ${poClient}`;
     drDetailsBody.innerHTML = '';
 
     if (data.transactions && data.transactions.length > 0) {
@@ -274,12 +275,11 @@ async function showDrDetails(drNo) {
             : '—';
 
         row.innerHTML = `
-          <td>${tx.date || '—'}</td>
           <td>${tx.item_name || '—'}</td>
+          <td>${tx.item_description || '—'}</td>
           <td>${tx.quantity || '—'}</td>
           <td>${serialButton}</td>
           <td>${tx.location || '—'}</td>
-          <td>${tx.po_client || '—'}</td>
           <td>${tx.remarks || '—'}</td>
           <td>${tx.updated_by_user || '—'}</td>
         `;
@@ -294,6 +294,7 @@ async function showDrDetails(drNo) {
       drDetailsBody.innerHTML = `<tr><td colspan="12">No transactions found for this D.R.</td></tr>`;
     }
 
+    drModal.classList.add('show');
     drModal.style.display = 'flex';
   } catch (err) {
     console.error('Failed to load DR details:', err);
@@ -343,38 +344,30 @@ async function loadProjects() {
 }
 
 // ===============================
-// Upload DR Modal + Form Handling (Safe)
+// Upload DR Modal Functionality
 // ===============================
 
 const uploadDrModal = document.getElementById('uploadDrModal');
-const openUploadDrModalBtn = document.getElementById('openUploadDrModalBtn');
-const closeUploadDrModal = document.getElementById('closeUploadDrModal');
 const uploadDrForm = document.getElementById('uploadDrForm');
 
-// ✅ Open modal safely
-if (openUploadDrModalBtn && uploadDrModal) {
-  openUploadDrModalBtn.addEventListener('click', () => {
+function openUploadDrModal() {
+  if (uploadDrModal) {
+    uploadDrModal.classList.add('show');
     uploadDrModal.style.display = 'flex';
-  });
-}
-
-// ✅ Close modal safely
-if (closeUploadDrModal && uploadDrModal && uploadDrForm) {
-  closeUploadDrModal.addEventListener('click', () => {
-    uploadDrModal.style.display = 'none';
-    uploadDrForm.reset();
-  });
-}
-
-// ✅ Close when clicking outside
-window.addEventListener('click', (e) => {
-  if (e.target === uploadDrModal) {
-    uploadDrModal.style.display = 'none';
-    if (uploadDrForm) uploadDrForm.reset();
   }
-});
+}
 
-// ✅ Handle form submission safely
+function closeUploadDrModal() {
+  if (uploadDrModal) {
+    uploadDrModal.classList.remove('show');
+    uploadDrModal.style.display = 'none';
+  }
+  if (uploadDrForm) {
+    uploadDrForm.reset();
+  }
+}
+
+// ✅ Handle form submission
 if (uploadDrForm) {
   uploadDrForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -417,29 +410,25 @@ if (uploadDrForm) {
 
       if (data.success) {
         alert("✅ DR and Images uploaded successfully!");
-        uploadDrModal.style.display = 'none';
-        uploadDrForm.reset();
+        closeUploadDrModal();
         
         // Reload the current project if one is selected
-        const selectedPo = document.getElementById('projectPo')?.textContent.trim();
-        if (selectedPo) {
-          displayProjectDetails(selectedPo);
-        }
+        const projectContainer = document.getElementById("projectDetailsContainer");
+        const selectedProjectId = projectContainer?.dataset.projectId;
+
+      if (selectedProjectId) {
+        await displayProjectDetails(selectedProjectId);
+      }
+
       } else {
         alert("❌ Upload failed: " + (data.error || "Unknown error"));
       }
     } catch (err) {
-      console.error(err);
-      alert("❌ An error occurred while uploading the D.R.");
+      console.error("Upload DR error:", err);
+      alert("❌ An error occurred while uploading the D.R. — check console for details.");
     }
-  });
-}
 
-function openUploadDrModal() {
-  const uploadDrModal = document.getElementById('uploadDrModal');
-  if (uploadDrModal) {
-    uploadDrModal.style.display = 'flex';
-  }
+  });
 }
 
 // ===============================
@@ -467,10 +456,113 @@ if (closeImagePreview) {
   });
 }
 
-// ✅ Close modal when clicking outside the image
+// ===============================
+// Global Click Events (Consolidated)
+// ===============================
+
 window.addEventListener('click', (e) => {
+  // Close Add Project Modal if clicked outside
+  if (e.target === addProjectModal) {
+    closeAddProjectModal();
+  }
+  
+  // Close Upload DR Modal if clicked outside
+  if (e.target === uploadDrModal) {
+    closeUploadDrModal();
+  }
+  
+  // Close DR Details Modal if clicked outside
+  if (e.target === drModal) {
+    drModal.classList.remove('show');
+    drModal.style.display = 'none';
+  }
+  
+  // Close Image Preview Modal if clicked outside
   if (e.target === imagePreviewModal) {
     imagePreviewModal.style.display = 'none';
     previewImage.src = '';
   }
 });
+
+// ===============================
+// ESC Key to Close Modals
+// ===============================
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    if (addProjectModal && addProjectModal.classList.contains('show')) {
+      closeAddProjectModal();
+    }
+    if (uploadDrModal && uploadDrModal.classList.contains('show')) {
+      closeUploadDrModal();
+    }
+    if (drModal && drModal.classList.contains('show')) {
+      drModal.classList.remove('show');
+      drModal.style.display = 'none';
+    }
+    if (imagePreviewModal && imagePreviewModal.style.display === 'flex') {
+      imagePreviewModal.style.display = 'none';
+      previewImage.src = '';
+    }
+  }
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  const uploadBtn = document.getElementById("uploadIconBtn");
+  const fileInput = document.getElementById("images");
+  const fileCount = document.getElementById("fileCount");
+
+  if (uploadBtn && fileInput) {
+    uploadBtn.addEventListener("click", () => fileInput.click());
+
+    fileInput.addEventListener("change", () => {
+      if (fileInput.files.length > 0) {
+        fileCount.textContent = `${fileInput.files.length} file(s) selected`;
+      } else {
+        fileCount.textContent = "No files selected";
+      }
+    });
+  }
+});
+
+// ===============================
+// DR Item Search/Filter
+// ===============================
+
+function filterDrItems() {
+    // Get the search input value and convert to uppercase for case-insensitive search
+    const input = document.getElementById('drItemSearchInput');
+    const filter = input.value.toUpperCase();
+    
+    // Get the table body and all its rows
+    const tableBody = document.getElementById('drDetailsBody');
+    const rows = tableBody.getElementsByTagName('tr');
+
+    // Loop through all table rows
+    for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        
+        // Get the text content of the first two cells (Item Name and Item Description)
+        const itemNameCell = row.getElementsByTagName('td')[0]; // Item Name is index 0
+        const itemDescCell = row.getElementsByTagName('td')[1]; // Item Description is index 1
+        
+        let shouldDisplay = false;
+
+        if (itemNameCell) {
+            const itemNameText = itemNameCell.textContent || itemNameCell.innerText;
+            if (itemNameText.toUpperCase().includes(filter)) {
+                shouldDisplay = true;
+            }
+        }
+        
+        if (!shouldDisplay && itemDescCell) {
+            const itemDescText = itemDescCell.textContent || itemDescCell.innerText;
+            if (itemDescText.toUpperCase().includes(filter)) {
+                shouldDisplay = true;
+            }
+        }
+
+        // Show or hide the row based on the filter result
+        row.style.display = shouldDisplay ? "" : "none";
+    }
+}

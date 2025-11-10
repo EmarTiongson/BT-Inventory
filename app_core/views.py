@@ -392,6 +392,7 @@ def get_dr_details(request, dr_no):
                     "id": tx.id,
                     "item_id": tx.item_id,
                     "item_name": tx.item.item_name,
+                    "item_description": tx.item.description,
                     "date": tx.date.strftime("%Y-%m-%d") if tx.date else "",
                     "transaction_type": tx.transaction_type,
                     "quantity": tx.quantity,
