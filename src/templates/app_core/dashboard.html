@@ -7,31 +7,45 @@
 {% endblock %}
 
 {% block content %}
-  <div class="logo-container">
-    <div class="logo-top">
-      <img src="{% static 'images/brite-logo.png' %}" alt="Company logo">
+  <!-- Logo - OUTSIDE the hero container (Tailwind) -->
+  <div class="mb-5">
+    <img src="{% static 'images/brite-logo.png' %}" 
+         alt="Company logo"
+         class="w-[250px] h-auto">
+  </div>
+
+  <!-- Hero Container - VANILLA CSS -->
+  <div class="hero-container">
+    
+    <!-- Gradient Orbs -->
+    <div class="gradient-orb orb-1"></div>
+    <div class="gradient-orb orb-2"></div>
+
+    <!-- Hero Content -->
+    <div class="hero-content">
+      <!-- Welcome Text (Tailwind) -->
+      <h1 class="welcome-text text-white font-medium mb-2.5 opacity-90 whitespace-nowrap inline-block overflow-hidden" 
+          style="font-size: 2.0rem; min-width: 550px; height: 3.0rem; line-height: 2.0rem;"
+          data-username="{{ user.username }}"></h1>
+
+      <!-- Hero Title (Tailwind) -->
+      <h2 class="text-white font-extrabold leading-[1.1] mb-20" 
+          style="font-size: 5.5rem; letter-spacing: -2px;">
+        INVENTORY<br>MANAGEMENT<br>SYSTEM
+      </h2>
     </div>
 
-    <div class="hero-container">
-      <div class="gradient-orb orb-1"></div>
-      <div class="gradient-orb orb-2"></div>
-
-      <div class="hero-content">
-        <h1 class="welcome-text" data-username="{{ user.username }}"></h1>
-
-        <h2 class="hero-title">INVENTORY<br>MANAGEMENT<br>SYSTEM</h2>
-      </div>
-
-      <div class="info-section">
-        <h3 class="info-title">What is Inventory<br>Management?</h3>
-        <div class="info-divider"></div>
-        <p class="info-text">
-          A system inventory system is a vital tool that helps us, as a System Integrator and
-          Professional Service provider, manage, track, and optimize all the components and assets
-          involved across our focus areas of innovation, design and engineering, installation,
-          commissioning, user training, testing and certification.
-        </p>
-      </div>
+    <!-- Info Section -->
+    <div class="info-section">
+      <!-- Info Title (Tailwind) -->
+      <h3 class="text-white text-2xl font-semibold mb-2.5 uppercase" style="letter-spacing: 1px;">
+        WHAT IS INVENTORY<br>MANAGEMENT?
+      </h3>
+      <div class="info-divider"></div>
+      <!-- Info Text (Tailwind) -->
+      <p class="text-white text-base font-light opacity-90" style="line-height: 1.7;">
+        A system inventory system is a vital tool that helps us, as a System Integrator and Professional Service provider, manage, track, and optimize all the components and assets involved across our focus areas of innovation, design and engineering, installation, commissioning, user training, testing and certification.
+      </p>
     </div>
   </div>
 

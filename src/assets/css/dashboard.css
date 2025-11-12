@@ -1,40 +1,8 @@
 /* =======================================
-   THEME VARIABLES (inherit from base.html)
-   ======================================= */
-:root {
-  --bg-primary: #ffffff;
-  --text-primary: #0a0a0a;
-  --text-secondary: #333333;
-  --accent-color: #134686;
-  --orb-blue: #134686;
-  --orb-orange: #1e5ba8;
-  --hero-bg-start: #b8c9db;
-  --hero-bg-end: #d6e3f0;
-}
-
-/* Override variables in dark mode */
-body.dark-mode {
-  --bg-primary: #0a0a0a;
-  --text-primary: #ffffff;
-  --text-secondary: #e0e0e0;
-  --accent-color: #D96F32;
-  --orb-blue: #0d1f3a;
-  --orb-orange: #D96F32;
-  --hero-bg-start: #0d1f3a;
-  --hero-bg-end: #D96F32;
-}
-
-/* =======================================
-   HERO CONTAINER
+   HERO CONTAINER - VANILLA CSS
    ======================================= */
 .hero-container {
-  /* ✅ 70% grey + 30% blue */
-  background: linear-gradient(
-    135deg,
-    #d6d6d6 0%,         /* light grey start */
-    #bfbfbf 70%,        /* middle grey tone up to 70% */
-    #134686 100%        /* blue from 70% to 100% */
-  );
+  background: linear-gradient(135deg, #d6d6d6 0%, #bfbfbf 70%, #134686 100%);
   border-radius: 16px;
   padding: 60px 50px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
@@ -44,30 +12,27 @@ body.dark-mode {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-width: 800px;
 }
 
-/* Dark mode specific gradient (unchanged) */
+/* Dark mode gradient */
 body.dark-mode .hero-container {
-  background: linear-gradient(
-    135deg,
-    #0d1f3a 0%,
-    #0d1f3a 70%,
-    #D96F32 100%
-  );
+  background: linear-gradient(135deg, #0d1f3a 0%, #0d1f3a 70%, #D96F32 100%);
 }
 
 /* Grainy texture overlay */
 .hero-container::before {
   content: '';
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
   opacity: 0.25;
   pointer-events: none;
 }
 
-/* Gradient orb effects */
+/* Gradient orbs */
 .gradient-orb {
   position: absolute;
   border-radius: 50%;
@@ -79,48 +44,31 @@ body.dark-mode .hero-container {
 .orb-1 {
   width: 400px;
   height: 400px;
-  background: radial-gradient(circle, var(--orb-blue) 0%, transparent 70%);
+  background: radial-gradient(circle, #134686 0%, transparent 70%);
   top: -100px;
   right: -100px;
+}
+
+body.dark-mode .orb-1 {
+  background: radial-gradient(circle, #0d1f3a 0%, transparent 70%);
 }
 
 .orb-2 {
   width: 300px;
   height: 300px;
-  background: radial-gradient(circle, var(--orb-orange) 0%, transparent 70%);
+  background: radial-gradient(circle, #1e5ba8 0%, transparent 70%);
   bottom: -50px;
   right: 150px;
+}
+
+body.dark-mode .orb-2 {
+  background: radial-gradient(circle, #D96F32 0%, transparent 70%);
 }
 
 .hero-content {
   position: relative;
   z-index: 1;
   min-height: 120px;
-}
-
-/* Welcome Text */
-.welcome-text {
-  color: var(--text-primary);
-  font-size: 2.0rem;
-  font-weight: 500;
-  margin-bottom: 10px;
-  opacity: 0.9;
-  white-space: nowrap;
-  min-width: 550px;
-  display: inline-block;
-  height: 3.0rem;
-  line-height: 2.0rem;
-  overflow: hidden;
-}
-
-/* Hero Title */
-.hero-title {
-  color: var(--text-primary);
-  font-size: 5.5rem;
-  font-weight: 800;
-  line-height: 1.1;
-  margin-bottom: 80px;
-  letter-spacing: -2px;
 }
 
 /* Info Section */
@@ -130,77 +78,32 @@ body.dark-mode .hero-container {
   max-width: 600px;
 }
 
-.info-title {
-  color: var(--text-primary);
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 10px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
 .info-divider {
   width: 60px;
   height: 3px;
-  background: var(--accent-color);
+  background: #134686;
   margin-bottom: 20px;
 }
 
-.info-text {
-  color: var(--text-secondary);
-  font-size: 1.0rem;
-  line-height: 1.7;
-  font-weight: 300;
-}
-
-/* Logo Section */
-.logo-container {
-  position: relative;
-  z-index: 1;
-  text-align: left;
-  margin-top: -80px;
-  margin-bottom: 20px;
-  min-width: 450px;
-}
-
-.logo-container img {
-  max-width: 200px;
-  height: auto;
-  margin-bottom: 25px;
-}
-
-.logo-text {
-  color: #4a90e2;
-  font-size: 1.8rem;
-  font-weight: 700;
-  font-style: italic;
+body.dark-mode .info-divider {
+  background: #D96F32;
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .hero-title {
-    font-size: 4.5rem;
-  }
   .hero-container {
     padding: 40px 30px;
     min-height: 400px;
-    min-width: auto;
   }
 }
 
 @media (max-width: 576px) {
-  .hero-title {
-    font-size: 3rem;
-  }
   .hero-container {
     padding: 30px 20px;
-    min-width: auto;
   }
 }
 
-/* =======================================
-   DARK MODE TOGGLE ICON VISIBILITY FIX
-   ======================================= */
+/* Dark mode icon visibility */
 body.dark-mode #darkModeIcon {
   color: #ffffff !important;
 }

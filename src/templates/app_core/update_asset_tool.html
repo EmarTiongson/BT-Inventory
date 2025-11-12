@@ -9,7 +9,6 @@
 <div class="add-item-container">
   <h1 class="page-title">Update Asset / Tool</h1>
 
-  <!-- ✅ Display Django messages -->
   {% if messages %}
     {% for message in messages %}
       <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
@@ -21,93 +20,53 @@
   <div class="inventory-card">
     <form method="POST" action="{% url 'update_asset_tool' asset_tool.id %}">
       {% csrf_token %}
-
       <div class="form-grid">
 
-        <!-- ✅ Tool / Asset Name -->
         <div class="form-field">
           <label for="tool_name" class="field-label">Tool / Asset Name</label>
-          <input type="text"
-                 id="tool_name"
-                 name="tool_name"
-                 value="{{ asset_tool.tool_name }}"
-                 readonly
-                 disabled>
+          <input type="text" id="tool_name" name="tool_name" value="{{ asset_tool.tool_name }}" readonly disabled>
         </div>
 
-        <!-- ✅ Description -->
         <div class="form-field">
           <label for="description" class="field-label">Description</label>
-          <input type="text"
-                 id="description"
-                 name="description"
-                 value="{{ asset_tool.description }}"
-                 readonly
-                 disabled>
+          <input type="text" id="description" name="description" value="{{ asset_tool.description }}" readonly disabled>
         </div>
 
-        <!-- ✅ Assigned User -->
         <div class="form-field">
           <label for="assigned_user" class="field-label">Assigned User (Optional)</label>
-          <input type="text"
-                 id="assigned_user"
-                 name="assigned_user"
-                 placeholder="Enter assigned user"
-                 value="{{ asset_tool.assigned_user|default:'' }}">
+          <input type="text" id="assigned_user" name="assigned_user" value="{{ asset_tool.assigned_user|default:'' }}" placeholder="Enter assigned user">
         </div>
 
-        <!-- ✅ Assigned By -->
         <div class="form-field">
           <label for="assigned_by" class="field-label">Assigned By</label>
-          <input type="text"
-                 id="assigned_by"
-                 name="assigned_by"
-                 value="{{ request.user.username }}"
-                 readonly>
+          <input type="text" id="assigned_by" name="assigned_by" value="{{ request.user.username }}" readonly>
         </div>
 
-        <!-- ✅ Transaction Date & Time -->
         <div class="form-field">
           <label for="transaction_date" class="field-label">Transaction Date & Time</label>
-          <input type="datetime-local"
-                 id="transaction_date"
-                 name="transaction_date"
-                 value="{{ current_datetime }}"
-                 required>
+          <input type="datetime-local" id="transaction_date" name="transaction_date" value="{{ current_datetime }}" required>
         </div>
 
-        <!-- ✅ Remarks -->
         <div class="form-field" style="grid-column: 1 / -1;">
           <label for="remarks" class="field-label">Remarks</label>
-          <textarea id="remarks"
-                    name="remarks"
-                    placeholder="Remarks about this update (optional)"
-                    rows="3"
-                    style="resize: none;">{{ asset_tool.remarks|default:'' }}</textarea>
+          <textarea id="remarks" name="remarks" placeholder="Remarks about this update (optional)" rows="3">{{ asset_tool.remarks|default:'' }}</textarea>
         </div>
 
       </div>
 
-      <!-- ===========================
-           SUBMIT SECTION
-      ============================ -->
       <div class="submit-section">
-        <button type="submit" class="add-btn">
-          <i class="bi bi-check-square"></i> Update Asset / Tool
-        </button>
+        <button type="submit" class="add-btn"><i class="bi bi-check-square"></i> Update Asset / Tool</button>
       </div>
     </form>
   </div>
 </div>
 
-<!-- ✅ Fixed Return Button -->
 <a href="{% url 'assets_tools' %}" class="return-btn-fixed">
   <i class="bi bi-arrow-left-circle"></i> Back to Assets & Tools
 </a>
 
 <script src="{% static 'js/add_asset_tool.js' %}"></script>
 
-<!-- ✅ Auto-fill current datetime if empty -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
   const dtInput = document.getElementById("transaction_date");

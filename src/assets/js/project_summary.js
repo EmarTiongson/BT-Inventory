@@ -278,6 +278,7 @@ async function showDrDetails(drNo) {
           <td>${tx.item_name || '—'}</td>
           <td>${tx.item_description || '—'}</td>
           <td>${tx.quantity || '—'}</td>
+          <td>${tx.unit_of_quantity || '-'}</td>
           <td>${serialButton}</td>
           <td>${tx.location || '—'}</td>
           <td>${tx.remarks || '—'}</td>

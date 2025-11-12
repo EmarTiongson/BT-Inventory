@@ -246,7 +246,9 @@ def project_summary_view(request):
     if selected_project_id:
         selected_project = get_object_or_404(Project, id=selected_project_id)
         # Fetch all DRs (ItemUpdates) connected to the project's P.O.
-        drs = ItemUpdate.objects.filter(po_client=selected_project.po_no).order_by("-date").distinct("dr_no")  # one entry per DR number
+        drs = (
+            ItemUpdate.objects.filter(po_client=selected_project.po_no).order_by("dr_no", "-date").distinct("dr_no")
+        )  # one entry per DR number
 
     context = {
         "projects": projects,
@@ -396,6 +398,7 @@ def get_dr_details(request, dr_no):
                     "date": tx.date.strftime("%Y-%m-%d") if tx.date else "",
                     "transaction_type": tx.transaction_type,
                     "quantity": tx.quantity,
+                    "unit_of_quantity": getattr(tx.item, "unit_of_quantity", ""),
                     "stock_after_transaction": tx.stock_after_transaction,
                     "location": tx.location,
                     "po_supplier": tx.po_supplier,
