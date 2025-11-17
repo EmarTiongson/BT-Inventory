@@ -38,7 +38,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for update in updates %}
+        {% for update in page_obj %}
         <tr {% if update.undone %}class="undone"{% endif %}>
           <td>{{ update.date|date:"F d, Y - h:i A" }}</td>
           <td>
@@ -122,6 +122,21 @@
       </tbody>
     </table>
   </div>
+</div>
+
+<!-- PAGINATION CONTROLS -->
+<div class="pagination-container">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}" class="pagination-btn">Previous</a>
+    {% endif %}
+
+    <span class="pagination-current">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    </span>
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}" class="pagination-btn">Next</a>
+    {% endif %}
 </div>
 
 <a href="{% url 'inventory' %}" class="return-btn-fixed">

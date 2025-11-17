@@ -107,6 +107,7 @@
 
 .form-grid {
   display: grid;
+  /* Standard layout: flexible columns, minimum width 300px */
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 20px;
   width: 100%;
@@ -370,7 +371,7 @@ body.dark-mode .upload-box:hover {
 
 /* ==========================
    DARK MODE - SELECT DROPDOWN FIX
-   ========================== */
+   =========================== */
 
 body.dark-mode select,
 body.dark-mode option {
@@ -391,8 +392,6 @@ body.dark-mode option:checked {
   background-color: #f39c12; /* orange highlight for active/hover */
   color: #000; /* black text for contrast when highlighted */
 }
-
-
 
 body.dark-mode .form-grid input:focus,
 body.dark-mode .form-grid select:focus {
@@ -496,4 +495,82 @@ body.dark-mode .save-btn:hover {
 }
 .serial-error.show {
   display: block;
+}
+
+/* ==================================== */
+/* 📱 MOBILE RESPONSIVENESS (<= 600px) */
+/* ==================================== */
+
+@media (max-width: 600px) {
+    /* Main Container Adjustments */
+    .add-item-container {
+        width: 98%;
+        margin: 20px auto;
+        padding: 20px; /* Reduced internal padding */
+        gap: 20px;
+    }
+
+    /* Page Title */
+    .page-title {
+        font-size: 24px; /* Slightly smaller title */
+        margin-bottom: 20px;
+    }
+
+    /* Form Grid: Single Column */
+    .form-grid {
+        /* Forces the grid to a single column regardless of content */
+        grid-template-columns: 1fr; 
+        gap: 15px; /* Reduced gap between form fields */
+    }
+
+    /* Input Fields */
+    .form-grid input,
+    .form-grid select,
+    .form-grid textarea {
+        padding: 10px 14px; /* Reduced padding on inputs */
+        font-size: 16px; /* Slightly increased size for better mobile tap target */
+    }
+
+    /* Serial Header */
+    .serial-header {
+        padding: 10px 12px;
+    }
+    
+    /* Serial Modal */
+    .modal-content {
+        padding: 25px 20px; /* Reduced modal padding */
+        max-height: 90vh;
+        width: 100%;
+    }
+
+    .modal-content h2 {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+
+    #serialFieldsContainer {
+        /* Adjust serial field grid for mobile modal */
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 10px;
+    }
+
+    /* Buttons */
+    .add-btn,
+    .cancel-btn,
+    .save-btn {
+        padding: 10px 18px;
+        font-size: 14px;
+        width: 100%; /* Make action buttons full width inside modal */
+    }
+    
+    .modal-actions {
+        flex-direction: column; /* Stack action buttons vertically */
+        gap: 10px;
+    }
+    
+    /* Fixed Return Button (to not overlap the bottom of the screen) */
+    .return-btn-fixed {
+        bottom: 15px;
+        right: 15px;
+    }
 }

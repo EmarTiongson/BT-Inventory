@@ -758,3 +758,55 @@ body.light-mode .item-link:hover {
     font-weight: 700 !important;
     transform: translateX(3px) !important;
 }
+
+/* Wrapper that forces pagination to stay at the bottom and centered */
+.pagination-container {
+    margin-top: 40px;              /* adds space from content */
+    width: 100%;                   /* ensures full row */
+    display: flex;
+    justify-content: center;       /* center horizontally */
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 20px;          /* adds breathing room at bottom */
+}
+
+/* Pagination buttons */
+.pagination-container {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    text-align: center !important;
+}
+ 
+.pagination-btn {
+    padding: 8px 14px;
+    border-radius: 6px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.pagination-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Current page display (supports theme variables) */
+.pagination-current {
+    padding: 8px 14px;
+    font-size: 14px;
+
+    /* Light mode defaults */
+    background: var(--pagination-bg, #e9ecef);
+    color: var(--pagination-text, #000);
+
+    border-radius: 6px;
+}
+
+/* DARK MODE OVERRIDE */
+body.dark-mode .pagination-current {
+    --pagination-bg: #2b2b2b;     /* Dark background */
+    --pagination-text: #ffffff;   /* White text */
+}

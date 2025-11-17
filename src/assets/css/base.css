@@ -41,42 +41,45 @@ body {
   color: var(--text);
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
+  /* FIX: Prevent entire page scroll on mobile when sidebar is open */
+  overflow-x: hidden; 
 }
 
 /* ---------- SIDEBAR ---------- */
 .sidebar {
-  position: fixed;
+  position: fixed; /* Ensures it stays in place */
   left: 0;
-  top: 0;
-  bottom: 0;
-  width: 260px;                /* expanded */
+  top: 0; /* Ensures it starts at the top */
+  bottom: 0; /* Ensures it spans the full height */
+  width: 260px;
   background: linear-gradient(180deg,var(--sidebar),var(--sidebar-contrast));
-  color: #1f2937;              /* Dark grey text for light sidebar */
+  color: #1f2937;
   display: flex;
   flex-direction: column;
   gap: 2px;
-  padding: 16px 12px;
+  /* Adjusted padding for better top spacing */
+  padding: 12px 12px 16px 12px;
   box-shadow: 0 8px 30px var(--shadow);
-  transition: width 0.25s ease, background 0.25s ease, padding 0.25s ease;
+  transition: width 0.25s ease, background 0.25s ease, padding 0.25s ease, transform 0.3s ease;
   z-index: 30;
-  overflow: hidden;
+  /* FIX: Allow vertical scrolling so Sign Out button is accessible */
+  overflow-y: auto; 
+  overflow-x: hidden; 
 }
 
 /* Dark mode sidebar text color */
-body.dark-mode .sidebar {
-  color: #fff;  /* White text for dark sidebar */
-}
+body.dark-mode .sidebar { color: #fff; }
 
 /* collapsed state */
 .sidebar.collapsed { width: 84px; }
 
-/* toggle button (top of sidebar) */
+/* toggle button base style */
 .toggle-btn, .toggle-btn:focus {
   border: none;
   background: transparent;
-  color: #134686;              /* Blue color for light mode */
+  color: #134686;
   font-size: 16px;
-  display:flex;
+  display:flex; 
   align-items:center;
   gap:14px;
   cursor:pointer;
@@ -87,404 +90,265 @@ body.dark-mode .sidebar {
   border-radius:10px;
 }
 
-.toggle-btn:hover {
-  background: rgba(0,0,0,0.08);
-}
-
-body.dark-mode .toggle-btn:hover {
-  background: rgba(255,255,255,0.04);
-}
-
-.toggle-btn i {
-  font-size:18px; 
-  width: 20px; 
-  text-align:center;
-}
-
-/* Dark mode toggle button color */
+/* toggle hover & dark mode */
+.toggle-btn:hover { background: rgba(0,0,0,0.08); }
+body.dark-mode .toggle-btn:hover { background: rgba(255,255,255,0.04); }
 body.dark-mode .toggle-btn,
-body.dark-mode .toggle-btn:focus {
-  color: #D96F32;              /* Orange color for dark mode */
-}
+body.dark-mode .toggle-btn:focus { color: #D96F32; }
 
-.toggle-text { 
-  font-weight:700; 
-  font-size:14px;
-  font-family: "Poppins", sans-serif;
-  transition: opacity 0.25s ease;
-  white-space: nowrap;
-}
-.sidebar.collapsed .toggle-text { 
-  display:none; 
-  opacity: 0;
-}
+.toggle-btn i { font-size:18px; width: 20px; text-align:center; }
+
+.toggle-text { font-weight:700; font-size:14px; font-family: "Poppins", sans-serif; transition: opacity 0.25s ease; white-space: nowrap; }
+.sidebar.collapsed .toggle-text { display:none; opacity: 0; }
 
 /* nav items */
-.nav-item {
-  display:flex;
-  gap:14px;
-  align-items:center;
-  padding:14px 16px;
-  text-decoration:none;
-  color: #1f2937;              /* Dark grey text for light sidebar */
-  border-radius:10px;
-  font-weight:500;
-  cursor:pointer;
-  margin-bottom: 4px;
-}
-
-/* Dark mode nav items color */
-body.dark-mode .nav-item {
-  color: #e6eef8;  /* Light text for dark sidebar */
-}
-
+.nav-item { display:flex; gap:14px; align-items:center; padding:14px 16px; text-decoration:none; color: #1f2937; border-radius:10px; font-weight:500; cursor:pointer; margin-bottom: 4px; }
+body.dark-mode .nav-item { color: #e6eef8; }
 .nav-item i { font-size:18px; width: 20px; text-align:center; }
 
-/* hover / active - light mode */
+/* hover / active */
 .nav-item:hover { background: rgba(0,0,0,0.08); }
 .nav-item.active { background: rgba(0,0,0,0.12); box-shadow: inset 0 1px 0 rgba(0,0,0,0.04); }
-
-/* hover / active - dark mode */
 body.dark-mode .nav-item:hover { background: rgba(255,255,255,0.04); }
-body.dark-mode .nav-item.active { 
-  background: rgba(255,255,255,0.06); 
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.02); 
-}
+body.dark-mode .nav-item.active { background: rgba(255,255,255,0.06); box-shadow: inset 0 1px 0 rgba(255,255,255,0.02); }
 
-/* ==============================
-   SIGN OUT BUTTON STYLES
-   ============================== */
-
-/* Push signout to bottom */
+/* sign out */
 .sidebar form.nav-item.signout,
-.sidebar .nav-item.signout {
-  margin-top: auto;
-  padding: 0 !important;
-  border: none !important;
-  margin-bottom: 0;
-  background: none !important;
+.sidebar .nav-item.signout { 
+    margin-top:auto; 
+    padding:0 !important; 
+    border:none !important; 
+    margin-bottom:0; 
+    background:none !important; 
+    /* FIX: Ensure the signout wrapper always reserves its space at the bottom */
+    min-height: 50px; 
+    display: flex; 
+    align-items: flex-end; 
 }
-
-/* Base signout button (light mode) */
 .sidebar form.nav-item.signout button,
 .sidebar .nav-item.signout button {
-  all: unset;
-  box-sizing: border-box;
-  width: 100%;
-  display: flex !important;
-  gap: 14px;
-  align-items: center;
-  padding: 14px 16px;
-  border-radius: 10px;
-  margin-bottom: 4px;
-  background: #134686; /* Light mode base color */
-  color: white !important;
-  transition: background 0.3s ease, transform 0.2s ease;
-  font-weight: 700;
-  font-family: "Poppins", sans-serif;
-  cursor: pointer;
+  all: unset; width:100%; display:flex !important; gap:14px; align-items:center; padding:14px 16px; border-radius:10px; margin-bottom:4px;
+  background:#134686; color:white !important; transition: background 0.3s ease, transform 0.2s ease; font-weight:700; font-family:"Poppins",sans-serif; cursor:pointer;
 }
-
 .sidebar form.nav-item.signout button:hover,
-.sidebar .nav-item.signout button:hover {
-  background: #D96F32; /* Light mode hover */
-  transform: scale(1.03);
-}
-
-/* Dark mode signout button */
+.sidebar .nav-item.signout button:hover { background:#D96F32; transform:scale(1.03); }
 body.dark-mode .sidebar form.nav-item.signout button,
-body.dark-mode .sidebar .nav-item.signout button {
-  background: #D96F32; /* Dark mode base color */
-}
-
+body.dark-mode .sidebar .nav-item.signout button { background:#D96F32; }
 body.dark-mode .sidebar form.nav-item.signout button:hover,
-body.dark-mode .sidebar .nav-item.signout button:hover {
-  background:#134686; /* Light mode base color */
-; /* Darker hover color for dark mode */
-  transform: scale(1.03);
-}
-
-/* Icon styling */
+body.dark-mode .sidebar .nav-item.signout button:hover { background:#134686; transform:scale(1.03); }
 .sidebar form.nav-item.signout button i,
-.sidebar .nav-item.signout button i {
-  font-size: 18px;
-  width: 20px;
-  text-align: center;
-}
-
-/* Dark mode signout border */
-body.dark-mode .sidebar form.nav-item.signout,
-body.dark-mode .sidebar .nav-item.signout {
-  border: none;
-}
-
-/* Hide labels on collapse */
-.sidebar.collapsed .nav-item span { 
-  display: none; 
-  opacity: 0;
-}
-.sidebar .nav-item span { 
-  display: inline-block;
-  transition: opacity 0.25s ease;
-  white-space: nowrap;
-}
-
-
-/* Dark mode signout border */
-body.dark-mode .sidebar form.nav-item.signout,
-body.dark-mode .sidebar .nav-item.signout {
-  border: none;
-}
+.sidebar .nav-item.signout button i { font-size:18px; width:20px; text-align:center; }
 
 /* hide labels on collapse */
-.sidebar.collapsed .nav-item span { 
-  display:none; 
-  opacity: 0;
-}
-.sidebar .nav-item span { 
-  display:inline-block;
-  transition: opacity 0.25s ease;
-  white-space: nowrap;
-}
+.sidebar.collapsed .nav-item span { display:none; opacity:0; }
+.sidebar .nav-item span { display:inline-block; transition:opacity 0.25s ease; white-space:nowrap; }
 
 /* ---------- MAIN CONTENT ---------- */
 .main-content {
-  margin-left: 260px;
+  margin-left: 260px; /* Standard starting position (expanded sidebar width) */
   min-height: 100vh;
-  transition: margin-left 0.25s ease, background 0.25s ease;
+  transition: margin-left 0.25s ease, transform 0.3s ease, background 0.25s ease;
   padding: 18px 22px;
   display: flex;
   flex-direction: column;
   gap: 18px;
 }
 
-/* move when sidebar collapsed */
-.sidebar.collapsed + .main-content { margin-left:84px; }
-
-/* header area */
-/* .header {
-  display:flex;
-  align-items:center;
-  gap:16px;
-  padding:8px 0;
-} */
-
-/* Ensure header always appears above page content */
-.header {
-  position: relative;
-  z-index: 1000;
+/* 🚀 FIX: Apply reduced margin when the sidebar is collapsed (Stronger selector) */
+body.sidebar-is-collapsed .main-content {
+    margin-left: 84px; 
+}
+/* Fallback/standard rule (kept for compatibility) */
+.sidebar.collapsed + .main-content { 
+    margin-left: 84px; 
 }
 
-
-/* search-bar (optional) */
-.search-bar {
-  display:flex;
-  align-items:center;
-  gap:10px;
-  background: rgba(0,0,0,0.03);
-  padding:10px;
-  border-radius:10px;
-  min-width: 280px;
-}
-.search-bar input {
-  border: 0;
-  outline: none;
-  background: transparent;
-  color: var(--text);
+/* header */
+.header { 
+    display: flex; 
+    align-items: center; 
+    gap: 15px; 
+    position:relative; 
+    z-index:1000; 
 }
 
-/* settings (theme toggle) */
-.settings-btn, #themeToggle {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 8px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius: 8px;
-}
-.settings-btn i { font-size: 18px; }
+/* search bar */
+.search-bar { display:flex; align-items:center; gap:10px; background: rgba(0,0,0,0.03); padding:10px; border-radius:10px; min-width:280px; }
+.search-bar input { border:0; outline:none; background:transparent; color:var(--text); }
 
-/* logo top (common header area) */
-.logo-top {
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-.logo-top img { height:44px; width:auto; display:block; padding-top: 25px;}
+/* settings button */
+.settings-btn, #themeToggle { background:transparent; border:none; cursor:pointer; padding:8px; display:flex; align-items:center; justify-content:center; border-radius:8px; }
+.settings-btn i { font-size:18px; }
 
-/* content card pattern */
-.content-card {
-  background: var(--panel);
-  border-radius: var(--radius);
-  padding: 18px;
-  box-shadow: 0 6px 20px var(--shadow);
+/* logo top */
+.logo-top { 
+    display:flex; 
+    align-items:center; 
+    gap:10px; 
+    padding: 15px 0 25px 0; /* Standard top/bottom spacing */
+    transition: opacity 0.25s ease, height 0.25s ease, padding 0.25s ease;
+}
+.logo-top img { height:44px; width:auto; display:block; } 
+
+/* FIX: Collapse the logo spacing on desktop collapse */
+.sidebar.collapsed .logo-top {
+    opacity: 0; 
+    pointer-events: none;
+    height: 0; /* Collapse the vertical space */
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
-/* page title */
-.page-title {
-  margin: 6px 0 8px 0;
-  font-size: 20px;
-  font-weight: 700;
-}
+/* content card */
+.content-card { background:var(--panel); border-radius:var(--radius); padding:18px; box-shadow:0 6px 20px var(--shadow); }
+.page-title { margin:6px 0 8px 0; font-size:20px; font-weight:700; }
+.add-btn { background:#134686; color:white; padding:8px 14px; border-radius:10px; border:none; cursor:pointer; font-weight:600; display:inline-flex; gap:10px; align-items:center; }
 
-/* action/add button */
-.add-btn {
-  background: #134686;
-  color: white;
-  padding: 8px 14px;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  font-weight:600;
-  display:inline-flex;
-  gap:10px;
-  align-items:center;
-}
+/* data table */
+.data-table { width:100%; border-collapse:collapse; margin-top:14px; }
+.data-table th, .data-table td { text-align:left; padding:12px 10px; border-bottom:1px solid rgba(0,0,0,0.06); }
+body.dark-mode .data-table th, body.dark-mode .data-table td { border-color: rgba(255,255,255,0.04); }
 
-/* data table basics (keeps admin styling) */
-.data-table {
-  width:100%;
-  border-collapse: collapse;
-  margin-top: 14px;
+/* add/update containers */
+.add-item-container, .update-item-container {
+  background: linear-gradient(180deg, #d1d5db, #e5e7eb) !important;
+  border:1px solid rgba(0,0,0,0.1) !important;
+  color:#1f2937 !important;
+  box-shadow:0 8px 30px rgba(9,30,66,0.08) !important;
+  transition: all 0.3s ease;
 }
-.data-table th, .data-table td {
-  text-align:left;
-  padding: 12px 10px;
-  border-bottom: 1px solid rgba(0,0,0,0.06);
-}
-body.dark-mode .data-table th, body.dark-mode .data-table td {
-  border-border-color: rgba(255,255,255,0.04);
-}
-
-/* ---------- ADD ITEM & UPDATE ITEM CONTAINER STYLES ---------- */
-/* Container - Light Mode (Default) - Match sidebar color */
-.add-item-container,
-.update-item-container {
-  background: linear-gradient(180deg, #d1d5db, #e5e7eb) !important; /* Same as light mode sidebar */
-  border: 1px solid rgba(0, 0, 0, 0.1) !important;
-  color: #1f2937 !important;
-  box-shadow: 0 8px 30px rgba(9,30,66,0.08) !important;
-  transition: background 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease, color 0.3s ease;
-}
-
-/* Container - Dark Mode - Match sidebar color */
 body.dark-mode .add-item-container,
 body.dark-mode .update-item-container {
-  background: linear-gradient(180deg, #0f1724, #0b2138) !important; /* Same as dark mode sidebar */
-  border: 1px solid rgba(255, 255, 255, 0.05) !important;
-  color: #e6eef8 !important;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.6) !important;
+  background: linear-gradient(180deg, #0f1724, #0b2138) !important;
+  border:1px solid rgba(255,255,255,0.05) !important;
+  color:#e6eef8 !important;
+  box-shadow:0 8px 30px rgba(0,0,0,0.6) !important;
 }
 
-/* Add/Update Button - Light Mode (Blue) */
+/* buttons in containers */
 .add-item-container .add-btn,
-.update-item-container .add-btn {
-  background: #134686 !important;
-  color: #fff !important;
-}
-
+.update-item-container .add-btn { background:#134686 !important; color:#fff !important; }
 .add-item-container .add-btn:hover,
-.update-item-container .add-btn:hover {
-  background: #0062d1 !important;
-  box-shadow: 0 4px 12px rgba(11, 99, 255, 0.3) !important;
-}
-
-/* Add/Update Button - Dark Mode (Orange) */
+.update-item-container .add-btn:hover { background:#0062d1 !important; box-shadow:0 4px 12px rgba(11,99,255,0.3) !important; }
 body.dark-mode .add-item-container .add-btn,
-body.dark-mode .update-item-container .add-btn {
-  background: #D96F32 !important;
-}
-
+body.dark-mode .update-item-container .add-btn { background:#D96F32 !important; }
 body.dark-mode .add-item-container .add-btn:hover,
-body.dark-mode .update-item-container .add-btn:hover {
-  background: #c25f28 !important;
-  box-shadow: 0 4px 12px rgba(217, 111, 50, 0.3) !important;
-}
-
-/* Page Title - Light Mode */
+body.dark-mode .update-item-container .add-btn:hover { background:#c25f28 !important; box-shadow:0 44px 12px rgba(217,111,50,0.3) !important; }
 .add-item-container .page-title,
-.update-item-container .page-title {
-  color: #1f2937 !important;
-}
-
-/* Page Title - Dark Mode */
+.update-item-container .page-title { color:#1f2937 !important; }
 body.dark-mode .add-item-container .page-title,
-body.dark-mode .update-item-container .page-title {
-  color: #fff !important;
+body.dark-mode .update-item-container .page-title { color:#fff !important; }
+
+/* ==================================== */
+/* 🚀 RESPONSIVENESS AND MENU BUTTONS */
+/* ==================================== */
+
+/* Hide the mobile button by default (desktop first approach) */
+.mobile-toggle-btn {
+    display: none !important; 
 }
 
-/* small devices */
-@media (max-width: 900px) {
-  .sidebar { position: fixed; z-index:40; transform: translateX(-4px); }
-  .sidebar.collapsed { transform: translateX(-100%); } /* hide on small screens */
-  .sidebar + .main-content { margin-left: 0; }
+/* DESKTOP VIEW (>= 901px) */
+@media (min-width: 901px) {
+  /* Sidebar is fixed, visible and uses transitions for collapse */
+  .sidebar { 
+    transform: translateX(0); 
+    width: 260px; 
+  }
+  .sidebar.collapsed { width: 84px; }
+  
+  /* Main content is offset by sidebar width (standard margin) */
+  .main-content { 
+    margin-left: 260px; 
+    transform: translateX(0) !important; 
+  }
+
+  /* NOTE: The collapsed main content margin is now controlled by the body.sidebar-is-collapsed selector */
+  
+  /* Show the desktop collapse button */
+  .desktop-toggle-btn { 
+    display: flex !important; 
+    font-size: 20px; 
+  }
+  
+  /* Hide the mobile menu button */
+  .mobile-toggle-btn { display: none !important; }
+    
+  /* Ensure mobile overlay is always hidden on desktop */
+  .sidebar-overlay { display: none !important; }
 }
+
+
+/* MOBILE VIEW (<= 900px) */
+@media (max-width: 900px) {
+    /* Define a variable for the mobile sidebar width */
+    :root {
+        --mobile-sidebar-width: 260px; 
+    }
+
+  /* Sidebar is hidden initially (off-screen) */
+  .sidebar { 
+    transform: translateX(-100%); 
+    width: var(--mobile-sidebar-width);
+    max-width: 80vw; 
+  }
+  .sidebar.open { transform: translateX(0); } /* Open state */
+
+  /* PUSH EFFECT: Shift the main content when the sidebar is open */
+  .sidebar.open ~ .main-content {
+      /* Shift the main content by the width of the sidebar */
+      transform: translateX(var(--mobile-sidebar-width)); 
+  }
+    
+  /* Main content starts at the left edge */
+  .main-content, .sidebar + .main-content { 
+    margin-left:0 !important;
+  }
+
+  /* Hide the desktop collapse button */
+  .desktop-toggle-btn { display: none !important; }
+  
+  /* Show the mobile menu button */
+  .mobile-toggle-btn { 
+    display: flex !important; 
+    font-size: 28px; 
+    margin-right: auto; 
+  }
+
+  /* Ensure text shows when mobile sidebar is open */
+  .sidebar.open .toggle-text,
+  .sidebar.open .nav-item span { display:inline-block !important; opacity:1 !important; }
+
+  /* Overlay for mobile sidebar (hidden/shown by JS/active class) */
+  .sidebar-overlay { 
+      display: none; 
+      position:fixed; top:0; left:0; right:0; bottom:0; 
+      background:rgba(0,0,0,0.45); 
+      backdrop-filter:blur(2px); 
+      z-index:25; 
+      transition: opacity 0.3s ease; 
+      opacity: 0;
+  }
+  .sidebar-overlay.active { 
+      display: block; 
+      opacity: 1;
+  }
+}
+
 
 /* small helpers */
-.hidden-xs { display: none; }
+.hidden-xs { display:none; }
 
-/* ===========================
-   FIXED RETURN BUTTON (Bottom Right)
-   =========================== */
-.return-btn-fixed {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 20px;
-  border-radius: 10px;
-  font-weight: 600;
-  text-decoration: none;
-  font-size: 15px;
-  cursor: pointer;
-  background: #134686;
-  color: #fff;
-  box-shadow: 0 4px 10px rgba(25, 55, 107, 0.3);
-  transition: all 0.3s ease;
-  z-index: 1000;
-}
+/* fixed return button */
+.return-btn-fixed { position:fixed; bottom:24px; right:24px; display:inline-flex; align-items:center; gap:8px; padding:12px 20px; border-radius:10px; font-weight:600; font-size:15px; cursor:pointer; background:#134686; color:#fff; box-shadow:0 4px 10px rgba(25,55,107,0.3); transition:all 0.3s ease; z-index:1000; }
+.return-btn-fixed:hover { background:#134686; transform:translateY(-2px); box-shadow:0 6px 14px rgba(11,99,255,0.4); }
+body.dark-mode .return-btn-fixed { background:#D96F32; color:#fff; box-shadow:0 4px 10px rgba(217,111,50,0.3); }
+body.dark-mode .return-btn-fixed:hover { background:#D96F32; box-shadow:0 6px 14px rgba(217,111,50,0.4); transform:translateY(-2px); }
 
-.return-btn-fixed:hover {
-  background: #134686;;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 14px rgba(11, 99, 255, 0.4);
-}
-
-/* Dark Mode */
-body.dark-mode .return-btn-fixed {
-  background: #D96F32;
-  color: #fff;
-  box-shadow: 0 4px 10px rgba(217, 111, 50, 0.3);
-}
-
-body.dark-mode .return-btn-fixed:hover {
-  background: #D96F32;
-  box-shadow: 0 6px 14px rgba(217, 111, 50, 0.4);
-  transform: translateY(-2px);
-}
-
-/* ==============================
-   Input Focus (Hover/Click Colors)
-   ============================== */
-
-/* Light Mode Input Focus */
+/* input focus */
 body:not(.dark-mode) input:focus,
 body:not(.dark-mode) select:focus,
-body:not(.dark-mode) textarea:focus {
-  border-color: #134686 !important;
-  box-shadow: 0 0 0 3px rgba(19, 70, 134, 0.2); /* Subtle blue glow */
-  outline: none;
-}
-
-/* Dark Mode Input Focus */
+body:not(.dark-mode) textarea:focus { border-color:#134686 !important; box-shadow:0 0 0 3px rgba(19,70,134,0.2); outline:none; }
 body.dark-mode input:focus,
 body.dark-mode select:focus,
-body.dark-mode textarea:focus {
-  border-color: #D96F32 !important;
-  box-shadow: 0 0 0 3px rgba(217, 111, 50, 0.3); /* Subtle orange glow */
-  outline: none;
-}
+body.dark-mode textarea:focus { border-color:#D96F32 !important; box-shadow:0 0 0 3px rgba(217,111,50,0.3); outline:none; }

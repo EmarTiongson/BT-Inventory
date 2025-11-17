@@ -287,7 +287,7 @@ def first_login_password(request):
             )
             return redirect("first_login_password")
 
-        # ✅ Update password securely
+        #  Update password securely
         user = request.user
         user.set_password(new_password)
         user.first_login = False

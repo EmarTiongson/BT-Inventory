@@ -107,3 +107,16 @@ window.addEventListener("resize", () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 });
+
+
+// Show/hide password toggle
+const passwordInput = document.getElementById("id_password");
+const togglePassword = document.getElementById("togglePassword");
+
+togglePassword.addEventListener("click", () => {
+  const isPassword = passwordInput.type === "password";
+  passwordInput.type = isPassword ? "text" : "password";
+  togglePassword.classList.toggle("bi-eye");
+  togglePassword.classList.toggle("bi-eye-slash");
+  passwordInput.focus();
+});

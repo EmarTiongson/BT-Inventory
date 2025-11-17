@@ -7,14 +7,14 @@
 {% endblock %}
 
 {% block content %}
-  <!-- Logo - OUTSIDE the hero container (Tailwind) -->
+  <!-- Logo -->
   <div class="mb-5">
     <img src="{% static 'images/brite-logo.png' %}" 
          alt="Company logo"
          class="w-[250px] h-auto">
   </div>
 
-  <!-- Hero Container - VANILLA CSS -->
+  <!-- Hero Container -->
   <div class="hero-container">
     
     <!-- Gradient Orbs -->
@@ -23,31 +23,32 @@
 
     <!-- Hero Content -->
     <div class="hero-content">
-      <!-- Welcome Text (Tailwind) -->
+      <!-- Welcome Text -->
       <h1 class="welcome-text text-white font-medium mb-2.5 opacity-90 whitespace-nowrap inline-block overflow-hidden" 
-          style="font-size: 2.0rem; min-width: 550px; height: 3.0rem; line-height: 2.0rem;"
+          style="font-size: 1.5rem; min-width: 550px; height: 3.0rem; line-height: 2.0rem;"
           data-username="{{ user.username }}"></h1>
 
-      <!-- Hero Title (Tailwind) -->
+      <!-- Hero Title -->
       <h2 class="text-white font-extrabold leading-[1.1] mb-20" 
-          style="font-size: 5.5rem; letter-spacing: -2px;">
+          style="font-size: 2.5rem; letter-spacing: -2px;">
         INVENTORY<br>MANAGEMENT<br>SYSTEM
       </h2>
     </div>
 
     <!-- Info Section -->
     <div class="info-section">
-      <!-- Info Title (Tailwind) -->
+      <!-- Info Title -->
       <h3 class="text-white text-2xl font-semibold mb-2.5 uppercase" style="letter-spacing: 1px;">
         WHAT IS INVENTORY<br>MANAGEMENT?
       </h3>
       <div class="info-divider"></div>
-      <!-- Info Text (Tailwind) -->
+      <!-- Info Text -->
       <p class="text-white text-base font-light opacity-90" style="line-height: 1.7;">
         A system inventory system is a vital tool that helps us, as a System Integrator and Professional Service provider, manage, track, and optimize all the components and assets involved across our focus areas of innovation, design and engineering, installation, commissioning, user training, testing and certification.
       </p>
     </div>
   </div>
 
-<script src="{% static 'js/dashboard.js' %}"></script>
+  <!-- Dashboard-specific JavaScript -->
+  <script src="{% static 'js/dashboard.js' %}"></script>
 {% endblock %}

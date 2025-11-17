@@ -9,6 +9,11 @@
 
 {% block content %}
 
+<!-- Notification Container -->
+<div id="notification" class="fixed top-5 right-5 z-50 hidden">
+  <div id="notificationContent" class="bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg"></div>
+</div>
+
 <!-- Add Project / Upload DR Buttons -->
 <div class="add-project-container flex justify-end mb-4">
   <div class="button-stack flex gap-2">
@@ -182,6 +187,12 @@
 <div id="imagePreviewModal" class="image-preview-modal flex justify-center items-center">
   <span id="closeImagePreview" class="close-preview">&times;</span>
   <img id="previewImage" class="preview-image rounded-lg shadow-lg" src="" alt="Preview">
+</div>
+
+
+<!-- Simple Loader -->
+<div id="loadingSpinner" class="hidden fixed inset-0 bg-black bg-opacity-25 flex items-center justify-center z-50">
+  <div class="animate-spin rounded-full h-12 w-12 border-4 border-t-transparent border-white"></div>
 </div>
 
 {% block extra_js %}

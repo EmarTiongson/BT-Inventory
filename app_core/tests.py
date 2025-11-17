@@ -151,7 +151,7 @@ class CoreAppViewsTests(TestCase):
 
         response = self.client.get(reverse("assets_tools"))
         self.assertEqual(response.status_code, 200)
-        assets = response.context["assets_tools"]
+        assets = response.context["page_obj"].object_list
 
         self.assertIn(active_asset, assets)
         self.assertNotIn(deleted_asset, assets)
@@ -161,7 +161,7 @@ class CoreAppViewsTests(TestCase):
         self.client.force_login(self.superadmin)
 
         data = {
-            "date_added": timezone.now().date(),
+            "date_added": timezone.now().date().strftime("%Y-%m-%d"),
             "tool_name": "New Drill",
             "description": "Professional drill",
             "warranty_date": (timezone.now().date() + timedelta(days=365)),
@@ -932,19 +932,6 @@ class CoreAppViewsTests(TestCase):
         result = response.json()
 
         self.assertEqual(result["serial_numbers"], [])
-
-    # ===== PROJECT DRS API TESTS =====
-
-    def test_project_drs_api_returns_distinct_drs(self):
-        """Test project DRs API returns distinct DR numbers"""
-        # Skip this test due to PostgreSQL DISTINCT ON limitation
-        # The view uses .distinct("dr_no") with .order_by("-date") which is incompatible
-        self.skipTest("PostgreSQL DISTINCT ON requires matching ORDER BY - view needs refactoring")
-
-    def test_project_drs_api_ordered_by_date(self):
-        """Test DRs are returned ordered by most recent date"""
-        # Skip this test due to PostgreSQL DISTINCT ON limitation
-        self.skipTest("PostgreSQL DISTINCT ON requires matching ORDER BY - view needs refactoring")
 
     # ===== COMPLEX INTEGRATION TESTS =====
 

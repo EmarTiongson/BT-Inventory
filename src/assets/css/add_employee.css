@@ -12,11 +12,13 @@
 body {
   font-family: 'Poppins', sans-serif; /* Set Poppins as the default font */
   background: #eef1f6;
+  /* 💡 Centering using minimum margin and flex to maintain responsiveness */
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  overflow: hidden;
+  overflow-x: hidden; /* Critical: Prevents horizontal scrolling caused by elements bleeding out */
+  overflow-y: auto;
   position: relative;
 }
 
@@ -33,13 +35,16 @@ body {
 /* Container - Transparent with Blur */
 .container {
   background: rgba(255, 255, 255, 0.25); /* Transparent background */
-  padding: 40px;
+  padding: 500px;
+  padding-top: 80px; /* PUSHES CONTENT DOWN: Added extra space to clear the fixed button (height + top margin) */
   border-radius: 16px;
   box-shadow: 0 4px 25px rgba(0, 0, 0, 0.1);
-  width: 480px;
+  width: 90%; /* Fluid width */
+  max-width: 480px; /* Maximum size */
   position: relative;
   z-index: 1;
   backdrop-filter: blur(10px); /* Backdrop blur for modern feel */
+  margin: 20px auto; /* Ensure vertical margin for better spacing on all screens */
 }
 
 /* Title */
@@ -190,7 +195,6 @@ body.dark-mode .form-group input::placeholder {
   z-index: -1;  /* Behind other content */
 }
 
-
 /* ============================= */
 /* BACK TO USER MANAGEMENT BUTTON */
 /* ============================= */
@@ -198,7 +202,7 @@ body.dark-mode .form-group input::placeholder {
 .back-btn-container {
   position: fixed;        /* Stick to viewport */
   top: 20px;
-  left: 40px;             /* 🔹 Changed from right: 40px; to left: 40px; */
+  left: 40px;             
   z-index: 100;           /* Ensure it's above the form */
 }
 
@@ -235,7 +239,6 @@ body.dark-mode .back-btn:hover {
   background: linear-gradient(90deg, #0041a8, #002d73);
 }
 
-
 /* Dropdown field styling */
 select {
   width: 100%;
@@ -258,21 +261,7 @@ select:focus {
   border-color: #333;
 }
 
-
-/* Responsive fix for small screens */
-@media (max-width: 600px) {
-  .back-btn-container {
-    top: 10px;
-    left: 20px;  /* 🔹 Also switched this from right: 20px; */
-  }
-
-  .back-btn {
-    padding: 8px 12px;
-    font-size: 13px;
-  }
-}
-
-
+/* Error/Status Alerts */
 .error-alert {
   background-color: #ffcccc;
   color: #b30000;
@@ -284,8 +273,50 @@ select:focus {
   text-align: center;
   animation: fadeIn 0.3s ease-in-out;
 }
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-5px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* ========================================================== */
+/* 🚀 MOBILE RESPONSIVENESS (<= 600px) */
+/* ========================================================== */
+@media (max-width: 600px) {
+ 
+  /* Main Container adjustments */
+  .container {
+    padding: 20px; /* Base mobile padding */
+    padding-top: 60px; /* PUSHES CONTENT DOWN: Adjusted top padding for mobile to clear the button */
+    width: 95%; /* Maximize width usage on very small screens */
+    margin: 10px auto; /* Even less margin on mobile */
+  }
+ 
+  /* Form Row: Stack elements vertically on small screens */
+  .form-row {
+    flex-direction: column;     
+    gap: 15px; /* Adjust gap between stacked elements */
+  }
+
+  /* Title and Subtitle */
+  h1 { font-size: 20px; }
+  .subtitle { font-size: 14px; margin-bottom: 20px; }
+  
+  /* Input fields */
+  input, select { padding: 8px; font-size: 13px; }
+
+  /* Back Button adjustments */
+  .back-btn-container {
+    top: 10px;
+    left: 10px; 
+  }
+
+  .back-btn {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+  
+  /* Icon placement adjustment for tighter screens */
+  .icon-btn { right: 30px; }
+  .eye-btn { right: 5px; }
+}

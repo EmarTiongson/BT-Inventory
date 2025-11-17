@@ -1,6 +1,6 @@
 /* ===========================
    ADD ASSET/TOOL PAGE - SPECIFIC STYLES
-   =========================== */
+   ============================ */
 
 /* Add item container - standard layout */
 .add-item-container {
@@ -42,8 +42,7 @@
 
 /* ===========================
    UPLOAD BOX
-   =========================== */
-
+   ============================ */
 .upload-box {
   position: relative;
   width: 150px;
@@ -103,8 +102,7 @@
 
 /* ===========================
    FORM GRID
-   =========================== */
-
+   ============================ */
 .form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -153,8 +151,7 @@
 
 /* ===========================
    BUTTONS
-   =========================== */
-
+   ============================ */
 .add-btn,
 .return-btn-fixed {
   color: #fff;
@@ -181,7 +178,7 @@
 
 /* ===========================
    FIXED RETURN BUTTON
-   =========================== */
+   ============================ */
 .return-btn-fixed {
   position: fixed;
   bottom: 24px;
@@ -202,8 +199,7 @@
 
 /* ===========================
    SUBMIT SECTION
-   =========================== */
-
+   ============================ */
 .submit-section {
   width: 100%;
   display: flex;
@@ -232,8 +228,7 @@
 
 /* ===========================
    DARK MODE OVERRIDES
-   =========================== */
-
+   ============================ */
 body.dark-mode .add-item-container {
   background: rgba(20, 25, 35, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -306,4 +301,55 @@ body.dark-mode .error-message {
   background-color: rgba(255, 100, 100, 0.15);
   border: 1px solid rgba(255, 100, 100, 0.3);
   color: #ff6b6b;
+}
+
+/* ==================================== */
+/* 📱 MOBILE RESPONSIVENESS (<= 600px) */
+/* ==================================== */
+
+@media (max-width: 600px) {
+
+  /* Main Container Adjustments */
+  .add-item-container {
+    width: 98%;
+    margin: 20px auto;
+    padding: 20px;
+    gap: 20px;
+  }
+
+  /* Page Title */
+  .page-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  /* Form Grid: Single Column */
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  /* Input Fields */
+  .form-grid input,
+  .form-grid select,
+  .form-grid textarea {
+    padding: 10px 14px;
+    font-size: 16px;
+  }
+
+  /* Error Message */
+  .error-message {
+    padding: 10px;
+    font-size: 14px;
+    width: 100%;
+    max-width: none;
+  }
+
+  /* Fixed Return Button */
+  .return-btn-fixed {
+    bottom: 15px;
+    right: 15px;
+    padding: 10px 15px;
+    font-size: 14px;
+  }
 }

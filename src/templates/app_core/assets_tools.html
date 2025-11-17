@@ -45,7 +45,7 @@
       </thead>
 
       <tbody id="assetsToolsTableBody">
-        {% for asset in assets_tools %}
+        {% for asset in page_obj %}
         <tr id="asset-row-{{ asset.id }}" style="transition: opacity 0.3s ease;">
           <td>{{ asset.date_added|date:"F d, Y" }}</td>
           <td><a href="{% url 'asset_history' asset.id %}" class="item-link">{{ asset.tool_name }}</a></td>
@@ -85,6 +85,22 @@
     </table>
   </div>
 </div>
+
+<!-- PAGINATION CONTROLS -->
+<div class="pagination-container">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}" class="pagination-btn">Previous</a>
+    {% endif %}
+
+    <span class="pagination-current">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    </span>
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}" class="pagination-btn">Next</a>
+    {% endif %}
+</div>
+
 
 <!-- IMAGE POPUP / LIGHTBOX -->
 <div id="imageLightboxOverlay" class="image-lightbox-overlay" aria-hidden="true" role="dialog">

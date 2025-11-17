@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from django.contrib import messages
 from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Prefetch, Q
 from django.http import JsonResponse
@@ -35,10 +36,22 @@ def inventory_view(request):
         Item.objects.filter(is_deleted=False)
         .select_related("user")
         .prefetch_related("serial_numbers", latest_updates)
-        .order_by("-date_last_modified")  # show most recently changed first
+        .order_by("-date_last_modified")
     )
 
-    return render(request, "inventory/inventory.html", {"items": items})
+    # === ADD PAGINATION (10 items per page) ===
+    paginator = Paginator(items, 10)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    return render(
+        request,
+        "inventory/inventory.html",
+        {
+            "items": items,  # keep for compatibility (not removed)
+            "page_obj": page_obj,
+        },
+    )
 
 
 @login_required
@@ -50,11 +63,19 @@ def item_history(request, item_id):
     specified item, ordered by most recent date.
     """
 
+    # Get the item by its ID, or return a 404 if not found
     item = get_object_or_404(Item, id=item_id)
-    updates = item.updates.all().order_by("-date")  # newest first
+
+    # Get the updates related to the item, ordered by most recent
+    updates = item.updates.all().order_by("-date")
+
+    # Pagination (10 updates per page)
+    paginator = Paginator(updates, 10)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
 
     # Ensure serial_numbers are always a list (safe for template rendering)
-    for update in updates:
+    for update in page_obj.object_list:  # iterate over the paginated updates
         if isinstance(update.serial_numbers, str):
             try:
                 import json
@@ -72,7 +93,7 @@ def item_history(request, item_id):
         "inventory/item_history.html",
         {
             "item": item,
-            "updates": updates,
+            "page_obj": page_obj,  # paginated updates
         },
     )
 
@@ -466,7 +487,7 @@ def undo_transaction(request, update_id):
     item = update.item
 
     try:
-        # 1️⃣ Revert IN transaction
+        #  Revert IN transaction
         if update.transaction_type == "IN":
             item.total_stock = max(item.total_stock - update.quantity, 0)
             item.save(update_fields=["total_stock"])
@@ -476,7 +497,7 @@ def undo_transaction(request, update_id):
                 serials = parse_serials(update.serial_numbers)
                 ItemSerial.objects.filter(item=item, serial_no__in=serials).delete()
 
-        # 2️⃣ Revert OUT transaction
+        #  Revert OUT transaction
         elif update.transaction_type == "OUT":
             item.total_stock += update.quantity
             item.save(update_fields=["total_stock"])
@@ -490,7 +511,7 @@ def undo_transaction(request, update_id):
                 serials = parse_serials(update.serial_numbers)
                 ItemSerial.objects.filter(item=item, serial_no__in=serials).update(is_available=True)
 
-            # 🔧 If this OUT was converted from an ALLOCATED, restore it
+            #  If this OUT was converted from an ALLOCATED, restore it
             if update.remarks and "Converted from ALLOCATED" in update.remarks:
                 match = re.search(r"ALLOCATED #(\d+)", update.remarks)
                 if match:
@@ -506,12 +527,12 @@ def undo_transaction(request, update_id):
                 item.allocated_quantity += update.quantity
                 item.save(update_fields=["allocated_quantity"])
 
-        # 3️⃣ Revert ALLOCATED transaction
+        #  Revert ALLOCATED transaction
         elif update.transaction_type == "ALLOCATED":
             item.allocated_quantity = max(item.allocated_quantity - update.allocated_quantity, 0)
             item.save(update_fields=["allocated_quantity"])
 
-        # 4️⃣ Serial availability correction
+        #  Serial availability correction
         if update.serial_numbers:
             serials = parse_serials(update.serial_numbers)
             if update.remarks and "Converted from ALLOCATED" in update.remarks:
@@ -521,7 +542,7 @@ def undo_transaction(request, update_id):
                 # Normal OUT undo — make serials available
                 ItemSerial.objects.filter(item=item, serial_no__in=serials).update(is_available=True)
 
-        # 5️⃣ Log in transaction history
+        #  Log in transaction history
         TransactionHistory.objects.create(
             item=item,
             user=request.user,
@@ -553,7 +574,7 @@ def transaction_history_view(request, item_id):
     """
 
     item = get_object_or_404(Item, id=item_id)
-    history = item.transactions.order_by("-timestamp")  # Use your related_name
+    history = item.transactions.order_by("-timestamp")  # Use related_name
     return render(
         request,
         "inventory/item_history.html",

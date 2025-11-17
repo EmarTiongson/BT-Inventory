@@ -6,23 +6,23 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>{% block title %}Inventory System{% endblock %}</title>
 
-  <!-- Google Fonts & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
+  <link rel="icon" type="image/jpeg" href="{% static 'images/Brite-fav.ico' %}">
 
-  <!-- Static files -->
+
   <link rel="stylesheet" href="{% static 'css/base.css' %}">
 
   {% block extra_css %}{% endblock %}
-
 </head>
 
 <body>
-  <!-- Sidebar -->
+
   <div class="sidebar" id="sidebar">
-    <button class="toggle-btn" id="sidebarToggle">
+
+    <button class="toggle-btn desktop-toggle-btn" id="desktopSidebarToggle">
       <i class="bi bi-list"></i>
       <span class="toggle-text">Collapse Menu</span>
     </button>
@@ -32,32 +32,20 @@
       <span>Dashboard</span>
     </a>
 
-  <a href="{% url 'inventory' %}" class="nav-item {% if request.path == '/inventory/' %}active{% endif %}">
-  <i class="bi bi-box-seam"></i>
-  <span>Inventory</span>
-</a>
-
-  <a href="{% url 'assets_tools' %}" class="nav-item {% if request.path == '/assets-tools/' %}active{% endif %}">
-    <i class="bi bi-tools"></i>
-    <span>Assets & Tools</span>
-  </a>
-
-
-    <!-- <a href="#" class="nav-item">
-      <i class="bi bi-cart3"></i>
-      <span>Order Management</span>
-    </a> -->
-
-    <a href="{% url 'project_summary' %}" class="nav-item {% if request.path == '/project-summary/' %}active{% endif %}">
-  <i class="bi bi-file-earmark-text"></i>
-  <span>Project Summary</span>
+    <a href="{% url 'inventory' %}" class="nav-item {% if request.path == '/inventory/' %}active{% endif %}">
+      <i class="bi bi-box-seam"></i>
+      <span>Inventory</span>
     </a>
 
+    <a href="{% url 'assets_tools' %}" class="nav-item {% if request.path == '/assets-tools/' %}active{% endif %}">
+      <i class="bi bi-tools"></i>
+      <span>Assets & Tools</span>
+    </a>
 
-    <!-- <a href="#" class="nav-item">
-      <i class="bi bi-bell"></i>
-      <span>Alert & Notification</span>
-    </a> -->
+    <a href="{% url 'project_summary' %}" class="nav-item {% if request.path == '/project-summary/' %}active{% endif %}">
+      <i class="bi bi-file-earmark-text"></i>
+      <span>Project Summary</span>
+    </a>
 
     {% if request.user.role == "superadmin" or request.user.role == "admin" %}
       <a href="{% url 'admin_page' %}" class="nav-item">
@@ -66,32 +54,37 @@
       </a>
     {% endif %}
 
-
     <form action="{% url 'logout' %}" method="post" class="nav-item signout">
-        {% csrf_token %}
-        <button type="submit">
-            <i class="bi bi-box-arrow-right"></i>
-            <span>Sign out</span>
-        </button>
+      {% csrf_token %}
+      <button type="submit">
+        <i class="bi bi-box-arrow-right"></i>
+        <span>Sign out</span>
+      </button>
     </form>
 
   </div>
 
-  <!-- Main content area -->
+  <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
   <div class="main-content" id="mainContent">
+
     <div class="header">
-      <!-- Dark mode toggle button -->
-      <button class="settings-btn" id="themeToggle" aria-pressed="false" title="Toggle dark mode" style="margin-left: auto; margin-right: 0;">
-        <i id="darkModeIcon" class="bi bi-moon-fill" aria-hidden="true"></i>
+
+      <button class="toggle-btn mobile-toggle-btn" id="mobileSidebarToggle">
+        <i class="bi bi-list"></i>
       </button>
+
+      <button class="settings-btn" id="themeToggle" aria-pressed="false" title="Toggle dark mode">
+        <i id="darkModeIcon" class="bi bi-moon-fill"></i>
+      </button>
+
     </div>
 
-    <!-- Page content block -->
     {% block content %}
     {% endblock %}
+
   </div>
 
-  <!-- Scripts -->
   <script src="{% static 'js/base.js' %}"></script>
 </body>
 </html>

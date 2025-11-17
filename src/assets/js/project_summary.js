@@ -1,3 +1,29 @@
+function showNotification(message, type = "info", duration = 3000) {
+  const container = document.getElementById('notification');
+  const content = document.getElementById('notificationContent');
+
+  const colors = {
+    success: 'bg-green-600',
+    error: 'bg-red-600',
+    warning: 'bg-yellow-500 text-black',
+    info: 'bg-blue-600',
+  };
+
+  // Reset and apply color
+  content.className = `px-4 py-2 rounded-lg shadow-lg ${colors[type] || colors.info}`;
+  content.textContent = message;
+
+  // Show
+  container.classList.remove('hidden');
+
+  // Hide after timeout
+  setTimeout(() => container.classList.add('hidden'), duration);
+}
+
+const csrftoken = (() => {
+  const cookie = document.cookie.split('; ').find(row => row.startsWith('csrftoken='));
+  return cookie ? decodeURIComponent(cookie.split('=')[1]) : '';
+})();
 // ===============================
 // Modal Functionality
 // ===============================
@@ -44,9 +70,6 @@ addProjectForm.addEventListener('submit', async function (e) {
     formData.append('location', location);
     formData.append('date', date);
 
-    // Get CSRF token from Django cookie
-    const csrftoken = getCookie('csrftoken');
-
     const response = await fetch('/add_project/', {
       method: 'POST',
       headers: { 'X-CSRFToken': csrftoken },
@@ -57,36 +80,18 @@ addProjectForm.addEventListener('submit', async function (e) {
 
     if (data.success) {
       await loadProjects(); // Reload the full list from backend
-      alert("✅ Project saved successfully!");
+      showNotification("Project saved successfully!", "success");
       addProjectForm.reset();
       closeAddProjectModal();
     } else {
-      alert("⚠️ " + (data.error || "Failed to save project."));
+      showNotification("Failed to save project.", "error");
     }
   } catch (err) {
     console.error(err);
-    alert("❌ An error occurred while saving the project.");
+    showNotification("❌ An error occurred while saving the project.", "error");
   }
 });
 
-// ===============================
-// CSRF Helper
-// ===============================
-
-function getCookie(name) {
-  let cookieValue = null;
-  if (document.cookie && document.cookie !== '') {
-    const cookies = document.cookie.split(';');
-    for (let i = 0; i < cookies.length; i++) {
-      const cookie = cookies[i].trim();
-      if (cookie.substring(0, name.length + 1) === name + '=') {
-        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-        break;
-      }
-    }
-  }
-  return cookieValue;
-}
 
 // ===============================
 // Dropdown Search Functionality
@@ -170,7 +175,7 @@ async function displayProjectDetails(projectId) {
         let imagesHtml = '';
 
         if (dr.images) {
-          // ✅ Normalize images into an array, even if backend returns a single string
+          // Normalize images into an array, even if backend returns a single string
           const imageList = Array.isArray(dr.images)
             ? dr.images
             : (typeof dr.images === 'string' && dr.images.trim() !== '' ? [dr.images] : []);
@@ -224,7 +229,7 @@ async function displayProjectDetails(projectId) {
     }
   } catch (err) {
     console.error('Failed to load project details:', err);
-    alert('❌ Could not load project details: ' + err.message);
+    showNotification(' Could not load project details: ', "error");
 
       
   }
@@ -264,7 +269,7 @@ async function showDrDetails(drNo) {
       data.transactions.forEach(tx => {
         const row = document.createElement('tr');
 
-        // ✅ "View Serials" link if serial_numbers exist
+        // "View Serials" link if serial_numbers exist
         const serialButton =
           tx.serial_numbers && tx.serial_numbers.length > 0
             ? `<div class="serials-wrapper">
@@ -287,7 +292,7 @@ async function showDrDetails(drNo) {
         drDetailsBody.appendChild(row);
       });
 
-      // ✅ Attach serial dropdown functionality
+      // Attach serial dropdown functionality
       if (window.SerialDropdown) {
         window.SerialDropdown.attach('.view-serials-link');
       }
@@ -299,7 +304,7 @@ async function showDrDetails(drNo) {
     drModal.style.display = 'flex';
   } catch (err) {
     console.error('Failed to load DR details:', err);
-    alert('❌ Could not load DR details.');
+   showNotification(' Could not load DR details.', "error");
   }
 }
 
@@ -311,13 +316,10 @@ document.addEventListener("DOMContentLoaded", loadProjects);
 
 async function loadProjects() {
   try {
-    console.log('Loading projects...'); // Debug log
     
     const response = await fetch('/api/projects/');
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data = await response.json();
-
-    console.log('Projects loaded:', data); // Debug log
 
     projectList.innerHTML = '';
     const seen = new Set();
@@ -330,17 +332,16 @@ async function loadProjects() {
 
         const li = document.createElement('li');
         li.textContent = p.display;
-        li.dataset.id = p.id; // ✅ This is now the PO number (string)
+        li.dataset.id = p.id; //  This is now the PO number (string)
         li.dataset.display = p.display;
         li.onclick = () => selectProject(p.display, li);
         projectList.appendChild(li);
       }
     });
     
-    console.log('Projects list updated, total:', seen.size); // Debug log
   } catch (err) {
     console.error("Failed to load projects:", err);
-    alert("❌ Failed to load projects: " + err.message);
+    showNotification(" Failed to load projects: ", "error");
   }
 }
 
@@ -368,7 +369,7 @@ function closeUploadDrModal() {
   }
 }
 
-// ✅ Handle form submission
+// Handle form submission
 if (uploadDrForm) {
   uploadDrForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -379,12 +380,12 @@ if (uploadDrForm) {
     const images = document.getElementById('images')?.files;
 
     if (!po_number || !dr_number || !uploaded_date) {
-      alert("⚠️ Please fill out all fields.");
+      showNotification("Please fill out all fields.", "warning");
       return;
     }
 
     if (!images || images.length < 1) {
-      alert("⚠️ Please upload at least one image.");
+      showNotification("Please upload at least one image.", "warning");
       return;
     }
 
@@ -398,8 +399,6 @@ if (uploadDrForm) {
         formData.append('images', images[i]);
       }
 
-      const csrftoken = getCookie('csrftoken');
-
       const response = await fetch('/upload_dr/', {
         method: 'POST',
         headers: { 'X-CSRFToken': csrftoken },
@@ -410,7 +409,7 @@ if (uploadDrForm) {
       const data = await response.json();
 
       if (data.success) {
-        alert("✅ DR and Images uploaded successfully!");
+        showNotification("DR and Images uploaded successfully!", "success");
         closeUploadDrModal();
         
         // Reload the current project if one is selected
@@ -422,11 +421,11 @@ if (uploadDrForm) {
       }
 
       } else {
-        alert("❌ Upload failed: " + (data.error || "Unknown error"));
+        showNotification("Upload failed: ", "error");
       }
     } catch (err) {
       console.error("Upload DR error:", err);
-      alert("❌ An error occurred while uploading the D.R. — check console for details.");
+      showNotification("An error occurred while uploading the D.R. — check console for details.", "error");
     }
 
   });
@@ -440,7 +439,7 @@ const imagePreviewModal = document.getElementById('imagePreviewModal');
 const previewImage = document.getElementById('previewImage');
 const closeImagePreview = document.getElementById('closeImagePreview');
 
-// ✅ When any DR image is clicked
+//When any DR image is clicked
 document.addEventListener('click', (e) => {
   if (e.target.classList.contains('dr-image-preview')) {
     const src = e.target.src;
@@ -449,7 +448,7 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// ✅ Close modal when clicking the X
+//Close modal when clicking the X
 if (closeImagePreview) {
   closeImagePreview.addEventListener('click', () => {
     imagePreviewModal.style.display = 'none';

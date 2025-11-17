@@ -3,6 +3,7 @@ from datetime import datetime
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Max
 from django.http import JsonResponse
@@ -63,15 +64,24 @@ def admin_view(request):
 @login_required
 def assets_tools(request):
     """
-    View to display all active (non-deleted) assets and tools
+    View to display all active (non-deleted) assets and tools, with pagination.
     """
 
     # Get all non-deleted assets/tools ordered by date added (newest first)
     assets_tools = AssetTool.objects.filter(is_deleted=False).order_by("-date_added")
 
-    context = {"assets_tools": assets_tools}
+    # Pagination (10 items per page)
+    paginator = Paginator(assets_tools, 10)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
 
-    return render(request, "app_core/assets_tools.html", context)
+    return render(
+        request,
+        "app_core/assets_tools.html",
+        {
+            "page_obj": page_obj,  # This is the paginated object
+        },
+    )
 
 
 @login_required
@@ -82,7 +92,7 @@ def add_asset_tool(request):
     if request.method == "POST":
         try:
             # Get form data
-            date_added = request.POST.get("date_added")
+            date_added_str = request.POST.get("date_added")
             tool_name = request.POST.get("tool_name")
             description = request.POST.get("description")
             warranty_date = request.POST.get("warranty_date")
@@ -92,7 +102,8 @@ def add_asset_tool(request):
             assigned_by = request.user.username
 
             # Validate required fields
-            if not all([date_added, tool_name, description, image]):
+            if not all([date_added_str, tool_name, description, image]):
+                # ... (error handling remains the same) ...
                 return render(
                     request,
                     "app_core/add_asset_tool.html",
@@ -103,9 +114,19 @@ def add_asset_tool(request):
                     },
                 )
 
+            date_obj = parse_date(date_added_str)
+            if date_obj:
+                # 1. Create a naive datetime object at midnight for the given date.
+                naive_datetime = timezone.datetime(date_obj.year, date_obj.month, date_obj.day, 0, 0, 0)
+                # 2. Make it timezone-aware using the system's timezone.
+                aware_datetime = timezone.make_aware(naive_datetime)
+            else:
+                # Should not happen if validation passes, but good for safety
+                aware_datetime = timezone.now()
+
             # Create new asset/tool entry
             AssetTool.objects.create(
-                date_added=date_added,
+                date_added=aware_datetime,
                 tool_name=tool_name,
                 description=description,
                 warranty_date=warranty_date if warranty_date else None,
@@ -133,6 +154,7 @@ def add_asset_tool(request):
 
 @login_required
 def update_asset(request, asset_id):
+    """Update or reassign an asset and log the change in AssetUpdate."""
     # Fetch asset instance safely
     asset = get_object_or_404(AssetTool, id=asset_id)
 
@@ -153,21 +175,22 @@ def update_asset(request, asset_id):
         else:
             transaction_date = timezone.now()
 
-        # ✅ Only create a history record if assigned user actually changes
+        # Only create a history record if assigned user actually changes
         if new_assigned_to and new_assigned_to != asset.assigned_user:
             previous_user = asset.assigned_user
 
-            # ✅ Log update in AssetUpdate
+            # Log update in AssetUpdate
             AssetUpdate.objects.create(
                 asset=asset,
                 previous_user=previous_user,
                 assigned_to=new_assigned_to,
                 remarks=remarks,
-                updated_by=request.user,  # ✅ Correct: pass user object
+                # Correct: pass user object
+                updated_by=request.user,
                 transaction_date=transaction_date,
             )
 
-            # ✅ Update the asset record itself
+            #  Update the asset record itself
             asset.assigned_user = new_assigned_to
             asset.assigned_by = request.user.username
             asset.remarks = remarks
@@ -182,7 +205,7 @@ def update_asset(request, asset_id):
 
         return redirect("asset_history", asset_id=asset.id)
 
-    # ✅ Pass correct context variable name and pre-fill datetime
+    # Pass correct context variable name and pre-fill datetime
     current_datetime = timezone.now().strftime("%Y-%m-%dT%H:%M")
     context = {
         "asset_tool": asset,
@@ -223,9 +246,10 @@ def delete_asset_tool(request, asset_id):
 
 @login_required
 def asset_history(request, asset_id):
+    """Display the transaction history of a specific asset."""
     asset = get_object_or_404(AssetTool, id=asset_id)
 
-    # ✅ Fetch related updates from AssetUpdate, most recent first
+    # Fetch related updates from AssetUpdate, most recent first
     updates = asset.updates.all().order_by("-transaction_date")
 
     context = {
@@ -237,7 +261,7 @@ def asset_history(request, asset_id):
 
 
 def project_summary_view(request):
-
+    """Render the project summary page and list all projects with DRs."""
     projects = Project.objects.all().order_by("project_title")
     selected_project_id = request.GET.get("project_id")
     selected_project = None
@@ -276,6 +300,7 @@ def project_drs_api(request, project_id):
 
 
 def add_project(request):
+    """Create a new project record via AJAX request."""
     if request.method == "POST":
         data = request.POST
         title = data.get("project_title")
@@ -295,18 +320,20 @@ def add_project(request):
 
 
 def get_projects(request):
+    """Return all projects as JSON for dropdown or selection fields."""
     projects = Project.objects.all().order_by("project_title")
     data = [{"id": p.id, "display": f"{p.po_no} | {p.project_title}"} for p in projects]
     return JsonResponse({"projects": data})
 
 
 def get_project_details(request, project_id):
+    """Return detailed information about a project, including DRs and uploaded images."""
     try:
         project = Project.objects.get(id=project_id)
     except Project.DoesNotExist:
         return JsonResponse({"success": False, "error": "Project not found"}, status=404)
 
-    # ✅ Normalize PO number for comparison
+    # Normalize PO number for comparison
     po_no = project.po_no.strip()
 
     # Group by DR No. and get the latest date for each
@@ -319,7 +346,7 @@ def get_project_details(request, project_id):
         .order_by("-date")
     )
 
-    # ✅ Get all uploaded DR images that match this project's P.O.
+    # Get all uploaded DR images that match this project's P.O.
     uploaded_drs = UploadedDR.objects.filter(po_number__iexact=po_no)
     dr_image_map = {}
 
@@ -327,7 +354,7 @@ def get_project_details(request, project_id):
         normalized_dr_no = dr.dr_number.strip().lower()
         dr_image_map.setdefault(normalized_dr_no, []).append(dr.image.url)
 
-    # ✅ Build response safely
+    # Build response safely
     dr_list = []
     for dr in drs:
         dr_no = (dr["dr_no"] or "").strip()
@@ -406,7 +433,7 @@ def get_dr_details(request, dr_no):
                     "dr_no": tx.dr_no,
                     "remarks": tx.remarks,
                     "updated_by_user": tx.updated_by_user,
-                    "serial_numbers": serials or [],  # ✅ correct serials for this transaction
+                    "serial_numbers": serials or [],  # correct serials for this transaction
                 }
             )
 
@@ -459,11 +486,11 @@ def upload_dr(request):
         except ValueError:
             return JsonResponse({"success": False, "error": "Invalid date format (expected YYYY-MM-DD)."})
 
-        # ✅ Normalize DR and PO for consistent matching
+        # Normalize DR and PO for consistent matching
         normalized_dr = dr_number.strip().lower()
         normalized_po = po_number.strip().lower()
 
-        # ✅ Save each uploaded image in UploadedDR model only
+        # Save each uploaded image in UploadedDR model only
         for img in images:
             UploadedDR.objects.create(
                 po_number=normalized_po,
