@@ -48,7 +48,7 @@ def inventory_view(request):
         request,
         "inventory/inventory.html",
         {
-            "items": items,  # keep for compatibility (not removed)
+            "items": items,  # keep for compatibility
             "page_obj": page_obj,
         },
     )
@@ -113,12 +113,6 @@ def add_item(request):
             #  Extract form data
             item_name = request.POST.get("item", "").strip()
             description = request.POST.get("description", "").strip()
-            # total_stock_raw = request.POST.get("total_stock", "").strip()
-            # total_stock = int(total_stock_raw) if total_stock_raw.isdigit() else 0
-
-            # allocated_raw = request.POST.get("allocated_quantity", "").strip()
-            # allocated_quantity = int(allocated_raw) if allocated_raw.isdigit() else 0
-
             unit_of_quantity = request.POST.get("unit_of_quantity", "").strip() or "pcs"
             # part_no = request.POST.get("part_no", "").strip() or None
             image = request.FILES.get("image")
@@ -138,40 +132,6 @@ def add_item(request):
                     date_added = timezone.now()
             else:
                 date_added = timezone.now()
-
-            # # Parse serial numbers safely
-            # serial_numbers_raw = request.POST.get("serial_numbers", "") or ""
-            # serial_numbers = [s.strip() for s in serial_numbers_raw.split(",") if s.strip()]
-            # serial_numbers = list(dict.fromkeys(serial_numbers))  # remove duplicates, preserve order
-
-            # # Strict 1:1 rule between total_stock and serial numbers
-            # if serial_numbers:
-            #     if len(serial_numbers) != total_stock:
-            #         error_message = f" The number of serial numbers ({len(serial_numbers)}) " f"must match the total stock ({total_stock})
-            #         # Re-render the same form without clearing user data
-            #         return render(
-            #             request,
-            #             "inventory/add_item.html",
-            #             {
-            #                 "error_message": error_message,
-            #                 "today": timezone.now(),
-            #                 # Preserve previously entered data
-            #                 "form_data": {
-            #                     "item": item_name,
-            #                     "description": description,
-            #                     "total_stock": total_stock_raw,
-            #                     "allocated_quantity": allocated_raw,
-            #                     "unit_of_quantity": unit_of_quantity,
-            #                     "part_no": part_no,
-            #                     "serial_numbers": ", ".join(serial_numbers),
-            #                 },
-            #             },
-            #         )
-            # else:
-            #     # If serials are not provided but total_stock > 0, allow only if item does not use serial tracking
-            #     # (We assume no serial tracking means okay to skip)
-            #     pass  # no action needed
-
             # Validation
             if not item_name or not description:
                 messages.error(request, " Please fill in all required fields.")
@@ -191,35 +151,6 @@ def add_item(request):
                 user=request.user,
                 date_last_modified=date_added,
             )
-
-            # # Create Serial Numbers (if any)
-            # created_sn = 0
-            # for sn in serial_numbers:
-            #     try:
-            #         ItemSerial.objects.create(item=item, serial_no=sn, is_available=True)
-            #         created_sn += 1
-            #     except IntegrityError:
-            #         continue  # skip duplicates silently
-
-            # Log in ItemUpdate (Initial Import)
-            # When adding new item
-            # initial_quantity = total_stock  # total stock entered in the form
-            # ItemUpdate.objects.create(
-            #     item=item,
-            #     transaction_type="IN",
-            #     quantity=initial_quantity,
-            #     serial_numbers=serial_numbers if serial_numbers else None,
-            #     location="Initial Import",
-            #     remarks="Initial item creation",
-            #     user=request.user,
-            #     updated_by_user=request.user.username,
-            #     date=date_added,
-            # )
-
-            # msg = f" Item '{item_name}' added successfully!"
-            # if created_sn:
-            #     msg += f" ({created_sn} serials added)"
-            # messages.success(request, msg)
             return redirect("inventory")
 
         except Exception as e:
@@ -262,7 +193,6 @@ def updateitem_view(request, item_id):
 
             total = max(total, 0)
             allocated = max(allocated, 0)
-
             update.stock_after_transaction = total
             update.allocated_after_transaction = allocated
             update.save(update_fields=["stock_after_transaction", "allocated_after_transaction"])
@@ -518,7 +448,7 @@ def undo_transaction(request, update_id):
                     allocate_id = match.group(1)
                     try:
                         allocate_txn = ItemUpdate.objects.get(id=allocate_id, transaction_type="ALLOCATED")
-                        allocate_txn.is_converted = False  # ✅ restore flag
+                        allocate_txn.is_converted = False  # restore flag
                         allocate_txn.save(update_fields=["is_converted"])
                     except ItemUpdate.DoesNotExist:
                         pass  # silently skip if not found
@@ -723,279 +653,3 @@ def ajax_search_po(request):
 
     html = render_to_string("inventory/po_table_rows.html", {"updates": updates, "query": query})
     return JsonResponse({"html": html})
-
-
-# ===============================
-# PROJECT SUMMARY VIEWS
-# ===============================
-
-
-@login_required
-def project_summary_view(request):
-    """
-    Display the project summary page with all projects.
-    """
-    from django.db import models as django_models
-
-    # Get all unique projects from ItemUpdate's po_client field
-    projects = (
-        ItemUpdate.objects.filter(po_client__isnull=False)
-        .exclude(po_client="")
-        .values("po_client")
-        .annotate(project_title=django_models.F("po_client"), date=django_models.Max("date"))
-        .order_by("-date")
-    )
-
-    return render(request, "inventory/project_summary.html", {"projects": projects})
-
-
-@login_required
-def get_project_details(request, project_id):
-    """
-    Get detailed information about a specific project including its DRs.
-    Note: project_id here is actually the PO number since we don't have a Project model.
-    """
-    try:
-        # Get all updates for this PO (treating PO as project identifier)
-        updates = ItemUpdate.objects.filter(Q(po_client=project_id) | Q(po_supplier=project_id)).order_by("-date")
-
-        if not updates.exists():
-            return JsonResponse({"error": "Project not found"}, status=404)
-
-        # Get the first update for project details
-        first_update = updates.first()
-
-        # Get unique DR numbers for this project
-        dr_numbers = updates.filter(dr_no__isnull=False).exclude(dr_no="").values_list("dr_no", flat=True).distinct()
-
-        dr_list = []
-        for dr_no in dr_numbers:
-            dr_update = updates.filter(dr_no=dr_no).first()
-            dr_data = {
-                "dr_number": dr_no,
-                "po_number": dr_update.po_client or dr_update.po_supplier,
-                "uploaded_date": dr_update.date.strftime("%Y-%m-%d") if dr_update.date else "N/A",
-                "image_url": dr_update.item.image.url if dr_update.item and dr_update.item.image else None,
-            }
-            dr_list.append(dr_data)
-
-        data = {
-            "title": project_id,  # Using PO number as title
-            "po_no": project_id,
-            "remarks": first_update.remarks or "No remarks",
-            "location": first_update.location or "N/A",
-            "date": first_update.date.strftime("%Y-%m-%d") if first_update.date else "N/A",
-            "drs": dr_list,
-        }
-
-        return JsonResponse(data)
-
-    except Exception as e:
-        traceback.print_exc()
-        return JsonResponse({"error": str(e)}, status=400)
-
-
-@login_required
-def api_projects(request):
-    """
-    Return list of all projects (unique PO numbers) for the dropdown.
-    """
-    try:
-        # Get all unique PO numbers from po_client field
-        po_clients = (
-            ItemUpdate.objects.filter(po_client__isnull=False)
-            .exclude(po_client="")
-            .values_list("po_client", flat=True)
-            .distinct()
-            .order_by("po_client")
-        )
-
-        project_list = []
-        for po in po_clients:
-            project_list.append({"id": po, "display": po})  # Using PO as ID  # Display PO number
-
-        return JsonResponse({"projects": project_list})
-
-    except Exception as e:
-        traceback.print_exc()
-        return JsonResponse({"error": str(e)}, status=400)
-
-
-@login_required
-@transaction.atomic
-def add_project(request):
-    """
-    Add a new project by creating an ItemUpdate entry.
-    Since we don't have a Project model, we'll use the first item to create an update.
-    """
-    if request.method == "POST":
-        try:
-            title = request.POST.get("project_title", "").strip()
-            po = request.POST.get("po_number", "").strip()
-            remarks = request.POST.get("remarks", "").strip()
-            location = request.POST.get("location", "").strip()
-            date_str = request.POST.get("date", "").strip()
-
-            if not title or not po:
-                return JsonResponse({"success": False, "error": "Title and PO are required"})
-
-            project_date = timezone.now()
-            if date_str:
-                try:
-                    date_part = datetime.strptime(date_str, "%Y-%m-%d").date()
-                    current_time = timezone.localtime().time()
-                    project_date = timezone.make_aware(datetime.combine(date_part, current_time), timezone.get_current_timezone())
-                except ValueError:
-                    pass
-
-            # Get or create a placeholder item for projects
-            item, created = Item.objects.get_or_create(
-                item_name="PROJECT_PLACEHOLDER",
-                defaults={
-                    "description": "Placeholder item for project tracking",
-                    "user": request.user,
-                    "is_deleted": True,  # Hide from regular inventory
-                },
-            )
-
-            # Create an update to represent the project
-            ItemUpdate.objects.create(
-                item=item,
-                transaction_type="IN",
-                quantity=0,
-                date=project_date,
-                location=location or None,
-                remarks=f"Project: {title} | {remarks}" if remarks else f"Project: {title}",
-                po_client=po,
-                user=request.user,
-                updated_by_user=request.user.username,
-            )
-
-            return JsonResponse({"success": True})
-
-        except Exception as e:
-            traceback.print_exc()
-            return JsonResponse({"success": False, "error": str(e)})
-
-    return JsonResponse({"success": False, "error": "Invalid request method"})
-
-
-@login_required
-@transaction.atomic
-def upload_dr(request):
-    """
-    Upload DR number and associate it with a project (PO number).
-    Creates an ItemUpdate entry with DR information.
-    """
-    if request.method == "POST":
-        try:
-            po_number = request.POST.get("po_number", "").strip()
-            dr_number = request.POST.get("dr_number", "").strip()
-            uploaded_date_str = request.POST.get("uploaded_date", "").strip()
-            images = request.FILES.getlist("images")
-
-            if not all([po_number, dr_number, uploaded_date_str]):
-                return JsonResponse({"success": False, "error": "All fields are required"})
-
-            uploaded_date = timezone.now()
-            if uploaded_date_str:
-                try:
-                    date_part = datetime.strptime(uploaded_date_str, "%Y-%m-%d").date()
-                    current_time = timezone.localtime().time()
-                    uploaded_date = timezone.make_aware(datetime.combine(date_part, current_time), timezone.get_current_timezone())
-                except ValueError:
-                    pass
-
-            # Get or create placeholder item
-            item, created = Item.objects.get_or_create(
-                item_name="PROJECT_PLACEHOLDER",
-                defaults={"description": "Placeholder item for project tracking", "user": request.user, "is_deleted": True},
-            )
-
-            # Create an update with DR info
-            ItemUpdate.objects.create(
-                item=item,
-                transaction_type="IN",
-                quantity=0,
-                date=uploaded_date,
-                dr_no=dr_number,
-                po_client=po_number,
-                remarks=f"DR Upload: {dr_number}",
-                user=request.user,
-                updated_by_user=request.user.username,
-            )
-
-            # If images provided, update the item's image (first image only)
-            if images:
-                item.image = images[0]
-                item.save()
-
-            return JsonResponse({"success": True})
-
-        except Exception as e:
-            traceback.print_exc()
-            return JsonResponse({"success": False, "error": str(e)})
-
-    return JsonResponse({"success": False, "error": "Invalid request method"})
-
-
-@login_required
-def get_dr_details(request, dr_no):
-    """
-    Get transaction details for a specific DR.
-    """
-    try:
-        po_client = request.GET.get("po_client", "")
-
-        # Build query
-        query = Q(dr_no=dr_no)
-        if po_client:
-            query &= Q(po_client=po_client)
-
-        updates = ItemUpdate.objects.filter(query).select_related("item", "user").order_by("-date")
-
-        transactions = []
-        for update in updates:
-            serials = []
-            if update.serial_numbers:
-                serials = parse_serials(update.serial_numbers)
-
-            transactions.append(
-                {
-                    "id": update.id,
-                    "date": update.date.strftime("%Y-%m-%d %H:%M") if update.date else "",
-                    "item__item_name": update.item.item_name if update.item else "N/A",
-                    "transaction_type": update.transaction_type,
-                    "quantity": update.quantity or 0,
-                    "stock_after_transaction": update.stock_after_transaction or 0,
-                    "serial_numbers": serials,
-                    "location": update.location or "",
-                    "po_supplier": update.po_supplier or "",
-                    "po_client": update.po_client or "",
-                    "dr_no": update.dr_no or "",
-                    "remarks": update.remarks or "",
-                    "updated_by_user": update.updated_by_user or (update.user.username if update.user else ""),
-                }
-            )
-
-        return JsonResponse({"transactions": transactions})
-
-    except Exception as e:
-        traceback.print_exc()
-        return JsonResponse({"error": str(e)}, status=400)
-
-
-@login_required
-def get_serials(request, update_id):
-    """
-    Get serial numbers for a specific ItemUpdate.
-    """
-    try:
-        update = get_object_or_404(ItemUpdate, id=update_id)
-        serials = parse_serials(update.serial_numbers) if update.serial_numbers else []
-
-        return JsonResponse({"serial_numbers": serials})
-
-    except Exception as e:
-        traceback.print_exc()
-        return JsonResponse({"error": str(e)}, status=400)

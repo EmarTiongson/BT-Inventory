@@ -361,57 +361,6 @@ class InventoryViewsTests(TestCase):
         # Total stock should decrease by 3
         self.assertEqual(item.total_stock, 2)
 
-    # def test_prevent_double_conversion_of_allocated_transaction(self):
-    #     """Test that converting an already-converted ALLOCATED transaction shows warning"""
-    #     item = self.create_item_via_view("DoubleConvert", "desc")
-    #     self.post_update(item.id, in_value=2, serials=["DC1", "DC2"])
-    #     self.post_update(item.id, allocated=2, serials=["DC1", "DC2"])
-
-    #     allocate_update = ItemUpdate.objects.filter(item=item, transaction_type="ALLOCATED").first()
-    #     url = reverse("convert_allocate_to_out", args=[allocate_update.id])
-
-    #     # First conversion should succeed
-    #     resp = self.client.post(url, follow=True)
-    #     self.assertContains(resp, "converted to OUT successfully")
-
-    #     # Second conversion attempt should show warning
-    #     resp = self.client.post(url, follow=True)
-    #     self.assertContains(resp, "already been converted")
-
-    # def test_complex_allocate_convert_undo_sequence(self):
-    #     """Test complex scenario: allocate → convert → undo conversion"""
-    #     item = self.create_item_via_view("Complex", "desc")
-    #     self.post_update(item.id, in_value=5, serials=["CX1", "CX2", "CX3", "CX4", "CX5"])
-
-    #     # Allocate 2
-    #     self.post_update(item.id, allocated=2, serials=["CX1", "CX2"])
-    #     item.refresh_from_db()
-    #     self.assertEqual(item.allocated_quantity, 2)
-    #     self.assertEqual(item.total_stock, 5)
-
-    #     # Convert to OUT
-    #     allocate_update = ItemUpdate.objects.filter(item=item, transaction_type="ALLOCATED").first()
-    #     convert_url = reverse("convert_allocate_to_out", args=[allocate_update.id])
-    #     self.client.post(convert_url, follow=True)
-
-    #     item.refresh_from_db()
-    #     self.assertEqual(item.total_stock, 3)
-    #     self.assertEqual(item.allocated_quantity, 0)
-
-    #     # Undo the OUT transaction
-    #     out_update = ItemUpdate.objects.filter(item=item, transaction_type="OUT").first()
-    #     undo_url = reverse("undo_transaction", args=[out_update.id])
-    #     self.client.post(undo_url, follow=True)
-
-    #     item.refresh_from_db()
-    #     # Stock should be restored to 5
-    #     self.assertEqual(item.total_stock, 5)
-    #     # Allocated should be restored to 2
-    #     self.assertEqual(item.allocated_quantity, 2)
-    #     # Original allocate should be marked as not converted
-    #     allocate_update.refresh_from_db()
-    #     self.assertFalse(allocate_update.is_converted)
-
     def test_prevent_double_conversion_of_allocated_transaction(self):
         """Ensure converting an already converted ALLOCATED transaction shows a warning."""
         item = self.create_item_via_view("DoubleConvert", "desc")

@@ -58,7 +58,7 @@ ROOT_URLCONF = "inventory.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "src" / "templates"],  # ✅ fixed — correct place
+        "DIRS": [BASE_DIR / "src" / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -126,7 +126,7 @@ USE_TZ = True
 # STATIC FILES (CSS, JS, IMAGES)
 # ---------------------------------------------------------
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [BASE_DIR / "src" / "assets"]  # ✅ correct local static directory
+STATICFILES_DIRS = [BASE_DIR / "src" / "assets"]  # correct local static directory
 STATIC_ROOT = BASE_DIR / "staticfiles"  # where collectstatic stores files
 
 # ---------------------------------------------------------

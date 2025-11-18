@@ -103,7 +103,6 @@ def add_asset_tool(request):
 
             # Validate required fields
             if not all([date_added_str, tool_name, description, image]):
-                # ... (error handling remains the same) ...
                 return render(
                     request,
                     "app_core/add_asset_tool.html",
@@ -121,7 +120,6 @@ def add_asset_tool(request):
                 # 2. Make it timezone-aware using the system's timezone.
                 aware_datetime = timezone.make_aware(naive_datetime)
             else:
-                # Should not happen if validation passes, but good for safety
                 aware_datetime = timezone.now()
 
             # Create new asset/tool entry
@@ -135,13 +133,10 @@ def add_asset_tool(request):
                 image=image,
             )
 
-            # Success message
             messages.success(request, f"{tool_name} has been added successfully!")
             return redirect("assets_tools")
 
         except Exception as e:
-            # More detailed error message
-            print(f"Error in add_asset_tool: {str(e)}")  # For debugging in console
             return render(
                 request,
                 "app_core/add_asset_tool.html",
@@ -440,7 +435,6 @@ def get_dr_details(request, dr_no):
         return JsonResponse({"transactions": transactions})
 
     except Exception as e:
-        print("❌ Error in get_dr_details:", e)
         return JsonResponse({"error": str(e)}, status=500)
 
 
@@ -458,7 +452,6 @@ def get_serials(request, update_id):
     except ItemUpdate.DoesNotExist:
         return JsonResponse({"error": "Transaction not found."}, status=404)
     except Exception as e:
-        print("❌ Error fetching serials:", e)
         return JsonResponse({"error": str(e)}, status=500)
 
 
@@ -502,5 +495,4 @@ def upload_dr(request):
         return JsonResponse({"success": True, "message": "DR and images uploaded successfully!"})
 
     except Exception as e:
-        print("❌ Error in upload_dr:", e)
         return JsonResponse({"success": False, "error": str(e)})
