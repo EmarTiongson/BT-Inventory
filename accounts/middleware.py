@@ -47,18 +47,17 @@ class ForcePasswordChangeMiddleware:
         first_login_url = reverse("first_login_password")
         login_url = reverse("login")
         logout_url = reverse("logout")
-
-        safe_paths = (
-            first_login_url,
-            login_url,
-            logout_url,
+        safe_exact = {first_login_url, login_url, logout_url}
+        safe_prefixes = (
             "/static/",
             "/media/",
         )
 
-        if any(request.path.startswith(path) for path in safe_paths):
+        # Avoid redirect loop & allow static/media
+        if request.path in safe_exact or any(request.path.startswith(p) for p in safe_prefixes):
             return self.get_response(request)
 
+        # Force first-time password update
         if getattr(user, "first_login", False):
             return redirect("first_login_password")
 

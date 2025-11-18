@@ -8,6 +8,8 @@ from django.contrib.auth import (
     update_session_auth_hash,
 )
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.http import HttpResponseNotAllowed, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -94,7 +96,6 @@ def signup_view(request):
                 middle_initial=middle_initial,
                 position=position,
                 contact_no=contact_no,
-                generated_password=generated_password,
                 role=role,
             )
 
@@ -274,29 +275,22 @@ def first_login_password(request):
             messages.error(request, "Passwords do not match.")
             return redirect("first_login_password")
 
-        # Strong password validation
-        # Minimum 8 chars, at least 1 uppercase, 1 lowercase, 1 digit, and 1 special character
-        pattern = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
-        if not re.match(pattern, new_password):
-            messages.error(
-                request,
-                (
-                    "Password must be at least 8 characters long and include at least 1 "
-                    "uppercase letter, 1 lowercase letter, 1 number, and 1 special character."
-                ),
-            )
+        try:
+            # Use Django’s built-in validators
+            validate_password(new_password, request.user)
+
+        except ValidationError as e:
+            # Convert list of errors into a readable string
+            messages.error(request, " ".join(e.messages))
             return redirect("first_login_password")
 
-        #  Update password securely
         user = request.user
         user.set_password(new_password)
         user.first_login = False
         user.save()
 
-        # Keep user logged in after password change
         update_session_auth_hash(request, user)
-
-        messages.success(request, "Your password has been successfully updated.")
+        messages.success(request, "Password successfully updated.")
         return redirect("dashboard")
 
     return render(request, "accounts/confirm_pass.html")

@@ -8,12 +8,8 @@ from . import views
 urlpatterns = [
     # User registration route
     path("signup/", views.signup_view, name="signup"),
-    # Login route using Django’s built-in LoginView
-    path(
-        "login/",
-        auth_views.LoginView.as_view(template_name="registration/login.html"),
-        name="login",
-    ),
+    # Login route
+    path("login/", views.login_view, name="login"),
     # Logout route, redirects to login after logging out
     path("logout/", auth_views.LogoutView.as_view(next_page="login"), name="logout"),
     # Update an existing user’s details by ID

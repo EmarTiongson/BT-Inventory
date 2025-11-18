@@ -73,8 +73,7 @@ async function showSerialsDropdown(updateId, buttonSelector = null) {
     }, 10);
 
   } catch (err) {
-    console.error("Failed to load serial numbers:", err);
-    alert("❌ Could not load serial numbers.");
+    alert("Could not load serial numbers.");
   }
 }
 

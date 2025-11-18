@@ -9,7 +9,7 @@
 <div class="add-item-container">
   <h1 class="page-title">Add New Item</h1>
   
-  <!-- ✅ Error Message Display -->
+  <!-- Error Message Display -->
   {% if error_message %}
   <div class="error-message">
     <i class="bi bi-exclamation-triangle-fill"></i>
@@ -52,34 +52,6 @@
         <!-- <input type="text" name="part_no" placeholder="Part No." value="{{ form_data.part_no|default:'' }}"> --> 
       </div>
 
-      <!-- ✅ Serial Numbers Section (with modal trigger) -->
-      <!-- <div class="serial-section">
-        <div class="serial-header">
-          <label>Add Serial Numbers</label>
-          <button type="button" class="serial-btn" id="openSerialModal">+</button>
-        </div> -->
-        <!-- Hidden field to store serialized serial numbers -->
-        <!-- <input type="hidden" id="serialHiddenInput" name="serial_numbers" value="{{ form_data.serial_numbers|default:'' }}">
-        <div class="serial-error" id="serialError">
-          <i class="bi bi-exclamation-circle"></i> Serial numbers must match total stock quantity
-        </div>
-      </div> -->
-
-      <!-- ✅ Modal for Serial Numbers -->
-      <!-- <div id="serialModal" class="modal">
-        <div class="modal-content">
-          <h2>Serial Numbers</h2>
-          <div id="serialFieldsContainer"></div>
-          <div class="serial-error" id="modalSerialError">
-            <i class="bi bi-exclamation-circle"></i> <span id="serialErrorText"></span>
-          </div>
-          <div class="modal-actions">
-            <button type="button" id="closeSerialModal" class="cancel-btn">Cancel</button>
-            <button type="button" id="saveSerialNumbers" class="save-btn">Save</button>
-          </div>
-        </div>
-      </div> -->
-
       <!-- Submit Section -->
       <div class="submit-section">
         <button type="submit" class="add-btn">
@@ -90,7 +62,7 @@
   </div>
 </div>
 
-<!-- ✅ Fixed Return Button -->
+<!-- Fixed Return Button -->
 <a href="#" class="return-btn-fixed" onclick="history.back(); return false;">
   <i class="bi bi-arrow-left-circle"></i> Back to Overview
 </a>

@@ -7,8 +7,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const assetsToolsTableBody = document.getElementById("assetsToolsTableBody");
   if (!assetsToolsTableBody) return;
 
-  console.log("✅ Assets & Tools JS loaded");
-
   // ===========================
   // SEARCH FUNCTIONALITY
   // ===========================

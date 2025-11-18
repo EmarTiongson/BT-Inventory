@@ -21,7 +21,6 @@ class CustomUser(AbstractUser):
         blank=True,
         null=True,
     )
-    generated_password = models.CharField(max_length=50, blank=True, null=True)
 
     ROLE_CHOICES = [
         ("superadmin", "Superadmin"),

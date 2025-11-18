@@ -1,20 +1,37 @@
-// ✅ Safely get elements (some may not exist on update page)
+// Safely get elements (some may not exist on update page)
 const generateBtn = document.getElementById('generatePassword');
 const passwordInput = document.getElementById('password');
 const toggleBtn = document.getElementById('togglePassword');
 const eyeIcon = toggleBtn ? toggleBtn.querySelector('i') : null;
 
-// ✅ Generate password only if button and input exist
+// Generate password only if button and input exist
 if (generateBtn && passwordInput) {
   generateBtn.addEventListener('click', () => {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
+    const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const lower = 'abcdefghijklmnopqrstuvwxyz';
+    const digits = '0123456789';
+    const symbols = '!@#$%^&*()';
+    const allChars = upper + lower + digits + symbols;
+
+    // Guarantee at least 1 of each required type
     let pass = '';
-    for (let i = 0; i < 10; i++) {
-      pass += chars.charAt(Math.floor(Math.random() * chars.length));
+    pass += upper.charAt(Math.floor(Math.random() * upper.length));
+    pass += lower.charAt(Math.floor(Math.random() * lower.length));
+    pass += digits.charAt(Math.floor(Math.random() * digits.length));
+    pass += symbols.charAt(Math.floor(Math.random() * symbols.length));
+
+    // Fill the rest of the password with random characters
+    for (let i = 4; i < 10; i++) {
+      pass += allChars.charAt(Math.floor(Math.random() * allChars.length));
     }
+
+    // Shuffle password to randomize order
+    pass = pass.split('').sort(() => Math.random() - 0.5).join('');
+
+    // Set the password input
     passwordInput.value = pass;
 
-    // Disable the button after one click
+    // Disable the button after generating
     generateBtn.disabled = true;
     generateBtn.style.opacity = '0.5';
     generateBtn.style.cursor = 'not-allowed';
@@ -22,7 +39,7 @@ if (generateBtn && passwordInput) {
   });
 }
 
-// ✅ Toggle password visibility only if the elements exist
+// Toggle password visibility only if the elements exist
 if (toggleBtn && passwordInput && eyeIcon) {
   toggleBtn.addEventListener('click', () => {
     const type = passwordInput.type === 'password' ? 'text' : 'password';
@@ -32,7 +49,7 @@ if (toggleBtn && passwordInput && eyeIcon) {
   });
 }
 
-// ✅ Auto-hide Django alert after 3 seconds
+// Auto-hide Django alert after 3 seconds
 const alerts = document.querySelectorAll('.error-alert, .success-alert');
 alerts.forEach(alert => {
   setTimeout(() => {
@@ -40,9 +57,9 @@ alerts.forEach(alert => {
     alert.style.opacity = '0';
     setTimeout(() => alert.remove(), 500);
   }, 3000);
-});
+})
 
-// ✅ Background animation (abstract flowing lines)
+// Background animation (abstract flowing lines)
 const canvas = document.getElementById("backgroundCanvas");
 if (canvas) {
   const ctx = canvas.getContext("2d");

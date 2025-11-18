@@ -11,7 +11,7 @@ const serialErrorText = document.getElementById("serialErrorText");
 
 let serialNumbers = [];
 
-// ✅ Check if all elements exist
+// Check if all elements exist
 console.log("Modal elements check:", {
   openModalBtn: !!openModalBtn,
   serialModal: !!serialModal,
@@ -22,7 +22,7 @@ console.log("Modal elements check:", {
   totalStockField: !!totalStockField
 });
 
-// ✅ Open modal and generate serial fields based on total stock
+// Open modal and generate serial fields based on total stock
 if (openModalBtn && serialModal) {
   openModalBtn.addEventListener("click", (e) => {
     e.preventDefault();
@@ -73,7 +73,7 @@ if (openModalBtn && serialModal) {
   });
 }
 
-// ✅ Close modal
+// Close modal
 if (closeModalBtn && serialModal) {
   closeModalBtn.addEventListener("click", (e) => {
     e.preventDefault();
@@ -85,7 +85,7 @@ if (closeModalBtn && serialModal) {
   });
 }
 
-// ✅ Save serial numbers with validation
+// Save serial numbers with validation
 if (saveSerialBtn) {
   saveSerialBtn.addEventListener("click", (e) => {
     e.preventDefault();
@@ -102,7 +102,7 @@ if (saveSerialBtn) {
     const filledCount = serialNumbers.length;
     console.log("Filled serial numbers:", filledCount, "Total stock:", totalStock);
 
-    // ✅ VALIDATION 1: Check if filled serials match total stock (if any are filled)
+    // VALIDATION 1: Check if filled serials match total stock (if any are filled)
     if (filledCount > 0 && filledCount !== totalStock) {
       if (modalSerialError && serialErrorText) {
         serialErrorText.textContent = `You've filled ${filledCount} serial number(s), but Total Stock is ${totalStock}. Please fill all ${totalStock} fields or leave them all empty.`;
@@ -110,10 +110,10 @@ if (saveSerialBtn) {
       } else {
         alert(`⚠️ Serial number count mismatch!\n\nFilled: ${filledCount}\nRequired: ${totalStock}\n\nPlease fill all ${totalStock} fields or leave them all empty.`);
       }
-      return; // ❌ Prevent saving
+      return; // Prevent saving
     }
 
-    // ✅ VALIDATION 2: Check for duplicate serial numbers
+    // VALIDATION 2: Check for duplicate serial numbers
     const uniqueSerials = [...new Set(serialNumbers)];
     if (uniqueSerials.length !== serialNumbers.length) {
       if (modalSerialError && serialErrorText) {
@@ -122,10 +122,10 @@ if (saveSerialBtn) {
       } else {
         alert('⚠️ Duplicate serial numbers detected!\n\nEach serial number must be unique.');
       }
-      return; // ❌ Prevent saving
+      return; // Prevent saving
     }
 
-    // ✅ SUCCESS: Save to hidden input
+    // SUCCESS: Save to hidden input
     hiddenSerialInput.value = serialNumbers.join(",");
     serialModal.style.display = "none";
     
@@ -136,15 +136,15 @@ if (saveSerialBtn) {
 
     // Show success feedback
     if (filledCount > 0) {
-      console.log(`✅ ${filledCount} serial numbers saved successfully!`);
-      alert(`✅ ${filledCount} serial numbers saved successfully!`);
+      console.log(` ${filledCount} serial numbers saved successfully!`);
+      alert(` ${filledCount} serial numbers saved successfully!`);
     } else {
       console.log("No serial numbers entered (optional)");
     }
   });
 }
 
-// ✅ Click outside to close modal
+// Click outside to close modal
 if (serialModal) {
   serialModal.addEventListener("mousedown", (e) => {
     if (e.target === serialModal) {
@@ -183,7 +183,7 @@ if (imageInput && imagePreview && uploadLabel) {
     }
   });
 
-  // ✅ Clicking the preview allows re-upload
+  // Clicking the preview allows re-upload
   imagePreview.addEventListener('click', function() {
     imageInput.click();
   });

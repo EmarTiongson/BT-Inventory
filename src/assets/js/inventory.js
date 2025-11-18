@@ -3,8 +3,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const inventoryTableBody = document.getElementById("inventoryTableBody");
   if (!inventoryTableBody) return;
 
-  console.log("✅ Inventory.js loaded");
-
   /* =====================================================
    * IMAGE POPUP / LIGHTBOX
    * ===================================================== */

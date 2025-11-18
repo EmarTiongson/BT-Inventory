@@ -19,7 +19,7 @@ const saveSerialsBtn = document.getElementById('saveSerialsBtn');
 const serialNumbersField = document.getElementById('serialNumbersField');
 const serialModalTitle = document.getElementById('serialModalTitle');
 
-// ✅ Get available serials from window object (passed from HTML)
+// Get available serials from window object (passed from HTML)
 let availableSerials = window.availableSerials || [];
 
 // Serial sorting logic
@@ -116,7 +116,7 @@ function renderSerialCheckboxes(serialList) {
 openSerialsBtn.addEventListener('click', () => {
   const inVal = parseInt(inField.value) || 0;
   const outVal = parseInt(outField.value) || 0;
-  const allocVal = parseInt(allocatedQuantity.value) || 0; // ✅ NEW
+  const allocVal = parseInt(allocatedQuantity.value) || 0; 
   serialInputsContainer.innerHTML = '';
   serialSearch.value = '';
 
@@ -195,7 +195,7 @@ saveSerialsBtn.addEventListener('click', () => {
   let serials = [];
   const inVal = parseInt(inField.value) || 0;
   const outVal = parseInt(outField.value) || 0;
-  const allocVal = parseInt(allocatedQuantity.value) || 0; // ✅ NEW
+  const allocVal = parseInt(allocatedQuantity.value) || 0; 
 
   // IN → collect text inputs
   if (inVal > 0) {
@@ -227,7 +227,7 @@ saveSerialsBtn.addEventListener('click', () => {
 (function () {
   const inField = document.getElementById('inField');
   const outField = document.getElementById('outField');
-  const allocateField = document.getElementById('allocatedQuantity'); // matches your HTML
+  const allocateField = document.getElementById('allocatedQuantity');
   const poSupplier = document.getElementById('poSupplierField');
   const poClient = document.getElementById('poClientField');
   const drInput = document.getElementById('drInput');
@@ -310,7 +310,7 @@ if (nowHasAlloc) {
 
   if (poSupplier) poSupplier.disabled = false;
   if (poClient) poClient.disabled = false;
-  if (drInput) drInput.disabled = false; // ✅ now enabled for Allocate too!
+  if (drInput) drInput.disabled = false; 
 
   inField.value = '';
   outField.value = '';

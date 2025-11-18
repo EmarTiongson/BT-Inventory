@@ -88,7 +88,7 @@ addProjectForm.addEventListener('submit', async function (e) {
     }
   } catch (err) {
     console.error(err);
-    showNotification("❌ An error occurred while saving the project.", "error");
+    showNotification("An error occurred while saving the project.", "error");
   }
 });
 

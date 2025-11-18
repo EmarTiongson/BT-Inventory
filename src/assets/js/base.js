@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const themeToggle = document.getElementById('themeToggle');     
   const darkModeIcon = document.getElementById('darkModeIcon');   
   
-  // 🚀 Responsive Sidebar Elements
+  // Responsive Sidebar Elements
   const desktopToggleBtn = document.getElementById('desktopSidebarToggle'); 
   const mobileToggleBtn = document.getElementById('mobileSidebarToggle');    
   const sidebarOverlay = document.getElementById('sidebarOverlay');
@@ -29,14 +29,13 @@ document.addEventListener('DOMContentLoaded', function () {
     // Apply persistence state only on desktop view
     if (window.innerWidth > 900 && collapsedStored === 'true') {
       sidebar.classList.add('collapsed');
-      // 🚀 NEW FIX: Apply body class for robust margin control
+      // Apply body class for robust margin control
       document.body.classList.add('sidebar-is-collapsed'); 
     }
 
     if (desktopToggleBtn) { // This is the desktop collapse button
       desktopToggleBtn.addEventListener('click', () => {
         const collapsed = sidebar.classList.toggle('collapsed');
-        // 🚀 NEW FIX: Toggle body class here
         document.body.classList.toggle('sidebar-is-collapsed', collapsed);
         
         localStorage.setItem(collapsedKey, collapsed ? 'true' : 'false');

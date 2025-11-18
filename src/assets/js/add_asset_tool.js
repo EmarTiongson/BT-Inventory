@@ -24,7 +24,7 @@ if (imageInput && imagePreview && uploadLabel) {
     }
   });
 
-  // ✅ Clicking the preview allows re-upload
+  //Clicking the preview allows re-upload
   imagePreview.addEventListener('click', function() {
     imageInput.click();
   });
