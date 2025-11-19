@@ -10,16 +10,16 @@
 
 /* Body */
 body {
-  font-family: 'Poppins', sans-serif; /* Set Poppins as the default font */
+  font-family: 'Poppins', sans-serif;
   background: #eef1f6;
-  /* 💡 Centering using minimum margin and flex to maintain responsiveness */
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  overflow-x: hidden; /* Critical: Prevents horizontal scrolling caused by elements bleeding out */
+  overflow-x: hidden;
   overflow-y: auto;
   position: relative;
+  padding: 20px; /* Add padding to prevent edge touching */
 }
 
 /* Canvas for Abstract Lines */
@@ -29,29 +29,29 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: -1; /* Ensure it stays behind the content */
+  z-index: -1;
 }
 
 /* Container - Transparent with Blur */
 .container {
-  background: rgba(255, 255, 255, 0.25); /* Transparent background */
-  padding: 500px;
-  padding-top: 80px; /* PUSHES CONTENT DOWN: Added extra space to clear the fixed button (height + top margin) */
+  background: rgba(255, 255, 255, 0.25);
+  padding: 40px; /* FIXED: Reduced from 500px to reasonable padding */
+  padding-top: 40px; /* FIXED: Reasonable top padding */
   border-radius: 16px;
   box-shadow: 0 4px 25px rgba(0, 0, 0, 0.1);
-  width: 90%; /* Fluid width */
-  max-width: 480px; /* Maximum size */
+  width: 90%;
+  max-width: 680px; /* INCREASED: Better width for two-column layout */
   position: relative;
   z-index: 1;
-  backdrop-filter: blur(10px); /* Backdrop blur for modern feel */
-  margin: 20px auto; /* Ensure vertical margin for better spacing on all screens */
+  backdrop-filter: blur(10px);
+  margin: 80px auto 20px auto; /* Top margin to clear the fixed back button */
 }
 
 /* Title */
 h1 {
   text-align: center;
   margin-bottom: 5px;
-  font-size: 24px;
+  font-size: 28px; /* Slightly larger for desktop */
   font-weight: 600;
 }
 
@@ -59,6 +59,7 @@ h1 {
   text-align: center;
   margin-bottom: 30px;
   color: #777;
+  font-size: 15px;
 }
 
 /* Form Layout */
@@ -77,21 +78,22 @@ h1 {
 label {
   font-weight: 500;
   margin-bottom: 6px;
+  font-size: 14px;
 }
 
-input {
+input, select {
   border: 1px solid #ccc;
   border-radius: 8px;
-  padding: 10px;
+  padding: 10px 12px;
   font-size: 14px;
   outline: none;
-  transition: border 0.3s, box-shadow 0.3s; /* Added transition for smooth glow effect */
-  background: rgba(255, 255, 255, 0.85); /* Slightly transparent background */
+  transition: border 0.3s, box-shadow 0.3s;
+  background: rgba(255, 255, 255, 0.85);
 }
 
-input:focus {
-  border-color: #ff7a00; /* Orange border on focus */
-  box-shadow: 0 0 8px 3px rgba(255, 122, 0, 0.4); /* Orange glow shadow on focus */
+input:focus, select:focus {
+  border-color: #ff7a00;
+  box-shadow: 0 0 8px 3px rgba(255, 122, 0, 0.4);
 }
 
 .full-width {
@@ -112,6 +114,11 @@ input:focus {
   cursor: pointer;
   font-size: 16px;
   color: #555;
+  transition: color 0.2s;
+}
+
+.icon-btn:hover {
+  color: #007bff;
 }
 
 .eye-btn {
@@ -130,15 +137,17 @@ input:focus {
   cursor: pointer;
   font-weight: 500;
   margin-top: 20px;
+  transition: opacity 0.3s, transform 0.2s;
 }
 
 .sign-in-btn:hover {
   opacity: 0.9;
+  transform: translateY(-1px);
 }
 
 /* Abstract Lines CSS (only for Light Mode) */
 body:not(.dark-mode) #backgroundCanvas {
-  display: block;  /* Ensure it's visible only in light mode */
+  display: block;
 }
 
 /* Dark Mode - Hide Abstract Lines */
@@ -146,14 +155,14 @@ body.dark-mode #backgroundCanvas {
   display: none;
 }
 
-/* Optional: Dark Mode Adjustments */
+/* Dark Mode Adjustments */
 body.dark-mode {
   background: #121212;
   color: #fff;
 }
 
 body.dark-mode .container {
-  background: #2a2a2a;
+  background: rgba(42, 42, 42, 0.85);
   color: white;
   box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4);
 }
@@ -161,6 +170,10 @@ body.dark-mode .container {
 body.dark-mode h1,
 body.dark-mode .subtitle {
   color: #fff;
+}
+
+body.dark-mode .subtitle {
+  color: #bbb;
 }
 
 body.dark-mode .sign-in-btn {
@@ -171,28 +184,28 @@ body.dark-mode .sign-in-btn:hover {
   opacity: 0.8;
 }
 
-body.dark-mode .form-group input {
+body.dark-mode input,
+body.dark-mode select {
   background: #333;
   color: white;
   border-color: #555;
 }
 
-body.dark-mode .form-group input:focus {
+body.dark-mode input:focus,
+body.dark-mode select:focus {
   border-color: #ff7a00;
 }
 
-body.dark-mode .form-group input::placeholder {
+body.dark-mode input::placeholder {
   color: #bbb;
 }
 
-/* Canvas Animation Styles */
-#backgroundCanvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;  /* Behind other content */
+body.dark-mode .icon-btn {
+  color: #aaa;
+}
+
+body.dark-mode .icon-btn:hover {
+  color: #007bff;
 }
 
 /* ============================= */
@@ -200,10 +213,10 @@ body.dark-mode .form-group input::placeholder {
 /* ============================= */
 
 .back-btn-container {
-  position: fixed;        /* Stick to viewport */
+  position: fixed;
   top: 20px;
-  left: 40px;             
-  z-index: 100;           /* Ensure it's above the form */
+  left: 40px;
+  z-index: 100;
 }
 
 .back-btn {
@@ -239,28 +252,6 @@ body.dark-mode .back-btn:hover {
   background: linear-gradient(90deg, #0041a8, #002d73);
 }
 
-/* Dropdown field styling */
-select {
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  background-color: #fff;
-  font-size: 14px;
-  transition: border-color 0.3s;
-}
-
-select:focus {
-  outline: none;
-  border-color: #007bff;
-}
-
-.dark-mode select {
-  background-color: #1c1c1c;
-  color: #fff;
-  border-color: #333;
-}
-
 /* Error/Status Alerts */
 .error-alert {
   background-color: #ffcccc;
@@ -280,35 +271,63 @@ select:focus {
 }
 
 /* ========================================================== */
+/* 🚀 TABLET RESPONSIVENESS (601px - 900px) */
+/* ========================================================== */
+@media (max-width: 900px) and (min-width: 601px) {
+  .container {
+    max-width: 600px;
+    padding: 35px;
+  }
+  
+  h1 {
+    font-size: 26px;
+  }
+}
+
+/* ========================================================== */
 /* 🚀 MOBILE RESPONSIVENESS (<= 600px) */
 /* ========================================================== */
 @media (max-width: 600px) {
- 
+  body {
+    padding: 10px;
+  }
+  
   /* Main Container adjustments */
   .container {
-    padding: 20px; /* Base mobile padding */
-    padding-top: 60px; /* PUSHES CONTENT DOWN: Adjusted top padding for mobile to clear the button */
-    width: 95%; /* Maximize width usage on very small screens */
-    margin: 10px auto; /* Even less margin on mobile */
+    padding: 25px;
+    padding-top: 25px;
+    width: 100%;
+    max-width: 100%;
+    margin: 70px auto 20px auto; /* Top margin for back button clearance */
   }
  
   /* Form Row: Stack elements vertically on small screens */
   .form-row {
-    flex-direction: column;     
-    gap: 15px; /* Adjust gap between stacked elements */
+    flex-direction: column;
+    gap: 15px;
   }
 
   /* Title and Subtitle */
-  h1 { font-size: 20px; }
-  .subtitle { font-size: 14px; margin-bottom: 20px; }
+  h1 { 
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+  
+  .subtitle { 
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
   
   /* Input fields */
-  input, select { padding: 8px; font-size: 13px; }
+  input, select { 
+    padding: 10px;
+    font-size: 14px;
+  }
 
   /* Back Button adjustments */
   .back-btn-container {
     top: 10px;
-    left: 10px; 
+    left: 10px;
   }
 
   .back-btn {
@@ -317,6 +336,34 @@ select:focus {
   }
   
   /* Icon placement adjustment for tighter screens */
-  .icon-btn { right: 30px; }
-  .eye-btn { right: 5px; }
+  .icon-btn { 
+    right: 40px;
+  }
+  
+  .eye-btn { 
+    right: 8px;
+  }
 }
+
+/* ========================================================== */
+/* 🚀 VERY SMALL MOBILE (<= 400px) */
+/* ========================================================== */
+@media (max-width: 400px) {
+  .container {
+    padding: 20px;
+  }
+  
+  h1 {
+    font-size: 20px;
+  }
+  
+  .back-btn {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+  
+  .back-btn span {
+    display: none; /* Hide text, keep only icon on very small screens */
+  }
+}
+

@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator
 from django.db import transaction
-from django.db.models import Max
+from django.db.models import Max, Prefetch, Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -64,22 +64,49 @@ def admin_view(request):
 @login_required
 def assets_tools(request):
     """
-    View to display all active (non-deleted) assets and tools, with pagination.
+    Display the Assets & Tools overview page with search functionality.
+
+    This view filters out soft-deleted assets, prefetches related updates,
+    and supports comprehensive server-side search.
     """
 
-    # Get all non-deleted assets/tools ordered by date added (newest first)
-    assets_tools = AssetTool.objects.filter(is_deleted=False).order_by("-date_added")
+    search_query = request.GET.get("search", "").strip()
 
-    # Pagination (10 items per page)
-    paginator = Paginator(assets_tools, 10)
-    page_number = request.GET.get("page")
+    # Prefetch latest updates for performance
+    latest_updates = Prefetch(
+        "updates",  # related_name from AssetUpdate
+        queryset=AssetUpdate.objects.select_related("updated_by").order_by("-transaction_date"),
+        to_attr="prefetched_updates",
+    )
+
+    # Base queryset
+    assets = (
+        AssetTool.objects.filter(is_deleted=False)
+        .prefetch_related(latest_updates)
+        .order_by("-updated_at")  # Or "-date_added" if you prefer
+    )
+
+    # Search filter
+    if search_query:
+        assets = assets.filter(
+            Q(tool_name__icontains=search_query)  # Asset name
+            | Q(description__icontains=search_query)  # Description
+            | Q(assigned_user__icontains=search_query)  # Assigned user
+            | Q(assigned_by__icontains=search_query)  # Assigned by
+        ).distinct()
+
+    # Pagination
+    paginator = Paginator(assets, 10)
+    page_number = request.GET.get("page", 1)
     page_obj = paginator.get_page(page_number)
 
     return render(
         request,
         "app_core/assets_tools.html",
         {
-            "page_obj": page_obj,  # This is the paginated object
+            "page_obj": page_obj,
+            "search_query": search_query,
+            "total_assets": assets.count(),
         },
     )
 

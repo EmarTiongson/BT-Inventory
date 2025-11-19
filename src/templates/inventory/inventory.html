@@ -8,6 +8,7 @@
 
 {% block content %}
 <h1 class="page-title">Inventory Overview</h1>
+
 {% if messages %}
   <div class="messages">
     {% for message in messages %}
@@ -18,8 +19,24 @@
 
 <div class="page-controls">
   <div class="search-box">
-    <input type="text" id="searchInput" placeholder="Search here..." />
+    <input 
+      type="text" 
+      id="searchInput" 
+      placeholder="Search here..." 
+      value="{{ search_query|default:'' }}"
+    />
     <i class="bi bi-search"></i>
+    
+    <!-- Clear search button -->
+    {% if search_query %}
+    <button 
+      onclick="window.location.href='{% url 'inventory' %}'" 
+      style="position: absolute; right: 40px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #888; font-size: 18px;"
+      title="Clear search"
+    >
+      <i class="bi bi-x-circle"></i>
+    </button>
+    {% endif %}
   </div>
 
   <div class="button-stack">
@@ -30,11 +47,29 @@
     <button class="add-btn modern-add-btn" onclick="window.location.href='{% url 'add_item' %}'">
       <i class="fas fa-plus"></i> Add Item
     </button>
-
   </div>
 </div>
 
+<!-- Search results indicator -->
+{% if search_query %}
+<div style="margin-bottom: 15px; padding: 12px 16px; background: rgba(33, 150, 243, 0.1); border-left: 4px solid #2196F3; border-radius: 8px; color: #2196F3; display: flex; align-items: center; justify-content: space-between;">
+  <span>
+    <i class="bi bi-search"></i> Showing results for: <strong>"{{ search_query }}"</strong>
+    {% if page_obj.paginator.count == 0 %}
+      <span style="color: #f44336; margin-left: 10px;">(No results found)</span>
+    {% else %}
+      <span style="margin-left: 10px;">({{ page_obj.paginator.count }} result{{ page_obj.paginator.count|pluralize }})</span>
+    {% endif %}
+  </span>
+  <a href="{% url 'inventory' %}" style="color: #f44336; text-decoration: none; font-weight: 600;">
+    <i class="bi bi-x-circle"></i> Clear search
+  </a>
+</div>
+{% endif %}
+
 <div class="inventory-card content-card">
+  
+  <!-- DESKTOP TABLE VIEW -->
   <div class="table-responsive">
     <table class="inventory-table data-table">
       <thead>
@@ -112,18 +147,146 @@
         </tr>
         {% empty %}
         <tr>
-          <td colspan="12" style="text-align: center; padding: 20px;">No items found</td>
+          <td colspan="12" style="text-align: center; padding: 20px;">
+            {% if search_query %}
+              No items found matching "{{ search_query }}"
+            {% else %}
+              No items found
+            {% endif %}
+          </td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
+
+  <!-- MOBILE CARD VIEW -->
+  <div class="table-card-layout">
+    {% for item in page_obj %}
+    <div class="data-card" id="card-item-{{ item.id }}">
+      <!-- Card Header with Item Name -->
+      <div class="data-card-header">
+        <a href="{% url 'item_history' item.id %}" class="item-link">{{ item.item_name }}</a>
+      </div>
+
+      <!-- Image -->
+      {% if item.image %}
+      <div class="data-card-row">
+        <span class="data-card-label">Image</span>
+        <span class="data-card-value">
+          <img src="{{ item.image.url }}" alt="{{ item.name }}" class="thumbnail"
+            onclick="showImagePopup('{{ item.image.url }}')" />
+        </span>
+      </div>
+      {% endif %}
+
+      <!-- Item ID -->
+      <div class="data-card-row">
+        <span class="data-card-label">Item ID</span>
+        <span class="data-card-value">{% if item.id %}{{ item.id }}{% else %}-{% endif %}</span>
+      </div>
+
+      <!-- Description -->
+      <div class="data-card-row">
+        <span class="data-card-label">Description</span>
+        <span class="data-card-value">{{ item.description|default:"—" }}</span>
+      </div>
+
+      <!-- Total Stock -->
+      <div class="data-card-row">
+        <span class="data-card-label">Total Stock</span>
+        <span class="data-card-value">{{ item.total_stock }}</span>
+      </div>
+
+      <!-- Allocated Stock -->
+      <div class="data-card-row">
+        <span class="data-card-label">Allocated Stock</span>
+        <span class="data-card-value">{{ item.allocated_quantity }}</span>
+      </div>
+
+      <!-- Unit -->
+      <div class="data-card-row">
+        <span class="data-card-label">Unit</span>
+        <span class="data-card-value">{{ item.get_unit_of_quantity_display }}</span>
+      </div>
+
+      <!-- Part Number -->
+      <div class="data-card-row">
+        <span class="data-card-label">Part Number</span>
+        <span class="data-card-value">{{ item.part_no|default:"—" }}</span>
+      </div>
+
+      <!-- Serial Numbers -->
+      <div class="data-card-row">
+        <span class="data-card-label">Serial Numbers</span>
+        <span class="data-card-value">
+          {% if item.serial_numbers.all %}
+          <div class="serials-wrapper">
+            <a href="javascript:void(0)" onclick="toggleSerialsMobile({{ item.id }})" class="view-serials-link">
+              View Serials ({{ item.available_serials|length }})
+            </a>
+            <div id="serials-mobile-{{ item.id }}" class="serials-list-container">
+              <input type="text" class="serial-search" placeholder="Search serials..."
+                onkeyup="filterSerialsMobile({{ item.id }})">
+              <ul class="serials-list">
+                {% for serial in item.available_serials %}
+                <li>{{ serial }}</li>
+                {% empty %}
+                <li><em>No serial numbers</em></li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+          {% else %}
+          <em>—</em>
+          {% endif %}
+        </span>
+      </div>
+
+      <!-- User -->
+      <div class="data-card-row">
+        <span class="data-card-label">User</span>
+        <span class="data-card-value">
+          {% if item.prefetched_updates %}
+            {{ item.prefetched_updates.0.user.username }}
+          {% else %}
+            {{ item.user.username }}
+          {% endif %}
+        </span>
+      </div>
+
+      <!-- Date Last Modified -->
+      <div class="data-card-row">
+        <span class="data-card-label">Last Modified</span>
+        <span class="data-card-value">{{ item.date_last_modified|date:"F d, Y" }}</span>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="data-card-actions">
+        <button class="update-btn action-btn"
+          onclick="window.location.href='{% url 'update_item' item.id %}'">Update</button>
+        {% if request.user.role == 'superadmin' %}
+          <button class="delete-btn action-btn" data-item-id="{{ item.id }}">Delete</button>
+        {% endif %}
+      </div>
+    </div>
+    {% empty %}
+    <div class="no-data" style="text-align: center; padding: 40px 20px; color: #888;">
+      {% if search_query %}
+        No items found matching "{{ search_query }}"
+      {% else %}
+        No items found
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+
 </div>
 
 <!-- PAGINATION CONTROLS -->
 <div class="pagination-container">
     {% if page_obj.has_previous %}
-        <a href="?page={{ page_obj.previous_page_number }}" class="pagination-btn">Previous</a>
+        <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" class="pagination-btn">Previous</a>
     {% endif %}
 
     <span class="pagination-current">
@@ -131,7 +294,7 @@
     </span>
 
     {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}" class="pagination-btn">Next</a>
+        <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" class="pagination-btn">Next</a>
     {% endif %}
 </div>
 

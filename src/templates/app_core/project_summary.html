@@ -6,7 +6,9 @@
 <link rel="stylesheet" href="{% static 'css/serial.css' %}">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 {% endblock %}
+
 {% block title %}Project Summary{% endblock %}
+
 {% block content %}
 
 <!-- Notification Container -->
@@ -64,6 +66,20 @@
 
   <div class="project-section mb-8">
     <h3 class="section-title uppercase tracking-wider text-gray-500 mb-3">Delivery Receipts (DRs)</h3>
+
+    <!-- DR Search Centered -->
+    <div class="modal-header-controls justify-center mb-4">
+      <div class="dr-search-container w-full max-w-md">
+        <input 
+          type="text" 
+          id="drItemSearchInput" 
+          placeholder="Search items..." 
+          onkeyup="filterDrItems()" 
+          class="form-control w-full"
+        >
+      </div>
+    </div>
+
     <div id="projectListContainer" class="project-list flex flex-col gap-4"></div>
   </div>
 </div>
@@ -74,29 +90,29 @@
     <span class="close-button" id="closeDrModal">&times;</span>
     <h2>Delivery Receipt Summary</h2>
 
-    <div class="modal-header-controls flex justify-between items-center mt-2 mb-5 px-2">
-      <div class="header-info">
+    <div class="modal-header-controls flex flex-col md:flex-row justify-center md:justify-between items-start md:items-center mt-2 mb-5 px-2 gap-3">
+      <div class="header-info text-center md:text-left">
         <p id="poNumberDisplay" class="po-number-display"></p>
         <p id="modalDrNumber" class="dr-number-display"></p>
       </div>
 
-      <div class="dr-search-container flex items-center">
+      <div class="dr-search-container w-full md:w-auto flex justify-center md:justify-end">
         <input 
           type="text" 
-          id="drItemSearchInput" 
+          id="drItemSearchInputModal" 
           placeholder="Search items..." 
           onkeyup="filterDrItems()" 
-          class="form-control"
+          class="form-control w-full md:w-64"
         >
       </div>
     </div>
     
-    <div class="table-wrapper overflow-x-auto px-6 pb-6">
-      <table class="transaction-table w-full min-w-[1200px] border-collapse text-sm">
+    <div class="table-wrapper overflow-x-auto px-4 pb-6">
+      <table class="transaction-table w-full border-collapse">
         <thead>
           <tr>
             <th>Item Name</th>
-            <th>Item description</th>
+            <th>Item Description</th>
             <th>Quantity</th>
             <th>Unit of Quantity</th>
             <th>Serial Numbers</th>
@@ -105,7 +121,24 @@
             <th>Transaction By</th>
           </tr>
         </thead>
-        <tbody id="drDetailsBody"></tbody>
+        <tbody id="drDetailsBody">
+          {% for item in dr_items %}
+          <tr>
+            <td data-label="Item Name">{{ item.name }}</td>
+            <td data-label="Item Description">{{ item.description }}</td>
+            <td data-label="Quantity">{{ item.quantity }}</td>
+            <td data-label="Unit of Quantity">{{ item.unit }}</td>
+            <td data-label="Serial Numbers">{{ item.serials }}</td>
+            <td data-label="Location">{{ item.location }}</td>
+            <td data-label="Remarks">{{ item.remarks }}</td>
+            <td data-label="Transaction By">{{ item.user }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="8" class="text-center text-gray-500">No items found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
       </table>
     </div>
   </div>
@@ -169,9 +202,7 @@
         </div>
 
         <div class="modal-actions flex justify-end gap-2 mt-4">
-          <button
-            type="button"
-            class="cancel-btn"
+          <button type="button" class="cancel-btn"
             onclick="document.getElementById('uploadDrModal').style.display='none'; document.getElementById('uploadDrForm').reset();"
           >
             Cancel
@@ -188,7 +219,6 @@
   <span id="closeImagePreview" class="close-preview">&times;</span>
   <img id="previewImage" class="preview-image rounded-lg shadow-lg" src="" alt="Preview">
 </div>
-
 
 <!-- Simple Loader -->
 <div id="loadingSpinner" class="hidden fixed inset-0 bg-black bg-opacity-25 flex items-center justify-center z-50">

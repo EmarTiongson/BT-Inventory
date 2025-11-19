@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}Asset & Tools{% endblock %}
+
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/assets_tools.css' %}">
 {% endblock %}
@@ -18,7 +19,7 @@
 
 <div class="page-controls">
   <div class="search-box">
-    <input type="text" id="searchInput" placeholder="Search assets or tools..." />
+    <input type="text" id="searchInput" placeholder="Search assets or tools..." value="{{ search_query }}">
     <i class="bi bi-search"></i>
   </div>
 
@@ -29,6 +30,9 @@
   </div>
 </div>
 
+<!-- =======================
+     DESKTOP TABLE VIEW
+======================== -->
 <div class="inventory-card content-card">
   <div class="table-responsive">
     <table class="inventory-table data-table">
@@ -48,14 +52,22 @@
         {% for asset in page_obj %}
         <tr id="asset-row-{{ asset.id }}" style="transition: opacity 0.3s ease;">
           <td>{{ asset.date_added|date:"F d, Y" }}</td>
-          <td><a href="{% url 'asset_history' asset.id %}" class="item-link">{{ asset.tool_name }}</a></td>
+
+          <td>
+            <a href="{% url 'asset_history' asset.id %}" class="item-link">
+              {{ asset.tool_name }}
+            </a>
+          </td>
+
           <td>
             {% if asset.image %}
-            <img src="{{ asset.image.url }}" alt="{{ asset.tool_name }}" class="thumbnail" onclick="showImagePopup('{{ asset.image.url }}')">
+              <img src="{{ asset.image.url }}" class="thumbnail" 
+                onclick="showImagePopup('{{ asset.image.url }}')">
             {% else %}
-            <span>No Image</span>
+              <span>No Image</span>
             {% endif %}
           </td>
+
           <td>
             {% if asset.warranty_date %}
               {{ asset.warranty_date|date:"F d, Y" }}
@@ -63,20 +75,26 @@
               —
             {% endif %}
           </td>
+
           <td>{{ asset.assigned_user|default:"Unassigned" }}</td>
           <td>{{ asset.assigned_by }}</td>
-          <td style="text-align: center;">
+
+          <td style="text-align:center;">
             <button class="action-btn update-btn" onclick="window.location.href='{% url 'update_asset_tool' asset.id %}'">
               Update
             </button>
+
             {% if request.user.role == 'superadmin' %}
-              <button class="delete-btn action-btn" id="red-btn" data-asset-id="{{ asset.id }}">Delete</button>
+              <button class="delete-btn action-btn" id="red-btn" data-asset-id="{{ asset.id }}">
+                Delete
+              </button>
             {% endif %}
           </td>
         </tr>
+
         {% empty %}
         <tr>
-          <td colspan="7" style="text-align: center; padding: 40px;">
+          <td colspan="7" style="text-align:center; padding:40px;">
             No assets or tools added yet. Click "Add Asset / Tool" to get started.
           </td>
         </tr>
@@ -86,19 +104,88 @@
   </div>
 </div>
 
+
+<!-- =======================
+     MOBILE CARD VIEW
+======================== -->
+<div class="mobile-cards">
+  {% for asset in page_obj %}
+  <div class="data-card">
+
+    <div class="data-card-row">
+      <span class="data-card-label">Date:</span>
+      <span class="data-card-value">{{ asset.date_added|date:"F d, Y" }}</span>
+    </div>
+
+    <div class="data-card-row">
+      <span class="data-card-label">Name:</span>
+      <span class="data-card-value">
+        <a href="{% url 'asset_history' asset.id %}" class="item-link">{{ asset.tool_name }}</a>
+      </span>
+    </div>
+
+    <div class="data-card-row">
+      <span class="data-card-label">Image:</span>
+      <span class="data-card-value">
+        {% if asset.image %}
+          <img src="{{ asset.image.url }}" class="thumbnail"
+            onclick="showImagePopup('{{ asset.image.url }}')">
+        {% else %}
+          No Image
+        {% endif %}
+      </span>
+    </div>
+
+    <div class="data-card-row">
+      <span class="data-card-label">Warranty:</span>
+      <span class="data-card-value">
+        {% if asset.warranty_date %}
+          {{ asset.warranty_date|date:"F d, Y" }}
+        {% else %}
+          —
+        {% endif %}
+      </span>
+    </div>
+
+    <div class="data-card-row">
+      <span class="data-card-label">Assigned User:</span>
+      <span class="data-card-value">{{ asset.assigned_user|default:"Unassigned" }}</span>
+    </div>
+
+    <div class="data-card-row">
+      <span class="data-card-label">Assigned By:</span>
+      <span class="data-card-value">{{ asset.assigned_by }}</span>
+    </div>
+
+    <div class="data-card-actions" style="justify-content:center; margin-top:12px;">
+      <button class="action-btn update-btn"
+        onclick="window.location.href='{% url 'update_asset_tool' asset.id %}'">Update</button>
+
+      {% if request.user.role == 'superadmin' %}
+      <button class="delete-btn action-btn" data-asset-id="{{ asset.id }}">Delete</button>
+      {% endif %}
+    </div>
+  </div>
+
+  {% empty %}
+  <p style="text-align:center; padding:20px;">No assets or tools found.</p>
+  {% endfor %}
+</div>
+
+
 <!-- PAGINATION CONTROLS -->
 <div class="pagination-container">
-    {% if page_obj.has_previous %}
-        <a href="?page={{ page_obj.previous_page_number }}" class="pagination-btn">Previous</a>
-    {% endif %}
+  {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" class="pagination-btn">Previous</a>
+  {% endif %}
 
-    <span class="pagination-current">
-        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-    </span>
+  <span class="pagination-current">
+      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+  </span>
 
-    {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}" class="pagination-btn">Next</a>
-    {% endif %}
+  {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" class="pagination-btn">Next</a>
+  {% endif %}
 </div>
 
 
@@ -109,6 +196,7 @@
     <img id="imageLightboxImg" alt="Preview" />
   </div>
 </div>
+
 
 <!-- Delete Confirmation Modal -->
 <div id="deleteModal" class="delete-modal hidden">

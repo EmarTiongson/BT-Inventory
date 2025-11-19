@@ -6,6 +6,25 @@
    - RESPONSIVE MOBILE TOGGLE
 */
 
+// ⚡ CRITICAL: Apply theme IMMEDIATELY before DOM loads to prevent flash
+(function() {
+  try {
+    const themeKey = 'brite_theme';
+    const saved = localStorage.getItem(themeKey);
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialDark = (saved === 'dark') || (saved === null && prefersDark);
+    
+    if (initialDark) {
+      document.documentElement.classList.add('dark-mode');
+      if (document.body) {
+        document.body.classList.add('dark-mode');
+      }
+    }
+  } catch (err) {
+    console.warn('Early theme application failed:', err);
+  }
+})();
+
 document.addEventListener('DOMContentLoaded', function () {
   
   // Elements (IDs must match base.html)
@@ -84,33 +103,42 @@ document.addEventListener('DOMContentLoaded', function () {
   /* --------------------------------------------- */
   try {
     const themeKey = 'brite_theme';
-    const saved = localStorage.getItem(themeKey);
-    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const initialDark = (saved === 'dark') || (saved === null && prefersDark);
+    
+    // Helper function to update the icon based on current mode
+    function updateIcon(isDark) {
+      if (!darkModeIcon) return;
+      
+      if (isDark) {
+        // Dark mode - show sun icon
+        darkModeIcon.className = 'bi bi-sun-fill';
+      } else {
+        // Light mode - show moon icon
+        darkModeIcon.className = 'bi bi-moon-fill';
+      }
+    }
 
     function setDarkMode(isDark) {
       if (isDark) {
         // Dark mode
         document.body.classList.add('dark-mode');
-        if (darkModeIcon) {
-          darkModeIcon.classList.remove('bi-moon-fill');
-          darkModeIcon.classList.add('bi-sun-fill');
-        }
         if (themeToggle) themeToggle.setAttribute('aria-pressed', 'true');
         localStorage.setItem(themeKey, 'dark');
+        updateIcon(true);
       } else {
         // Light mode
         document.body.classList.remove('dark-mode');
-        if (darkModeIcon) {
-          darkModeIcon.classList.remove('bi-sun-fill');
-          darkModeIcon.classList.add('bi-moon-fill');
-        }
         if (themeToggle) themeToggle.setAttribute('aria-pressed', 'false');
         localStorage.setItem(themeKey, 'light');
+        updateIcon(false);
       }
     }
 
-    // Set initial theme
+    // Determine initial theme
+    const saved = localStorage.getItem(themeKey);
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialDark = (saved === 'dark') || (saved === null && prefersDark);
+
+    // Set initial theme and icon
     setDarkMode(initialDark);
 
     // Toggle theme on button click

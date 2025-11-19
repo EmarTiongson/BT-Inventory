@@ -176,9 +176,43 @@ body.sidebar-is-collapsed .main-content {
 .search-bar { display:flex; align-items:center; gap:10px; background: rgba(0,0,0,0.03); padding:10px; border-radius:10px; min-width:280px; }
 .search-bar input { border:0; outline:none; background:transparent; color:var(--text); }
 
-/* settings button */
-.settings-btn, #themeToggle { background:transparent; border:none; cursor:pointer; padding:8px; display:flex; align-items:center; justify-content:center; border-radius:8px; }
-.settings-btn i { font-size:18px; }
+/* ADD THIS TO YOUR base.css FILE - Theme Toggle Icon Colors */
+
+/* Settings/Theme Toggle Button - Light Mode */
+.settings-btn, #themeToggle { 
+  background: transparent; 
+  border: none; 
+  cursor: pointer; 
+  padding: 8px; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  border-radius: 8px;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.settings-btn:hover, #themeToggle:hover {
+  background: rgba(0, 0, 0, 0.08);
+  transform: scale(1.05);
+}
+
+.settings-btn i, #themeToggle i { 
+  font-size: 18px;
+  color: #1f2937; /* Dark color for light mode */
+  transition: color 0.3s ease;
+}
+
+/* Settings/Theme Toggle Button - Dark Mode */
+body.dark-mode .settings-btn, 
+body.dark-mode #themeToggle {
+  background: transparent;
+}
+
+body.dark-mode .settings-btn i, 
+body.dark-mode #themeToggle i,
+body.dark-mode #darkModeIcon { 
+  color: #ffffff; /* Warm yellow/gold color for dark mode (like a sun) */
+}
 
 /* logo top */
 .logo-top { 
@@ -352,3 +386,4 @@ body:not(.dark-mode) textarea:focus { border-color:#134686 !important; box-shado
 body.dark-mode input:focus,
 body.dark-mode select:focus,
 body.dark-mode textarea:focus { border-color:#D96F32 !important; box-shadow:0 0 0 3px rgba(217,111,50,0.3); outline:none; }
+

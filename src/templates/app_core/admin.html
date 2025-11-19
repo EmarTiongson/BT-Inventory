@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}User Management{% endblock %}
+
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/inventory.css' %}">
 <link rel="stylesheet" href="{% static 'css/admin.css' %}">
@@ -10,7 +11,6 @@
 <h1 class="page-title">User Management</h1>
 
 <div class="page-controls">
-  
   <div class="search-box">
     <input 
       type="text" 
@@ -42,15 +42,15 @@
       </thead>
       <tbody id="userTableBody">
         {% for user in users %}
-        <tr id="user-row-{{ user.id }}" style="transition: opacity 0.3s ease;">
-          <td>{{ user.id }}</td>
-          <td>{{ user.get_full_name }}</td>
-          <td>{{ user.position }}</td>
-          <td>{{ user.email }}</td>
-          <td>{{ user.username }}</td>
-          <td>{{ user.contact_no }}</td>
-          <td>{{ user.role }}</td>
-          <td>
+        <tr id="user-row-{{ user.id }}" class="user-card" style="transition: opacity 0.3s ease;">
+          <td data-label="Account No.">{{ user.id }}</td>
+          <td data-label="Full Name">{{ user.get_full_name }}</td>
+          <td data-label="Position">{{ user.position }}</td>
+          <td data-label="Email Address">{{ user.email }}</td>
+          <td data-label="Username">{{ user.username }}</td>
+          <td data-label="Contact No.">{{ user.contact_no }}</td>
+          <td data-label="Role">{{ user.role }}</td>
+          <td data-label="">
             <button class="update-btn action-btn" onclick="window.location.href='{% url 'update_user' user.id %}'">
               Update
             </button>

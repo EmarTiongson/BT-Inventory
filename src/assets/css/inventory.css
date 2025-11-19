@@ -247,7 +247,7 @@ body.dark-mode .add-item-container textarea {
 }
 
 /* ==========================================================
- * DATA TABLE STYLES
+ * DATA TABLE STYLES - DESKTOP
  * ========================================================== */
 
 .inventory-card {
@@ -265,8 +265,9 @@ body.dark-mode .add-item-container textarea {
     margin: 0;
 }
 
+/* REMOVE SCROLLBAR - Use card layout on mobile instead */
 .table-responsive {
-    overflow-x: auto;
+    overflow-x: visible; /* Changed from auto */
     width: 100%;
     margin: 0;
     padding: 0;
@@ -277,7 +278,7 @@ body.dark-mode .add-item-container textarea {
     border-collapse: collapse;
     font-size: 14px;
     background: transparent;
-    min-width: 1300px;
+    min-width: auto; /* Changed from 1300px */
 }
 
 .data-table thead {
@@ -331,6 +332,107 @@ body.dark-mode .add-item-container textarea {
     color: #888;
     padding: 40px 20px !important;
     font-style: italic;
+}
+
+/* ==========================================================
+ * MOBILE CARD LAYOUT - NO SCROLLBAR
+ * ========================================================== */
+
+.table-card-layout {
+    display: none; /* Hidden on desktop */
+}
+
+.data-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+.data-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.data-card-header {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    color: #60a5fa;
+}
+
+.data-card-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    gap: 10px;
+}
+
+.data-card-row:last-child {
+    border-bottom: none;
+}
+
+.data-card-label {
+    font-weight: 500;
+    color: #94a3b8;
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+.data-card-value {
+    font-weight: 500;
+    color: #e2e8f0;
+    font-size: 14px;
+    text-align: right;
+}
+
+.data-card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.data-card-actions .action-btn {
+    flex: 1;
+    margin: 0;
+    text-align: center;
+}
+
+/* Light mode card styling */
+body.light-mode .data-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .data-card-header {
+    border-bottom: 2px solid #e5e7eb;
+    color: #2563eb;
+}
+
+body.light-mode .data-card-row {
+    border-bottom: 1px solid #f3f4f6;
+}
+
+body.light-mode .data-card-label {
+    color: #6b7280;
+}
+
+body.light-mode .data-card-value {
+    color: #111827;
+}
+
+body.light-mode .data-card-actions {
+    border-top: 1px solid #e5e7eb;
 }
 
 /* ==========================================================
@@ -417,12 +519,12 @@ body.dark-mode .add-item-container textarea {
 /* IMAGE LIGHTBOX */
 .image-lightbox-overlay {
   position: fixed;
-  inset: 0; /* top:0; right:0; bottom:0; left:0; */
+  inset: 0;
   display: flex;
   justify-content: center;
   align-items: center;
   background: rgba(0,0,0,0.85);
-  z-index: 2147483647; /* very high to guarantee on top */
+  z-index: 2147483647;
   opacity: 0;
   visibility: hidden;
   transition: opacity 220ms ease, visibility 220ms ease;
@@ -456,7 +558,6 @@ body.dark-mode .add-item-container textarea {
   transform: translateZ(0);
 }
 
-Close button
 .image-lightbox-close {
   position: fixed;
   top: 18px;
@@ -478,10 +579,7 @@ Close button
   transform: scale(1.05);
 }
 
-/* Ensure thumbnail pointer indicates clickability */
 img.thumbnail { cursor: zoom-in; }
-
-
 
 /* ===================== DELETE MODAL ===================== */
 
@@ -520,7 +618,6 @@ img.thumbnail { cursor: zoom-in; }
   margin-bottom: 20px;
 }
 
-/* Password Input */
 .modal-input {
   width: 100%;
   padding: 12px 14px;
@@ -544,7 +641,6 @@ img.thumbnail { cursor: zoom-in; }
   box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.25);
 }
 
-/* Light Mode */
 body.light-mode .delete-modal-content {
   background: #ffffff;
   color: #111827;
@@ -565,8 +661,6 @@ body.light-mode .modal-input:focus {
   box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
 }
 
-
-/* Modal Buttons */
 .modal-actions {
   display: flex;
   justify-content: space-between;
@@ -606,26 +700,6 @@ body.light-mode .modal-input:focus {
   to { opacity: 1; transform: translateY(0); }
 }
 
-
-/* =========================
-   LIGHT MODE VARIANTS
-   ========================= */
-body.light-mode .delete-modal-content {
-  background-color: #ffffff;
-  color: #111827;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-}
-
-body.light-mode .modal-input {
-  background-color: #f9fafb;
-  color: #111827;
-  border: 1px solid #d1d5db;
-}
-
-body.light-mode .modal-input:focus {
-  border-color: #f59e0b;
-}
-
 body.light-mode .cancel-btn {
   background-color: #e5e7eb;
   color: #111827;
@@ -643,7 +717,6 @@ body.light-mode .confirm-btn {
 body.light-mode .confirm-btn:hover {
   background-color: #dc2626;
 }
-
 
 /* ==========================================================
  * DYNAMIC THEME OVERRIDES
@@ -672,15 +745,15 @@ body.dark-mode textarea {
 }
 
 body.dark-mode .item-link {
-    color: #2196F3; /* Normal link color in dark mode */
+    color: #2196F3;
 }
 
 body.dark-mode .item-link:visited {
-    color: #2196F3; /* Prevent violet color */
+    color: #2196F3;
 }
 
 body.dark-mode .item-link:hover {
-    color: #f59e0b; /* Orange hover in dark mode */
+    color: #f59e0b;
     font-weight: 700;
     transform: translateX(3px);
 }
@@ -725,7 +798,7 @@ body .main-content {
     align-items: center;
     gap: 8px;
     padding: 10px 20px;
-    background: #ff9800; /* Orange color */
+    background: #ff9800;
     color: white;
     border: none;
     border-radius: 8px;
@@ -748,35 +821,26 @@ body .main-content {
 body.light-mode .item-link,
 body.light-mode .item-link:link,
 body.light-mode .item-link:visited {
-    color: #2196F3!important; /* Black for light mode */
+    color: #2196F3!important;
     text-decoration: none !important;
 }
 
 .item-link:hover,
 body.light-mode .item-link:hover {
-    color: #f59e0b !important; /* Orange hover */
+    color: #f59e0b !important;
     font-weight: 700 !important;
     transform: translateX(3px) !important;
 }
 
-/* Wrapper that forces pagination to stay at the bottom and centered */
+/* Pagination */
 .pagination-container {
-    margin-top: 40px;              /* adds space from content */
-    width: 100%;                   /* ensures full row */
+    margin-top: 40px;
+    width: 100%;
     display: flex;
-    justify-content: center;       /* center horizontally */
+    justify-content: center;
     align-items: center;
     gap: 12px;
-    padding-bottom: 20px;          /* adds breathing room at bottom */
-}
-
-/* Pagination buttons */
-.pagination-container {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    width: 100% !important;
-    text-align: center !important;
+    padding-bottom: 20px;
 }
  
 .pagination-btn {
@@ -793,20 +857,68 @@ body.light-mode .item-link:hover {
     background-color: #0056b3;
 }
 
-/* Current page display (supports theme variables) */
 .pagination-current {
     padding: 8px 14px;
     font-size: 14px;
-
-    /* Light mode defaults */
     background: var(--pagination-bg, #e9ecef);
     color: var(--pagination-text, #000);
-
     border-radius: 6px;
 }
 
-/* DARK MODE OVERRIDE */
 body.dark-mode .pagination-current {
-    --pagination-bg: #2b2b2b;     /* Dark background */
-    --pagination-text: #ffffff;   /* White text */
+    --pagination-bg: #2b2b2b;
+    --pagination-text: #ffffff;
+}
+
+/* ==========================================================
+ * RESPONSIVE BREAKPOINTS
+ * ========================================================== */
+
+/* Desktop - Show Table */
+@media (min-width: 769px) {
+    .data-table {
+        display: table;
+    }
+    
+    .table-card-layout {
+        display: none;
+    }
+}
+
+/* Mobile - Show Cards, Hide Table */
+@media (max-width: 768px) {
+    .data-table {
+        display: none; /* Hide table on mobile */
+    }
+    
+    .table-card-layout {
+        display: block; /* Show cards on mobile */
+    }
+    
+    .page-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-box {
+        max-width: 100%;
+    }
+    
+    .button-stack {
+        width: 100%;
+    }
+    
+    .modern-add-btn,
+    .modern-po-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .page-title {
+        font-size: 22px;
+    }
+    
+    .item-summary {
+        grid-template-columns: 1fr;
+    }
 }

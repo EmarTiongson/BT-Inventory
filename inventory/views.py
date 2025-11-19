@@ -20,18 +20,25 @@ from .models import Item, ItemSerial, ItemUpdate, TransactionHistory
 @login_required
 def inventory_view(request):
     """
-    Display the inventory overview page.
+    Display the inventory overview page with search functionality.
 
     This view shows all items that are not soft-deleted. It also
     calculates total stock and retrieves the latest update for each item
     to display in the item list.
+
+    Supports server-side search across multiple fields.
     """
+    # Get search query from URL parameter
+    search_query = request.GET.get("search", "").strip()
+
+    # Prefetch latest updates for each item
     latest_updates = Prefetch(
         "updates",
         queryset=ItemUpdate.objects.select_related("user").order_by("-date"),
         to_attr="prefetched_updates",
     )
 
+    # Start with base queryset
     items = (
         Item.objects.filter(is_deleted=False)
         .select_related("user")
@@ -39,17 +46,30 @@ def inventory_view(request):
         .order_by("-date_last_modified")
     )
 
-    # === ADD PAGINATION (10 items per page) ===
+    # Apply search filter if query exists
+    if search_query:
+        items = items.filter(
+            Q(item_name__icontains=search_query)  # Search in item name
+            | Q(description__icontains=search_query)  # Search in description
+            | Q(part_no__icontains=search_query)  # Search in part number
+            | Q(id__icontains=search_query)  # Search by item ID
+            | Q(user__username__icontains=search_query)  # Search by username
+            | Q(user__first_name__icontains=search_query)  # Search by user first name
+            | Q(user__last_name__icontains=search_query)  # Search by user last name
+        ).distinct()  # Use distinct() to avoid duplicate results
+
+    # Paginate results (10 items per page)
     paginator = Paginator(items, 10)
-    page_number = request.GET.get("page")
+    page_number = request.GET.get("page", 1)
     page_obj = paginator.get_page(page_number)
 
     return render(
         request,
         "inventory/inventory.html",
         {
-            "items": items,  # keep for compatibility
             "page_obj": page_obj,
+            "search_query": search_query,  # Pass search query to template
+            "total_items": items.count(),  # Total count for reference
         },
     )
 

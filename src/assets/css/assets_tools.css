@@ -1,97 +1,132 @@
 /* ==========================================================
- * ASSETS & TOOLS PAGE STYLES
- * Based on inventory.css
+ * ASSETS & TOOLS PAGE STYLES (OPTIMIZED - INVENTORY STYLES)
  * ========================================================== */
 
-/* Import all base inventory styles */
+/* Import base styles from inventory */
 @import url('inventory.css');
 
-/* ------------------------------------------
-   CUSTOM OVERRIDES OR PAGE-SPECIFIC STYLES
--------------------------------------------*/
+/* ==========================================================
+ * OVERRIDE SPECIFIC STYLES TO MATCH INVENTORY
+ * ========================================================== */
 
-/* Page title (you can adjust the color or spacing if desired) */
-.page-title {
-  margin-bottom: 25px;
+/* Force table to use inventory styling */
+.data-table {
+    min-width: auto !important;
+    width: 100% !important;
 }
 
-/* Search box placeholder */
-#searchInput::placeholder {
-  color: #888;
+/* Ensure mobile cards use inventory styling */
+.table-card-layout {
+    display: none;
 }
 
-/* Make the Add Asset/Tool button distinct (orange accent) */
+.data-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+.data-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+/* Light mode card styling */
+body.light-mode .data-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Item link colors to match inventory */
+.item-link,
+.item-link:link,
+.item-link:visited {
+    color: #2196F3 !important;
+    text-decoration: none !important;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.item-link:hover {
+    color: #f59e0b !important;
+    font-weight: 700 !important;
+    transform: translateX(3px) !important;
+}
+
+/* Add button - keep your orange style but with inventory sizing */
 .modern-add-btn {
-  background-color: #f97316; /* orange-500 */
-  color: white;
+    padding: 10px 20px !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    background: linear-gradient(90deg, #f97316, #ea580c) !important;
+    color: white !important;
+    border: none !important;
+    transition: all 0.3s ease !important;
 }
 
 .modern-add-btn:hover {
-  background-color: #ea580c; /* darker orange */
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3) !important;
+    background: linear-gradient(90deg, #ea580c, #c2410c) !important;
 }
 
-/* Table tweaks for assets/tools */
-.inventory-table th,
-.inventory-table td {
-  text-align: center;
-  vertical-align: middle;
+/* Action buttons match inventory sizing */
+.action-btn {
+    padding: 6px 16px !important;
+    border-radius: 6px !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    margin-right: 8px !important;
 }
 
-/* Make images slightly larger for assets/tools */
-.inventory-table img.thumbnail {
-  width: 75px;
-  height: 75px;
-  object-fit: cover;
-  border-radius: 10px;
-  transition: transform 0.2s ease;
+/* Mobile card button positioning */
+@media (max-width: 768px) {
+    .data-table {
+        display: none !important;
+    }
+    .mobile-cards {
+        display: block !important;
+    }
 }
+    
+    .data-card .btn-pair {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        right: 10px;
+        display: flex;
+        gap: 8px;
+    }
+    
+    .data-card .btn-pair .action-btn {
+        flex: 1;
+        margin: 0 !important;
+        text-align: center;
+        font-size: 13px !important;
+        padding: 6px 12px !important;
+    }
+    
+    /* Hide table, show cards on mobile */
+    .data-table {
+        display: none !important;
+    }
+    
+    .table-card-layout {
+        display: block !important;
+    }
 
-.inventory-table img.thumbnail:hover {
-  transform: scale(1.05);
-}
-
-/* Lightbox overlay (copied from inventory style with tweak) */
-.image-lightbox-overlay {
-  background-color: rgba(0, 0, 0, 0.8);
-}
-
-/* Pagination buttons */
-.pagination-container {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    width: 100% !important;
-    text-align: center !important;
-}
-
-.pagination-btn {
-    padding: 8px 14px;
-    border-radius: 6px;
-    background-color: #007bff;
-    color: white;
-    text-decoration: none;
-    font-size: 14px;
-    transition: background 0.2s;
-}
-
-.pagination-btn:hover {
-    background-color: #0056b3;
-}
-
-/* Current page display (supports theme variables) */
-.pagination-current {
-    padding: 8px 14px;
-    font-size: 14px;
-
-    /* Light mode defaults */
-    background: var(--pagination-bg, #e9ecef);
-    color: var(--pagination-text, #000);
-
-    border-radius: 6px;
-}
-
-/* DARK MODE OVERRIDE */
-body.dark-mode .pagination-current {
-    --pagination-bg: #2b2b2b;     /* Dark background */
-    --pagination-text: #ffffff;   /* White text */
+/* Desktop - show table */
+@media (min-width: 769px) {
+    .data-table {
+        display: table !important;
+    }
+    .mobile-cards {
+        display: none !important;
+    }
 }

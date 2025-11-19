@@ -1,94 +1,135 @@
 /* ==========================================================
- * ASSETS & TOOLS PAGE SCRIPT
- * Based on inventory.js
+ * ASSETS & TOOLS PAGE SCRIPT (Optimized & Cleaned)
  * ========================================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
-  const assetsToolsTableBody = document.getElementById("assetsToolsTableBody");
-  if (!assetsToolsTableBody) return;
 
-  // ===========================
-  // SEARCH FUNCTIONALITY
-  // ===========================
-  const searchInput = document.getElementById("searchInput");
-  if (searchInput) {
-    searchInput.addEventListener("keyup", function () {
-      const filter = searchInput.value.toLowerCase();
-      const rows = document.querySelectorAll("#assetsToolsTableBody tr");
-
-      rows.forEach(row => {
-        const text = row.textContent.toLowerCase();
-        row.style.display = text.includes(filter) ? "" : "none";
-      });
-    });
-  }
-
-  // ===========================
-  // IMAGE LIGHTBOX
-  // ===========================
+  /* ------------------------------
+     IMAGE LIGHTBOX
+  --------------------------------*/
   const overlay = document.getElementById("imageLightboxOverlay");
   const img = document.getElementById("imageLightboxImg");
   const closeBtn = document.getElementById("imageLightboxClose");
 
   if (overlay && img && closeBtn) {
-    window.showImagePopup = function(imageUrl) {
-      img.src = imageUrl;
+
+    window.showImagePopup = (src) => {
+      img.src = src;
       overlay.classList.add("active");
       document.body.style.overflow = "hidden";
     };
 
-    function closeImagePopup() {
+    const closeImage = () => {
       overlay.classList.remove("active");
       img.src = "";
       document.body.style.overflow = "";
-    }
+    };
 
-    closeBtn.addEventListener("click", closeImagePopup);
-
-    overlay.addEventListener("click", e => {
-      if (e.target === overlay || e.target === closeBtn) closeImagePopup();
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay || e.target === closeBtn) closeImage();
     });
 
-    document.addEventListener("keydown", e => {
-      if (e.key === "Escape" && overlay.classList.contains("active")) closeImagePopup();
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeImage();
     });
   }
 
-  // ==============================
-  // DELETE ASSET/TOOL LOGIC (password confirm)
-  // ==============================
-  const deleteModal = document.getElementById('deleteModal');
-  const deleteForm = document.getElementById('deleteForm');
-  let assetIdToDelete = null;
+  /* ------------------------------
+     DELETE CONFIRMATION MODAL
+  --------------------------------*/
+  const deleteModal = document.getElementById("deleteModal");
+  const deleteForm = document.getElementById("deleteForm");
 
-  // When a delete button is clicked, open modal
-  document.querySelectorAll('.delete-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      assetIdToDelete = btn.dataset.assetId;
-      const deleteUrlTemplate = deleteForm.dataset.urlTemplate;
-      const deleteUrl = deleteUrlTemplate.replace('0', assetIdToDelete);
-      deleteForm.action = deleteUrl; // set correct form action
-      deleteModal.classList.remove('hidden'); // show modal
+  if (deleteModal && deleteForm) {
+    let assetIdToDelete = null;
+
+    window.closeDeleteModal = () => {
+      assetIdToDelete = null;
+      deleteModal.classList.add("hidden");
+      deleteForm.reset();
+    };
+
+    document.querySelectorAll(".delete-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        assetIdToDelete = btn.dataset.assetId;
+        const url = deleteForm.dataset.urlTemplate.replace("0", assetIdToDelete);
+        deleteForm.action = url;
+        deleteModal.classList.remove("hidden");
+      });
     });
-  });
 
-  // Close modal on Cancel button
-  document.querySelectorAll('.cancel-btn').forEach(btn => {
-    btn.addEventListener('click', e => {
-      e.preventDefault();
-      closeDeleteModal();
+    document.querySelectorAll(".cancel-btn").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        window.closeDeleteModal();
+      });
     });
-  });
 
-  // Close modal when clicking outside of modal content
-  window.addEventListener('click', e => {
-    if (e.target === deleteModal) closeDeleteModal();
-  });
+    window.addEventListener("click", (e) => {
+      if (e.target === deleteModal) window.closeDeleteModal();
+    });
+  }
 
-  // Helper function to close modal (make it global)
-  window.closeDeleteModal = function() {
-    assetIdToDelete = null;
-    deleteModal.classList.add('hidden');
-    deleteForm.reset(); // clear password field
-  };
+  /* ------------------------------
+     SERVER-SIDE SEARCH
+  --------------------------------*/
+  const searchInput = document.getElementById("searchInput");
+
+  if (searchInput) {
+    let searchTimeout;
+
+    const loadingIndicator = document.createElement("div");
+    loadingIndicator.id = "searchLoadingIndicator";
+    loadingIndicator.innerHTML = '<i class="bi bi-hourglass-split"></i> Searching...';
+    loadingIndicator.style.cssText = `
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      background: rgba(249, 115, 22, 0.95);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      z-index: 10000;
+      display: none;
+    `;
+    document.body.appendChild(loadingIndicator);
+
+    function showLoading() {
+      loadingIndicator.style.display = "block";
+    }
+
+    function performSearch() {
+      const value = searchInput.value.trim();
+      const url = new URL(window.location.href);
+
+      if (value) {
+        url.searchParams.set("search", value);
+        url.searchParams.set("page", 1);
+      } else {
+        url.searchParams.delete("search");
+      }
+
+      showLoading();
+      setTimeout(() => (window.location.href = url.toString()), 150);
+    }
+
+    searchInput.addEventListener("keyup", (e) => {
+      if (e.key === "Enter") return;
+
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        performSearch();
+      }, 1200);
+    });
+
+    searchInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        clearTimeout(searchTimeout);
+        performSearch();
+      }
+    });
+  }
 });
+
+

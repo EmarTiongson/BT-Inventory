@@ -1204,3 +1204,130 @@ body.dark-mode .po-number-display {
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
     outline: none;
 }
+
+
+
+/* ===========================================
+    MOBILE VERSION: Vertical Table (Stacked Cards)
+=========================================== */
+@media (max-width: 768px) {
+
+  /* DR modal header: stack vertically and center on mobile */
+  #drDetailsModal .modal-header-controls {
+    flex-direction: column;      /* stack PO/DR and search vertically */
+    align-items: center;         /* center horizontally */
+    gap: 15px;                   /* spacing between DR number and search bar */
+    text-align: center;          /* ensure text centered */
+  }
+
+  /* Header info (PO/DR numbers) */
+  #drDetailsModal .header-info {
+    text-align: center;
+  }
+
+  /* DR Search bar container */
+  #drDetailsModal .dr-search-container {
+    width: 90%;                  /* make it responsive */
+    max-width: 400px;
+    margin: 0 auto;              /* center horizontally */
+  }
+
+  /* DR Search input */
+  #drDetailsModal .dr-search-container input {
+    width: 100%;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    color: #111;
+    text-align: left;
+    transition: all 0.3s ease;
+  }
+
+  body.dark-mode #drDetailsModal .dr-search-container input {
+    background-color: #2a2a2a;
+    border: 1px solid #555;
+    color: #fff;
+  }
+
+  #drDetailsModal .dr-search-container input:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+    outline: none;
+  }
+
+  body.dark-mode #drDetailsModal .dr-search-container input:focus {
+    border-color: #D96F32;
+    box-shadow: 0 0 0 2px rgba(217, 111, 50, 0.25);
+  }
+
+  /* Table wrapper for vertical scroll */
+  #drDetailsModal .table-wrapper {
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch; /* smooth scrolling on mobile */
+    max-height: 60vh;                 /* limit height */
+    padding: 0 10px 15px 10px;
+    display: block;
+  }
+
+  /* Vertical mobile table layout */
+  #drDetailsModal .transaction-table,
+  #drDetailsModal .transaction-table thead,
+  #drDetailsModal .transaction-table tbody,
+  #drDetailsModal .transaction-table tr,
+  #drDetailsModal .transaction-table th,
+  #drDetailsModal .transaction-table td {
+    display: block;
+    width: 100%;
+  }
+
+  #drDetailsModal .transaction-table thead {
+    display: none;
+  }
+
+  #drDetailsModal .transaction-table tr {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    padding: 12px;
+    background-color: #f9f9f9;
+  }
+
+  body.dark-mode #drDetailsModal .transaction-table tr {
+    background-color: #2a2a2a;
+    border-color: #555;
+  }
+
+  #drDetailsModal .transaction-table td {
+    padding: 8px 0;
+    border: none;
+    border-bottom: 1px solid #eee;
+    position: relative;
+  }
+
+  body.dark-mode #drDetailsModal .transaction-table td {
+    border-bottom: 1px solid #555;
+    color: #fff;
+  }
+
+  #drDetailsModal .transaction-table td:last-child {
+    border-bottom: 0;
+  }
+
+  #drDetailsModal .transaction-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #555;
+    display: block;
+    margin-bottom: 4px;
+    font-size: 12px;
+  }
+
+  body.dark-mode #drDetailsModal .transaction-table td::before {
+    color: #aaa;
+  }
+}
+
+
