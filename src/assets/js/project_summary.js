@@ -229,9 +229,7 @@ async function displayProjectDetails(projectId) {
     }
   } catch (err) {
     console.error('Failed to load project details:', err);
-    showNotification(' Could not load project details: ', "error");
-
-      
+    showNotification('Could not load project details: ', "error");
   }
 }
   
@@ -279,15 +277,16 @@ async function showDrDetails(drNo) {
                </div>`
             : '—';
 
+        // ✅ ADD data-label attributes to each <td> for mobile view
         row.innerHTML = `
-          <td>${tx.item_name || '—'}</td>
-          <td>${tx.item_description || '—'}</td>
-          <td>${tx.quantity || '—'}</td>
-          <td>${tx.unit_of_quantity || '-'}</td>
-          <td>${serialButton}</td>
-          <td>${tx.location || '—'}</td>
-          <td>${tx.remarks || '—'}</td>
-          <td>${tx.updated_by_user || '—'}</td>
+          <td data-label="Item Name">${tx.item_name || '—'}</td>
+          <td data-label="Item Description">${tx.item_description || '—'}</td>
+          <td data-label="Quantity">${tx.quantity || '—'}</td>
+          <td data-label="Unit of Quantity">${tx.unit_of_quantity || '-'}</td>
+          <td data-label="Serial Numbers">${serialButton}</td>
+          <td data-label="Location">${tx.location || '—'}</td>
+          <td data-label="Remarks">${tx.remarks || '—'}</td>
+          <td data-label="Transaction By">${tx.updated_by_user || '—'}</td>
         `;
         drDetailsBody.appendChild(row);
       });
@@ -297,14 +296,14 @@ async function showDrDetails(drNo) {
         window.SerialDropdown.attach('.view-serials-link');
       }
     } else {
-      drDetailsBody.innerHTML = `<tr><td colspan="12">No transactions found for this D.R.</td></tr>`;
+      drDetailsBody.innerHTML = `<tr><td colspan="8">No transactions found for this D.R.</td></tr>`;
     }
 
     drModal.classList.add('show');
     drModal.style.display = 'flex';
   } catch (err) {
     console.error('Failed to load DR details:', err);
-   showNotification(' Could not load DR details.', "error");
+    showNotification('Could not load DR details.', "error");
   }
 }
 
@@ -341,7 +340,7 @@ async function loadProjects() {
     
   } catch (err) {
     console.error("Failed to load projects:", err);
-    showNotification(" Failed to load projects: ", "error");
+    showNotification("Failed to load projects: ", "error");
   }
 }
 
@@ -530,17 +529,34 @@ document.addEventListener("DOMContentLoaded", () => {
 // ===============================
 
 function filterDrItems() {
-    // Get the search input value and convert to uppercase for case-insensitive search
-    const input = document.getElementById('drItemSearchInput');
+    // Try to get either search input (both have the same function now)
+    const input = document.getElementById('drItemSearchInputModal') || document.getElementById('drItemSearchInput');
+    
+    if (!input) {
+        console.error('Search input not found');
+        return;
+    }
+    
     const filter = input.value.toUpperCase();
     
     // Get the table body and all its rows
     const tableBody = document.getElementById('drDetailsBody');
+    
+    if (!tableBody) {
+        console.error('Table body not found');
+        return;
+    }
+    
     const rows = tableBody.getElementsByTagName('tr');
 
     // Loop through all table rows
     for (let i = 0; i < rows.length; i++) {
         const row = rows[i];
+        
+        // Skip empty message rows
+        if (row.cells.length === 1 && row.cells[0].getAttribute('colspan')) {
+            continue;
+        }
         
         // Get the text content of the first two cells (Item Name and Item Description)
         const itemNameCell = row.getElementsByTagName('td')[0]; // Item Name is index 0
@@ -566,3 +582,27 @@ function filterDrItems() {
         row.style.display = shouldDisplay ? "" : "none";
     }
 }
+
+// Sync both search inputs when typing
+document.addEventListener('DOMContentLoaded', () => {
+    const searchInput1 = document.getElementById('drItemSearchInput');
+    const searchInput2 = document.getElementById('drItemSearchInputModal');
+    
+    if (searchInput1) {
+        searchInput1.addEventListener('input', function() {
+            if (searchInput2) {
+                searchInput2.value = this.value;
+            }
+            filterDrItems();
+        });
+    }
+    
+    if (searchInput2) {
+        searchInput2.addEventListener('input', function() {
+            if (searchInput1) {
+                searchInput1.value = this.value;
+            }
+            filterDrItems();
+        });
+    }
+});

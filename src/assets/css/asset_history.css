@@ -1,6 +1,18 @@
+/* ========================================================== */
+/* --- RESPONSIVE TABLE WRAPPER --- */
+/* ========================================================== */
+
 .table-responsive {
   width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  display: block;
+}
+
+/* Prevent table from shrinking */
+.history-table {
+  min-width: 650px;
+  width: 100%;
 }
 
 /* ========================================================== */
@@ -24,7 +36,6 @@
 /* ========================================================== */
 
 .history-table {
-  width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
   border-radius: 10px;
@@ -41,7 +52,7 @@
   border: 1px solid #e2e8f0;
 }
 
-/* Table Header */
+/* Header */
 .history-table thead th {
   font-weight: 600;
   text-transform: uppercase;
@@ -52,30 +63,28 @@
   border-bottom: 2px solid #cbd5e1;
 }
 
-/* Table Body - Light Mode Alternating Rows */
+/* Body + alternating rows */
 .history-table tbody td {
   color: #0f172a;
   border-bottom: 1px solid #e2e8f0;
-} 
+}
 
-/* ODD ROWS - WHITE (1st, 3rd, 5th, etc.) */
 .history-table tbody tr:nth-child(odd) td {
   background-color: #ffffff;
 }
 
-/* EVEN ROWS - LIGHT GREY (2nd, 4th, 6th, etc.) */
 .history-table tbody tr:nth-child(even) td {
   background-color: #dce8f3;
 }
 
-/* HOVER STATE - Medium Grey */
+/* Hover */
 .history-table tbody tr:hover td {
   background-color: #e5e7eb !important;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
-/* Empty state message */
+/* Empty state row */
 .history-table tbody td[colspan] {
   color: #64748b;
   text-align: center;
@@ -85,26 +94,15 @@
 }
 
 /* ========================================================== */
-/* --- TYPE STYLES (IN/OUT/UPDATE) --- */
+/* --- TYPE COLORS --- */
 /* ========================================================== */
 
-.in-type {
-  color: #16a34a;
-  font-weight: bold;
-}
-
-.out-type {
-  color: #dc2626;
-  font-weight: bold;
-}
-
-.update-type {
-  color: #e67e22;
-  font-weight: bold;
-}
+.in-type { color: #16a34a; font-weight: bold; }
+.out-type { color: #dc2626; font-weight: bold; }
+.update-type { color: #e67e22; font-weight: bold; }
 
 /* ========================================================== */
-/* --- UNDONE/REVERTED ROW STYLES --- */
+/* --- UNDONE / REVERTED --- */
 /* ========================================================== */
 
 .history-table tbody tr.undone td,
@@ -127,13 +125,12 @@
   cursor: pointer;
   transition: background 0.2s ease;
 }
-
 .undo-btn:hover {
   background-color: #ea580c;
 }
 
 /* ========================================================== */
-/* --- SERIAL TAG STYLING --- */
+/* --- SERIAL TAGS --- */
 /* ========================================================== */
 
 .serial-tag {
@@ -148,17 +145,11 @@
 }
 
 /* ========================================================== */
-/* --- CONVERT/ALLOCATE LINK STYLES --- */
+/* --- ALLOCATE LINKS --- */
 /* ========================================================== */
 
-.convert-allocate {
-  cursor: pointer;
-  text-decoration: underline;
-}
-
-.convert-allocate:hover {
-  color: #e67e22;
-}
+.convert-allocate { cursor: pointer; text-decoration: underline; }
+.convert-allocate:hover { color: #e67e22; }
 
 .disabled-allocate {
   color: gray;
@@ -168,7 +159,7 @@
 }
 
 /* ========================================================== */
-/* --- TOGGLE HISTORY BUTTON --- */
+/* --- TOGGLE BUTTON --- */
 /* ========================================================== */
 
 #toggleHistoryBtn {
@@ -196,7 +187,7 @@
 }
 
 /* ========================================================== */
-/* --- FIXED RETURN BUTTON --- */
+/* --- RETURN BUTTON --- */
 /* ========================================================== */
 
 .return-btn-fixed {
@@ -224,12 +215,10 @@
 }
 
 /* ========================================================== */
-/* --- DARK MODE OVERRIDES --- */
+/* --- DARK MODE --- */
 /* ========================================================== */
 
-body.dark-mode .page-title {
-  color: #f1f5f9;
-}
+body.dark-mode .page-title { color: #f1f5f9; }
 
 body.dark-mode .history-table {
   background: #1e293b;
@@ -253,11 +242,11 @@ body.dark-mode .history-table tbody tr:nth-child(odd) td {
 }
 
 body.dark-mode .history-table tbody tr:nth-child(even) td {
-  background-color: #1e293b;
+  background: #1e293b;
 }
 
 body.dark-mode .history-table tbody tr:hover td {
-  background-color: #3d4f66 !important;
+  background: #3d4f66 !important;
 }
 
 body.dark-mode .history-table tbody td[colspan] {
@@ -271,13 +260,8 @@ body.dark-mode .history-table tbody tr.reverted td {
   color: #fecaca !important;
 }
 
-body.dark-mode .return-btn-fixed {
-  background: #D96F32;
-}
-
-body.dark-mode .return-btn-fixed:hover {
-  background: #c85a1f;
-}
+body.dark-mode .return-btn-fixed { background: #D96F32; }
+body.dark-mode .return-btn-fixed:hover { background: #c85a1f; }
 
 body.dark-mode #toggleHistoryBtn {
   background: #D96F32;
@@ -288,4 +272,35 @@ body.dark-mode #toggleHistoryBtn:hover {
   background: #c85a1f;
   box-shadow: 0 6px 14px rgba(217, 111, 50, 0.4);
   transform: translateY(-2px);
+}
+
+/* ========================================================== */
+/* --- MOBILE OPTIMIZATIONS --- */
+/* ========================================================== */
+
+@media (max-width: 768px) {
+
+  /* Table scroll */
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Smaller table */
+  .history-table {
+    min-width: 600px;
+    font-size: 12px;
+  }
+
+  /* Smaller cells */
+  .history-table th,
+  .history-table td {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  /* Smaller page title */
+  .page-title {
+    font-size: 1.4rem;
+  }
 }

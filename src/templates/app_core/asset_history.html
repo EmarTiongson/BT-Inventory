@@ -4,6 +4,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/asset_history.css' %}">
+<link rel="stylesheet" href="{% static 'css/hide.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -13,28 +14,30 @@
   <h2 style="margin-bottom: 20px; font-size: 1.5rem;">{{ asset.tool_name }}</h2>
 
   {% if updates %}
-    <table class="history-table">
-      <thead>
-        <tr>
-          <th>Date & Time</th>
-          <th>Previous User</th>
-          <th>Assigned To</th>
-          <th>Remarks</th>
-          <th>Updated By</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for update in updates %}
+    <div class="table-responsive">
+      <table class="history-table">
+        <thead>
           <tr>
-            <td>{{ update.transaction_date|timezone:"Asia/Manila"|date:"F d, Y - h:i A" }}</td>
-            <td>{{ update.previous_user|default:"—" }}</td>
-            <td>{{ update.assigned_to|default:"—" }}</td>
-            <td>{{ update.remarks|default:"No remarks" }}</td>
-            <td>{{ update.updated_by.username|default:"System" }}</td>
+            <th>Date & Time</th>
+            <th>Previous User</th>
+            <th>Assigned To</th>
+            <th>Remarks</th>
+            <th>Updated By</th>
           </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {% for update in updates %}
+            <tr>
+              <td>{{ update.transaction_date|timezone:"Asia/Manila"|date:"F d, Y - h:i A" }}</td>
+              <td>{{ update.previous_user|default:"—" }}</td>
+              <td>{{ update.assigned_to|default:"—" }}</td>
+              <td>{{ update.remarks|default:"No remarks" }}</td>
+              <td>{{ update.updated_by.username|default:"System" }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   {% else %}
     <p style="text-align: center; color: #64748b; padding: 40px;">
       No history available for this asset/tool yet.

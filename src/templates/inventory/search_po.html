@@ -3,15 +3,28 @@
 {% block title %}Search Inventory{% endblock %}
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/inventory.css' %}">
+<link rel="stylesheet" href="{% static 'css/hide.css' %}">
+<link rel="stylesheet" href="{% static 'css/buttons.css' %}">
 {% endblock %}
-
 {% block content %}
 <h1 class="page-title">Search by P.O / D.R No.</h1>
 
 <div class="page-controls">
   <div class="search-box">
-    <input type="text" id="poSearchInput" placeholder="Search by Purchase Order Number..." value="{{ query }}">
-    <i class="bi bi-search"></i>
+    <!-- Form added so Enter / mobile keyboards behave predictably -->
+    <form id="poSearchForm" action="javascript:void(0)" autocomplete="on" novalidate>
+      <input
+        type="search"
+        id="poSearchInput"
+        name="q"
+        inputmode="search"
+        autocomplete="off"
+        placeholder="Search by Purchase Order Number..."
+        value="{{ query }}"
+        aria-label="Search by Purchase Order Number"
+      >
+      <i class="bi bi-search" aria-hidden="true"></i>
+    </form>
   </div>
 </div>
 
@@ -32,17 +45,23 @@
       </thead>
       <tbody id="poTableBody">
         <tr>
-            <td colspan="9" style="text-align:center; color: gray;">
+          <td colspan="9" style="text-align:center; color: gray;">
             Type a P.O Number or DR No. above to begin searching
-            </td>
+          </td>
         </tr>
       </tbody>
     </table>
   </div>
 </div>
 
-<a href="{% url 'inventory' %}" class="return-btn-fixed">
+<!-- Desktop Back Button (text + icon) -->
+<a href="{% url 'inventory' %}" class="return-btn-fixed desktop-back-btn">
   <i class="bi bi-arrow-left-circle"></i> Back to Overview
+</a>
+
+<!-- Mobile Back Button (icon only, circular) -->
+<a href="{% url 'inventory' %}" class="return-btn-fixed mobile-back-btn">
+  <i class="bi bi-arrow-left-circle"></i>
 </a>
 
 <script src="{% static 'js/search_po.js' %}"></script>

@@ -1,576 +1,167 @@
-/* ===========================
-   ADD ITEM PAGE - SPECIFIC STYLES
-   =========================== */
+/* ==========================================================
+   ADD ITEM PAGE - CLEAN LAYOUT & SPACING
+========================================================== */
 
-/* Add item container - standard layout */
+/* ===========================
+   MAIN CONTAINER
+=========================== */
 .add-item-container {
-  width: 95%;
-  max-width: 1600px;
-  margin: 40px auto;
-  padding: 40px;
-  border-radius: 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 40px;
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-}
-
-/* Inventory card wrapper - make it transparent */
-.inventory-card {
-  background: transparent !important;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  box-shadow: none !important;
-  border: none !important;
-  padding: 0 !important;
-}
-
-.inventory-card form {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: transparent !important;
-}
-
-/* ===========================
-   UPLOAD BOX
-   =========================== */
-
-.upload-box {
-  position: relative;
-  width: 150px;
-  height: 150px;
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin: 20px auto 40px;
-  text-align: center;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.18);
-  border: 2px dashed rgba(0, 0, 0, 0.2);
-}
-
-.upload-label {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  color: #666;
-  font-size: 14px;
-  cursor: pointer;
-  border-radius: 8px;
-  transition: background 0.2s ease, border-color 0.2s ease;
-}
-
-.upload-label i {
-  font-size: 24px;
-  margin-bottom: 8px;
-  color: #666;
-}
-
-.image-preview {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.image-preview:hover {
-  transform: scale(1.05);
-}
-
-/* Upload box hover - Light Mode */
-.upload-box:hover {
-  border-color: #134686;
-  background: rgba(19, 70, 134, 0.1);
-}
-
-/* ===========================
-   FORM GRID
-   =========================== */
-
-.form-grid {
-  display: grid;
-  /* Standard layout: flexible columns, minimum width 300px */
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-  width: 100%;
-  max-width: 1200px;
-}
-
-/* Light Mode Inputs */
-.form-grid input,
-.form-grid select,
-.form-grid textarea {
-  background: #ffffff;
-  color: #1a1a1a;
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: 8px;
-  padding: 12px 16px;
-  font-size: 14px;
-  transition: all 0.3s ease;
-}
-
-.form-grid input::placeholder {
-  color: rgba(0, 0, 0, 0.5);
-}
-
-.form-grid input:focus,
-.form-grid select:focus {
-  outline: none;
-  border-color: #134686;
-  box-shadow: 0 0 0 3px rgba(19, 70, 134, 0.15);
-}
-
-/* ===========================
-   BUTTONS
-   =========================== */
-
-.add-btn,
-.return-btn-fixed {
-  color: #fff;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 10px;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  background: #134686;
-  box-shadow: 0 4px 10px rgba(25, 55, 107, 0.3);
-}
-
-.add-btn:hover,
-.return-btn-fixed:hover {
-  background: #0062d1;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 14px rgba(11, 99, 255, 0.4);
-}
-
-/* ===========================
-   FIXED RETURN BUTTON
-   =========================== */
-.return-btn-fixed {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  text-decoration: none;
-  font-size: 15px;
-  z-index: 1000;
+    width: 90%;
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 30px;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
 }
 
 /* Page Title */
 .page-title {
-  font-weight: 700;
-  font-size: 28px;
-  margin: 0 0 30px 0;
-  text-align: center;
-  color: #1a1a1a;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #1a1a1a;
+}
+
+/* ===========================
+   ERROR MESSAGE
+=========================== */
+.error-message {
+    background: #fee;
+    border: 1px solid #fcc;
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: #c33;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+.error-message i { font-size: 1.2em; }
+
+/* ===========================
+   INVENTORY CARD
+=========================== */
+.inventory-card {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* ===========================
+   UPLOAD BOX
+=========================== */
+.upload-box {
+    width: 150px;
+    height: 150px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 0 auto 20px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.18);
+    border: 2px dashed rgba(0, 0, 0, 0.2);
+}
+.upload-box:hover {
+    border-color: #134686;
+    background: rgba(19, 70, 134, 0.1);
+}
+.upload-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: #666;
+    font-size: 14px;
+}
+.upload-label i { font-size: 24px; margin-bottom: 8px; }
+
+/* Preview Image */
+#imagePreview {
+    display: block;
+    margin-top: 10px;
+    max-width: 150px;
+    border-radius: 8px;
+}
+
+/* ===========================
+   FORM GRID
+=========================== */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    width: 100%;
+}
+.form-grid input,
+.form-grid select,
+.form-grid textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+.form-grid input::placeholder { color: rgba(0,0,0,0.5); }
+.form-grid input:focus,
+.form-grid select:focus,
+.form-grid textarea:focus {
+    outline: none;
+    border-color: #134686;
+    box-shadow: 0 0 0 3px rgba(19,70,134,0.15);
 }
 
 /* ===========================
    SUBMIT SECTION
-   =========================== */
-
+=========================== */
 .submit-section {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
 }
+.submit-section .add-btn {
+    width: 100%;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    background: #d35400;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+.submit-section .add-btn:hover {
+    background: #ba4a00;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(211, 84, 0, 0.3);
+}
+
 
 /* ===========================
-   SERIAL NUMBER SECTION
-   =========================== */
-
-.serial-section {
-  width: 100%;
-  max-width: 1200px;
-  margin-top: 20px;
-}
-
-.serial-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 16px;
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: 8px;
-}
-
-.serial-header label {
-  font-size: 14px;
-  font-weight: 600;
-  color: #1a1a1a;
-}
-
-.serial-btn {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: #134686;
-  color: white;
-  border: none;
-  font-size: 20px;
-  font-weight: bold;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-}
-
-.serial-btn:hover {
-  background: #0062d1;
-  transform: scale(1.1);
-}
-
-/* ===========================
-   SERIAL MODAL
-   =========================== */
-
-.modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(10px);
-  z-index: 9999;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-
-.modal-content {
-  background: rgba(255, 255, 255, 0.98);
-  backdrop-filter: blur(20px);
-  border-radius: 20px;
-  padding: 40px;
-  width: 90%;
-  max-width: 700px;
-  max-height: 80vh;
-  overflow-y: auto;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-}
-
-.modal-content h2 {
-  margin: 0 0 25px 0;
-  font-size: 24px;
-  text-align: center;
-  color: #1a1a1a;
-}
-
-#serialFieldsContainer {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 15px;
-  margin-bottom: 25px;
-}
-
-.serial-field {
-  padding: 12px 16px;
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: 8px;
-  font-size: 14px;
-  background: #ffffff;
-  color: #1a1a1a;
-  transition: all 0.3s ease;
-}
-
-.serial-field:focus {
-  outline: none;
-  border-color: #134686;
-  box-shadow: 0 0 0 3px rgba(19, 70, 134, 0.15);
-}
-
-.modal-actions {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  margin-top: 25px;
-}
-
-.cancel-btn,
-.save-btn {
-  padding: 12px 24px;
-  border: none;
-  border-radius: 10px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 14px;
-}
-
-.cancel-btn {
-  background: #134686;
-  color: white;
-}
-
-.cancel-btn:hover {
-  background: #0062d1;;
-  transform: translateY(-2px);
-}
-
-.save-btn {
-  background: #134686;
-  color: white;
-}
-
-.save-btn:hover {
-  background: #0062d1;
-  transform: translateY(-2px);
-}
-
-/* ===========================
-   DARK MODE OVERRIDES
-   =========================== */
-
-body.dark-mode .add-item-container {
-  background: rgba(20, 25, 35, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-}
-
-body.dark-mode .page-title {
-  color: #ffffff;
-}
-
-/* Dark Mode Upload Box */
-body.dark-mode .upload-box {
-  background: rgba(255, 255, 255, 0.05);
-  border: 2px dashed rgba(255, 255, 255, 0.15);
-}
-
-body.dark-mode .upload-box:hover {
-  border-color: #D96F32;
-  background: rgba(217, 111, 50, 0.1);
-}
-
-/* ==========================
-   DARK MODE - SELECT DROPDOWN FIX
-   =========================== */
-
-body.dark-mode select,
-body.dark-mode option {
-  background-color: #ffffff; /* dark background for dropdown */
-  color: #000000; /* white text for visibility */
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-/* When the dropdown is focused (clicked) */
-body.dark-mode select:focus {
-  outline: none;
-  border-color: #f39c12; /* orange border highlight */
-}
-
-/* Optional: improve hover contrast in dropdown list */
-body.dark-mode option:hover,
-body.dark-mode option:checked {
-  background-color: #f39c12; /* orange highlight for active/hover */
-  color: #000; /* black text for contrast when highlighted */
-}
-
-body.dark-mode .form-grid input:focus,
-body.dark-mode .form-grid select:focus {
-  border-color: #D96F32;
-  box-shadow: 0 0 0 3px rgba(217, 111, 50, 0.2);
-}
-
-/* Dark Mode Buttons */
-body.dark-mode .add-btn,
-body.dark-mode .return-btn-fixed {
-  background: #D96F32;
-  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.315);
-}
-
-body.dark-mode .add-btn:hover,
-body.dark-mode .return-btn-fixed:hover {
-  background: #D96F32;
-  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.315);
-  transform: translateY(-2px);
-}
-
-/* Dark Mode Serial Section */
-body.dark-mode .serial-header {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-body.dark-mode .serial-header label {
-  color: #ffffff;
-}
-
-body.dark-mode .serial-btn {
-  background: #D96F32;
-}
-
-body.dark-mode .serial-btn:hover {
-  background: #D96F32;
-}
-
-/* Dark Mode Modal */
-body.dark-mode .modal {
-  background: rgba(0, 0, 0, 0.8);
-}
-
-body.dark-mode .modal-content {
-  background: rgba(15, 23, 36, 0.98);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-body.dark-mode .modal-content h2 {
-  color: #ffffff;
-}
-
-body.dark-mode .serial-field {
-  background: rgba(255, 255, 255, 0.08);
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-body.dark-mode .serial-field:focus {
-  border-color: #D96F32;
-  box-shadow: 0 0 0 3px rgba(217, 111, 50, 0.2);
-}
-
-body.dark-mode .cancel-btn {
-  background: #D96F32;
-}
-
-body.dark-mode .cancel-btn:hover {
-  background: #D96F32;
-}
-
-body.dark-mode .save-btn {
-  background: #D96F32;
-}
-
-body.dark-mode .save-btn:hover {
-  background: #D96F32;
-}
-
-
-.error-message {
-  background-color: #fee;
-  border: 1px solid #fcc;
-  border-radius: 8px;
-  padding: 12px 16px;
-  margin-bottom: 20px;
-  color: #c33;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.error-message i {
-  font-size: 1.2em;
-}
-.serial-error {
-  color: #c33;
-  font-size: 0.9em;
-  margin-top: 5px;
-  display: none;
-}
-.serial-error.show {
-  display: block;
-}
-
-/* ==================================== */
-/* 📱 MOBILE RESPONSIVENESS (<= 600px) */
-/* ==================================== */
-
-@media (max-width: 600px) {
-    /* Main Container Adjustments */
-    .add-item-container {
-        width: 98%;
-        margin: 20px auto;
-        padding: 20px; /* Reduced internal padding */
-        gap: 20px;
-    }
-
-    /* Page Title */
-    .page-title {
-        font-size: 24px; /* Slightly smaller title */
-        margin-bottom: 20px;
-    }
-
-    /* Form Grid: Single Column */
-    .form-grid {
-        /* Forces the grid to a single column regardless of content */
-        grid-template-columns: 1fr; 
-        gap: 15px; /* Reduced gap between form fields */
-    }
-
-    /* Input Fields */
-    .form-grid input,
-    .form-grid select,
-    .form-grid textarea {
-        padding: 10px 14px; /* Reduced padding on inputs */
-        font-size: 16px; /* Slightly increased size for better mobile tap target */
-    }
-
-    /* Serial Header */
-    .serial-header {
-        padding: 10px 12px;
-    }
-    
-    /* Serial Modal */
-    .modal-content {
-        padding: 25px 20px; /* Reduced modal padding */
-        max-height: 90vh;
-        width: 100%;
-    }
-
-    .modal-content h2 {
-        font-size: 20px;
-        margin-bottom: 20px;
-    }
-
-    #serialFieldsContainer {
-        /* Adjust serial field grid for mobile modal */
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-        gap: 10px;
-    }
-
-    /* Buttons */
-    .add-btn,
-    .cancel-btn,
-    .save-btn {
-        padding: 10px 18px;
-        font-size: 14px;
-        width: 100%; /* Make action buttons full width inside modal */
-    }
-    
-    .modal-actions {
-        flex-direction: column; /* Stack action buttons vertically */
-        gap: 10px;
-    }
-    
-    /* Fixed Return Button (to not overlap the bottom of the screen) */
-    .return-btn-fixed {
-        bottom: 15px;
-        right: 15px;
-    }
+   MOBILE RESPONSIVENESS
+=========================== */
+@media (max-width: 768px) {
+    .add-item-container { width: 95%; padding: 20px; gap: 20px; }
+    .page-title { font-size: 22px; }
+    .form-grid { grid-template-columns: 1fr; gap: 15px; }
 }

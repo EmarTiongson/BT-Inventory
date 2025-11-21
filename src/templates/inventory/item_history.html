@@ -4,7 +4,7 @@
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/item_history.css' %}">
 <link rel="stylesheet" href="{% static 'css/serial.css' %}">
-
+<link rel="stylesheet" href="{% static 'css/buttons.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -139,8 +139,14 @@
     {% endif %}
 </div>
 
-<a href="{% url 'inventory' %}" class="return-btn-fixed">
+<!-- Desktop Back Button (text + icon) -->
+<a href="{% url 'inventory' %}" class="return-btn-fixed desktop-back-btn">
   <i class="bi bi-arrow-left-circle"></i> Back to Overview
+</a>
+
+<!-- Mobile Back Button (icon only, circular) -->
+<a href="{% url 'inventory' %}" class="return-btn-fixed mobile-back-btn">
+  <i class="bi bi-arrow-left-circle"></i>
 </a>
 
 <script src="{% static 'js/item_history.js' %}"></script>

@@ -3,6 +3,7 @@
 {% block title %}Add Asset & Tools{% endblock %}
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/add_asset_tool.css' %}">
+<link rel="stylesheet" href="{% static 'css/buttons.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -67,8 +68,14 @@
   </div>
 </div>
 
-<a href="{% url 'assets_tools' %}" class="return-btn-fixed">
-  <i class="bi bi-arrow-left-circle"></i> Back to Assets & Tools
+<!-- Desktop Back Button (text + icon) -->
+<a href="{% url 'inventory' %}" class="return-btn-fixed desktop-back-btn">
+  <i class="bi bi-arrow-left-circle"></i> Back to Overview
+</a>
+
+<!-- Mobile Back Button (icon only, circular) -->
+<a href="{% url 'inventory' %}" class="return-btn-fixed mobile-back-btn">
+  <i class="bi bi-arrow-left-circle"></i>
 </a>
 
 <script src="{% static 'js/add_asset_tool.js' %}"></script>

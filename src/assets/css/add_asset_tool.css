@@ -2,17 +2,17 @@
    ADD ASSET/TOOL PAGE - SPECIFIC STYLES
    ============================ */
 
-/* Add item container - standard layout */
+/* Add item container - smaller layout */
 .add-item-container {
-  width: 95%;
-  max-width: 1600px;
-  margin: 40px auto;
-  padding: 40px;
-  border-radius: 16px;
+  width: 85%;                 /* reduced from 95% */
+  max-width: 1300px;          /* reduced from 1600px */
+  margin: 30px auto;          /* reduced margin */
+  padding: 30px;              /* reduced padding */
+  border-radius: 14px;        /* slightly smaller */
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 40px;
+  gap: 30px;                  /* reduced gap */
   background: rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -20,7 +20,7 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
 }
 
-/* Inventory card wrapper - make it transparent */
+/* Inventory card wrapper */
 .inventory-card {
   background: transparent !important;
   width: 100%;
@@ -45,8 +45,8 @@
    ============================ */
 .upload-box {
   position: relative;
-  width: 150px;
-  height: 150px;
+  width: 130px;               /* reduced from 150px */
+  height: 130px;              /* reduced */
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -54,7 +54,7 @@
   align-items: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin: 20px auto 40px;
+  margin: 15px auto 30px;     /* smaller spacing */
   text-align: center;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.18);
@@ -69,15 +69,15 @@
   width: 100%;
   height: 100%;
   color: #666;
-  font-size: 14px;
+  font-size: 13px;            /* reduced */
   cursor: pointer;
   border-radius: 8px;
   transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 .upload-label i {
-  font-size: 24px;
-  margin-bottom: 8px;
+  font-size: 22px;            /* reduced */
+  margin-bottom: 6px;
   color: #666;
 }
 
@@ -94,7 +94,7 @@
   transform: scale(1.05);
 }
 
-/* Upload box hover - Light Mode */
+/* Upload box hover */
 .upload-box:hover {
   border-color: #134686;
   background: rgba(19, 70, 134, 0.1);
@@ -105,27 +105,27 @@
    ============================ */
 .form-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); /* narrower */
+  gap: 16px;                          /* reduced */
   width: 100%;
-  max-width: 1200px;
+  max-width: 900px;                   /* reduced from 1200px */
 }
 
-/* Form Field with Label */
+/* Form Field */
 .form-field {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;                           /* reduced */
 }
 
 .field-label {
-  font-size: 14px;
+  font-size: 13px;                    /* reduced */
   font-weight: 600;
   color: #1a1a1a;
   margin: 0;
 }
 
-/* Light Mode Inputs */
+/* Inputs */
 .form-grid input,
 .form-grid select,
 .form-grid textarea {
@@ -133,8 +133,8 @@
   color: #1a1a1a;
   border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 8px;
-  padding: 12px 16px;
-  font-size: 14px;
+  padding: 10px 14px;                 /* reduced */
+  font-size: 13px;                    /* reduced */
   transition: all 0.3s ease;
 }
 
@@ -156,13 +156,13 @@
 .return-btn-fixed {
   color: #fff;
   border: none;
-  padding: 12px 20px;
+  padding: 10px 18px;                 /* reduced */
   border-radius: 10px;
   font-weight: 600;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;                           /* reduced */
   transition: all 0.3s ease;
   cursor: pointer;
   background: #134686;
@@ -181,18 +181,18 @@
    ============================ */
 .return-btn-fixed {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  bottom: 20px;                       /* reduced */
+  right: 20px;
   text-decoration: none;
-  font-size: 15px;
+  font-size: 14px;                    /* reduced */
   z-index: 1000;
 }
 
 /* Page Title */
 .page-title {
   font-weight: 700;
-  font-size: 28px;
-  margin: 0 0 30px 0;
+  font-size: 26px;                    /* reduced from 28px */
+  margin: 0 0 20px 0;                 /* reduced */
   text-align: center;
   color: #1a1a1a;
 }
@@ -204,7 +204,7 @@
   width: 100%;
   display: flex;
   justify-content: center;
-  margin-top: 20px;
+  margin-top: 10px;                   /* reduced */
 }
 
 /* Error Message */
@@ -212,18 +212,18 @@
   background-color: #fee;
   border: 1px solid #fcc;
   border-radius: 8px;
-  padding: 12px 16px;
-  margin-bottom: 20px;
+  padding: 10px 14px;                 /* reduced */
+  margin-bottom: 15px;                /* reduced */
   color: #c33;
   display: flex;
   align-items: center;
   gap: 10px;
   width: 100%;
-  max-width: 1200px;
+  max-width: 900px;                   /* reduced */
 }
 
 .error-message i {
-  font-size: 1.2em;
+  font-size: 1.1em;                   /* reduced */
 }
 
 /* ===========================
@@ -309,47 +309,41 @@ body.dark-mode .error-message {
 
 @media (max-width: 600px) {
 
-  /* Main Container Adjustments */
   .add-item-container {
-    width: 98%;
+    width: 90%;
+    padding: 18px;
     margin: 20px auto;
-    padding: 20px;
-    gap: 20px;
+    gap: 18px;
+    border-radius: 12px;
   }
 
-  /* Page Title */
   .page-title {
-    font-size: 24px;
-    margin-bottom: 20px;
+    font-size: 22px;
+    margin-bottom: 16px;
   }
 
-  /* Form Grid: Single Column */
+  .upload-box {
+    width: 110px;
+    height: 110px;
+  }
+
   .form-grid {
     grid-template-columns: 1fr;
-    gap: 15px;
+    gap: 12px;
+    max-width: 100%;
   }
 
-  /* Input Fields */
   .form-grid input,
   .form-grid select,
   .form-grid textarea {
-    padding: 10px 14px;
-    font-size: 16px;
-  }
-
-  /* Error Message */
-  .error-message {
-    padding: 10px;
+    padding: 9px 12px;
     font-size: 14px;
-    width: 100%;
-    max-width: none;
   }
 
-  /* Fixed Return Button */
   .return-btn-fixed {
-    bottom: 15px;
-    right: 15px;
-    padding: 10px 15px;
-    font-size: 14px;
+    bottom: 14px;
+    right: 14px;
+    padding: 8px 14px;
+    font-size: 13px;
   }
 }

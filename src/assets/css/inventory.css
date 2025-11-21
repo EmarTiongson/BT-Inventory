@@ -922,3 +922,19 @@ body.dark-mode .pagination-current {
         grid-template-columns: 1fr;
     }
 }
+
+@media (max-width: 768px) {
+    .data-table {
+        display: table; /* keep table visible */
+        font-size: 12px; /* smaller font */
+        min-width: 600px; /* scrollable horizontally */
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .table-card-layout {
+        display: none; /* hide cards */
+    }
+}

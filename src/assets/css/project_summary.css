@@ -615,7 +615,7 @@ body.dark-mode .modal-project-details {
 
 .transaction-table td {
     color: #000;
-    background-color: #fff;
+    background-color: #e0e0e0;
 }
 
 .transaction-table tbody tr {
@@ -1085,6 +1085,102 @@ body.dark-mode .po-number-display {
     color: #ccc;
 }
 
+/* ===========================================
+    MODAL HEADER CONTROLS
+=========================================== */
+
+/* Container to manage alignment of info (left) and search (right) */
+.modal-header-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    padding: 0 25px; 
+}
+
+/* Container for PO/DR Numbers (Left Side) */
+.header-info p {
+    margin: 3px 0;
+    font-size: 1.1em;
+}
+
+/* Style for the search bar container (Right Side) */
+.dr-search-container {
+    display: flex;
+    align-items: center;
+}
+
+/* Style for the search input field itself */
+#drItemSearchInput,
+#drItemSearchInputModal {
+    width: 280px; 
+    padding: 8px 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px; 
+    font-size: 14px; 
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Focus state for user feedback */
+#drItemSearchInput:focus,
+#drItemSearchInputModal:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+    outline: none;
+}
+
+body.dark-mode #drItemSearchInput,
+body.dark-mode #drItemSearchInputModal {
+    background-color: #2a2a2a;
+    border: 1px solid #555;
+    color: #fff;
+}
+
+body.dark-mode #drItemSearchInput:focus,
+body.dark-mode #drItemSearchInputModal:focus {
+    border-color: #D96F32;
+    box-shadow: 0 0 0 3px rgba(217, 111, 50, 0.25);
+}
+
+/* ===========================================
+    HIDE SCROLLBAR (Keep smooth scrolling)
+=========================================== */
+
+.table-wrapper.hide-scrollbar {
+    -webkit-overflow-scrolling: touch;
+    overflow-x: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+}
+
+/* Hide scrollbar for WebKit browsers */
+.table-wrapper.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+/* ===== MOBILE TOUCH SCROLL FOR DR TABLE (NO SCROLLBAR) ===== */
+
+/* Wrapper scroll (no visible scrollbar) */
+.table-wrapper {
+    -webkit-overflow-scrolling: touch;   /* Smooth iOS touch scroll */
+    overflow-x: auto;
+}
+
+/* Hide scrollbar on WebKit browsers */
+.table-wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar on Firefox */
+.table-wrapper {
+    scrollbar-width: none; /* Firefox */
+}
+
+/* Hide scrollbar on Edge/IE */
+.table-wrapper {
+    -ms-overflow-style: none;
+}
 
 /* ===========================================
     RESPONSIVE DESIGN
@@ -1164,76 +1260,43 @@ body.dark-mode .po-number-display {
     }
 }
 
-/* Container to manage alignment of info (left) and search (right) */
-.modal-header-controls {
-    display: flex;
-    justify-content: space-between; /* Pushes info to the left and search to the right */
-    align-items: center; /* Vertically centers the search bar with the info text */
-    margin-top: 10px;
-    margin-bottom: 20px; /* Provides spacing above the table */
-    padding: 0 10px; 
-}
-
-/* Container for PO/DR Numbers (Left Side) */
-.header-info p {
-    margin: 3px 0; /* Ensures consistent spacing between the PO and DR number */
-    font-size: 1.1em;
-}
-
-/* Style for the search bar container (Right Side) */
-.dr-search-container {
-    display: flex;
-    align-items: center;
-}
-
-/* Style for the search input field itself */
-#drItemSearchInput {
-    /* Adjust width to be suitable for the header area */
-    width: 280px; 
-    padding: 8px 15px;
-    border: 1px solid #ccc;
-    border-radius: 6px; 
-    font-size: 14px; 
-    /* Use your primary color for a consistent look */
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-/* Focus state for user feedback */
-#drItemSearchInput:focus {
-    border-color: #007bff; /* Example focus color */
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
-    outline: none;
-}
-
-
-
 /* ===========================================
     MOBILE VERSION: Vertical Table (Stacked Cards)
+    Updated for better mobile view with labels
 =========================================== */
 @media (max-width: 768px) {
 
   /* DR modal header: stack vertically and center on mobile */
   #drDetailsModal .modal-header-controls {
-    flex-direction: column;      /* stack PO/DR and search vertically */
-    align-items: center;         /* center horizontally */
-    gap: 15px;                   /* spacing between DR number and search bar */
-    text-align: center;          /* ensure text centered */
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    text-align: center;
+    padding: 0 15px;
   }
 
   /* Header info (PO/DR numbers) */
   #drDetailsModal .header-info {
     text-align: center;
+    width: 100%;
+  }
+
+  #drDetailsModal .header-info p {
+    margin: 5px 0;
+    font-size: 1em;
   }
 
   /* DR Search bar container */
   #drDetailsModal .dr-search-container {
-    width: 90%;                  /* make it responsive */
+    width: 100%;
     max-width: 400px;
-    margin: 0 auto;              /* center horizontally */
+    margin: 0 auto;
   }
 
   /* DR Search input */
-  #drDetailsModal .dr-search-container input {
+  #drDetailsModal .dr-search-container input,
+  #drDetailsModal #drItemSearchInput,
+  #drDetailsModal #drItemSearchInputModal {
     width: 100%;
     padding: 10px 15px;
     border-radius: 8px;
@@ -1245,19 +1308,25 @@ body.dark-mode .po-number-display {
     transition: all 0.3s ease;
   }
 
-  body.dark-mode #drDetailsModal .dr-search-container input {
+  body.dark-mode #drDetailsModal .dr-search-container input,
+  body.dark-mode #drDetailsModal #drItemSearchInput,
+  body.dark-mode #drDetailsModal #drItemSearchInputModal {
     background-color: #2a2a2a;
     border: 1px solid #555;
     color: #fff;
   }
 
-  #drDetailsModal .dr-search-container input:focus {
+  #drDetailsModal .dr-search-container input:focus,
+  #drDetailsModal #drItemSearchInput:focus,
+  #drDetailsModal #drItemSearchInputModal:focus {
     border-color: #4CAF50;
     box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
     outline: none;
   }
 
-  body.dark-mode #drDetailsModal .dr-search-container input:focus {
+  body.dark-mode #drDetailsModal .dr-search-container input:focus,
+  body.dark-mode #drDetailsModal #drItemSearchInput:focus,
+  body.dark-mode #drDetailsModal #drItemSearchInputModal:focus {
     border-color: #D96F32;
     box-shadow: 0 0 0 2px rgba(217, 111, 50, 0.25);
   }
@@ -1266,68 +1335,625 @@ body.dark-mode .po-number-display {
   #drDetailsModal .table-wrapper {
     overflow-x: hidden;
     overflow-y: auto;
-    -webkit-overflow-scrolling: touch; /* smooth scrolling on mobile */
-    max-height: 60vh;                 /* limit height */
-    padding: 0 10px 15px 10px;
+    -webkit-overflow-scrolling: touch;
+    max-height: 60vh;
+    padding: 0 15px 15px 15px;
     display: block;
   }
 
-  /* Vertical mobile table layout */
-  #drDetailsModal .transaction-table,
-  #drDetailsModal .transaction-table thead,
-  #drDetailsModal .transaction-table tbody,
-  #drDetailsModal .transaction-table tr,
-  #drDetailsModal .transaction-table th,
-  #drDetailsModal .transaction-table td {
-    display: block;
+  /* Remove min-width restriction on mobile */
+  #drDetailsModal .transaction-table {
+    min-width: auto;
     width: 100%;
   }
 
+  /* Hide table header on mobile */
   #drDetailsModal .transaction-table thead {
-    display: none;
+    display: none !important;
   }
 
-  #drDetailsModal .transaction-table tr {
-    border: 1px solid #ccc;
+  /* Vertical mobile table layout for body */
+  #drDetailsModal .transaction-table tbody,
+  #drDetailsModal .transaction-table tbody tr,
+  #drDetailsModal .transaction-table tbody th,
+  #drDetailsModal .transaction-table tbody td {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Style each row as a card */
+  #drDetailsModal .transaction-table tbody tr {
+    border: 1px solid #ddd;
     border-radius: 10px;
-    margin-bottom: 12px;
-    padding: 12px;
+    margin-bottom: 15px;
+    padding: 15px;
     background-color: #f9f9f9;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   }
 
-  body.dark-mode #drDetailsModal .transaction-table tr {
+  body.dark-mode #drDetailsModal .transaction-table tbody tr {
     background-color: #2a2a2a;
     border-color: #555;
   }
 
-  #drDetailsModal .transaction-table td {
-    padding: 8px 0;
-    border: none;
-    border-bottom: 1px solid #eee;
-    position: relative;
+  /* Style table cells with labels - two column layout */
+  #drDetailsModal .transaction-table tbody td {
+    display: block !important;
+    width: 100% !important;
+    padding: 12px 0 !important;
+    border: none !important;
+    border-bottom: 1px solid #e0e0e0 !important;
+    position: relative !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    background-color: transparent !important;
+    min-height: 40px !important;
   }
 
-  body.dark-mode #drDetailsModal .transaction-table td {
-    border-bottom: 1px solid #555;
-    color: #fff;
+  body.dark-mode #drDetailsModal .transaction-table tbody td {
+    border-bottom: 1px solid #444 !important;
+    color: #fff !important;
   }
 
-  #drDetailsModal .transaction-table td:last-child {
-    border-bottom: 0;
+  /* Remove border from last cell */
+  #drDetailsModal .transaction-table tbody td:last-child {
+    border-bottom: 0 !important;
+    padding-bottom: 0 !important;
   }
 
-  #drDetailsModal .transaction-table td::before {
-    content: attr(data-label);
-    font-weight: 600;
-    color: #555;
-    display: block;
-    margin-bottom: 4px;
+  /* Create a flex container inside td */
+  #drDetailsModal .transaction-table tbody td {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    gap: 15px !important;
+  }
+
+  /* Add column labels before each cell - LEFT ALIGNED */
+  #drDetailsModal .transaction-table tbody td::before {
+    content: attr(data-label) !important;
+    font-weight: 600 !important;
+    color: #666 !important;
+    font-size: 13px !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    text-align: left !important;
+    flex-shrink: 0 !important;
+    width: 40% !important;
+    display: block !important;
+    line-height: 1.5 !important;
+  }
+
+  body.dark-mode #drDetailsModal .transaction-table tbody td::before {
+    color: #aaa !important;
+  }
+
+  /* Value container - RIGHT ALIGNED */
+  #drDetailsModal .transaction-table tbody td > * {
+    flex: 1 !important;
+    text-align: right !important;
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+    color: #333 !important;
+  }
+
+  body.dark-mode #drDetailsModal .transaction-table tbody td > * {
+    color: #fff !important;
+  }
+
+  /* Style for serial numbers cell */
+  #drDetailsModal .transaction-table tbody td .serials-wrapper {
+    display: inline-block;
+    text-align: right;
+  }
+
+  /* Adjust view serials button for mobile */
+  #drDetailsModal .view-serials-btn {
+    padding: 8px 14px;
     font-size: 12px;
+    width: auto;
+    white-space: nowrap;
   }
 
-  body.dark-mode #drDetailsModal .transaction-table td::before {
-    color: #aaa;
+  /* Adjust serials list container for mobile */
+  #drDetailsModal .serials-list-container {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 300px;
+    z-index: 10000;
   }
 }
 
+@media (max-width: 768px) {
+    .modal-header {
+        padding: 10px 15px;
+        gap: 10px;
+    }
+
+    .modal-title {
+        font-size: 12px !important;   /* much smaller, force override */
+        font-weight: 600;
+        text-align: left;
+        margin: 0;
+        line-height: 1.1;
+        flex: 1;
+        white-space: normal;           /* allow wrapping if too long */
+    }
+
+    .modal-close,
+    .close-button {
+        font-size: 20px;
+        padding: 4px;
+        width: 28px;
+        height: 28px;
+    }
+
+    .modal form {
+        padding: 10px 15px 15px;
+        gap: 10px;
+    }
+
+    .modal-field {
+        margin-bottom: 10px;
+    }
+
+    .modal form label {
+        font-size: 11px;
+        margin-bottom: 4px;
+    }
+
+    .modal form input,
+    .modal form textarea,
+    .modal form select {
+        font-size: 13px;
+        padding: 8px 10px;
+        height: auto;
+    }
+
+    .modal-content {
+        padding: 0;
+        width: 95%;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .modal-actions {
+        margin-top: 10px;
+        gap: 10px;
+    }
+}
+    /* DR / PO Number Display */
+    .dr-number-display,
+    .po-number-display {
+        font-size: 0.95rem;
+        padding-left: 15px;
+        padding-right: 20px;
+        margin-bottom: 5px;
+    }
+
+    .po-number-display {
+        padding-top: 10px;
+        padding-bottom: 5px;
+    }
+
+    .dr-number-display {
+        padding-bottom: 8px;
+    }
+
+    /* =========================
+       MODAL FORM FIXES
+    ========================= */
+    .modal form {
+        padding: 10px 15px 15px;
+        gap: 10px;
+    }
+
+    .modal-field {
+        margin-bottom: 10px;
+    }
+
+    .modal form label {
+        font-size: 11px;
+        margin-bottom: 4px;
+    }
+
+    .modal form input,
+    .modal form textarea,
+    .modal form select {
+        font-size: 13px;
+        padding: 8px 10px;
+        height: auto;
+    }
+
+   /* ===========================
+   BUTTON STACK - DESKTOP VIEW
+=========================== */
+.button-stack {
+    display: flex;
+    flex-direction: column;       /* stack vertically */
+    gap: 10px;
+    width: 40%;                   /* smaller container width */
+    margin: 0;                     /* remove auto centering */
+    align-items: flex-end;         /* align buttons to the right */
+}
+
+.add-project-btn,
+.upload-dr-btn {
+    width: 25%;                   /* smaller buttons inside container */
+    padding: 8px 12px;
+    font-size: 13px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;     /* align action buttons to the right */
+    margin-top: 10px;
+    gap: 8px;
+}
+
+/* ===========================
+   BUTTON STACK - MOBILE VIEW
+   Max-width 768px
+=========================== */
+@media (max-width: 768px) {
+    .button-stack {
+        width: 100%;              /* full container width */
+        flex-direction: column;
+        align-items: center;      /* keep buttons centered */
+        gap: 10px;
+        margin: 0 auto;
+    }
+
+    .add-project-btn,
+    .upload-dr-btn {
+        width: 100%;              /* full-width buttons on mobile */
+        padding: 10px 15px;      /* larger touch target */
+        font-size: 14px;          /* easier to read on small screens */
+    }
+
+    .modal-actions {
+        justify-content: center;
+        gap: 10px;
+    }
+}
+
+
+    /* =========================
+       MODAL CONTENT & SCROLL
+    ========================= */
+    .modal-content {
+        width: 95%;
+        max-height: 90vh;
+        overflow-y: auto;
+        padding: 0;
+    }
+
+    .modal-body {
+        padding: 10px 15px 15px;
+    }
+
+    /* =========================
+       DR IMAGES
+    ========================= */
+    .dr-images-gallery {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 8px;
+    }
+
+    .dr-image-preview {
+        height: 90px;
+        border-radius: 6px;
+    }
+
+    /* =========================
+       TRANSACTION TABLE (VERTICAL MOBILE LAYOUT)
+    ========================= */
+    #drDetailsModal .table-wrapper {
+        overflow-x: hidden;
+        overflow-y: auto;
+        max-height: 50vh;
+        padding: 0 10px 10px 10px;
+    }
+
+    #drDetailsModal .transaction-table {
+        min-width: auto;
+        width: 100%;
+        font-size: 12px;
+    }
+
+    #drDetailsModal .transaction-table thead {
+        display: none;
+    }
+
+    #drDetailsModal .transaction-table tbody,
+    #drDetailsModal .transaction-table tbody tr,
+    #drDetailsModal .transaction-table tbody td {
+        display: block;
+        width: 100%;
+    }
+
+    #drDetailsModal .transaction-table tbody tr {
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        margin-bottom: 12px;
+        padding: 10px;
+        background-color: #f9f9f9;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+
+    #drDetailsModal .transaction-table tbody td {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: flex-start !important;
+        gap: 10px !important;
+        padding: 8px 0 !important;
+        border: none !important;
+        border-bottom: 1px solid #e0e0e0 !important;
+        word-wrap: break-word !important;
+    }
+
+    #drDetailsModal .transaction-table tbody td::before {
+        content: attr(data-label) !important;
+        font-weight: 600 !important;
+        color: #666 !important;
+        font-size: 12px !important;
+        width: 40% !important;
+        flex-shrink: 0 !important;
+    }
+
+    #drDetailsModal .transaction-table tbody td > * {
+        flex: 1 !important;
+        text-align: right !important;
+        font-size: 13px !important;
+    }
+
+    #drDetailsModal .serials-list-container {
+        width: 90%;
+        max-width: 280px;
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10000;
+    }
+
+    /* =========================
+       DR SEARCH INPUT
+    ========================= */
+    #drDetailsModal .dr-search-container {
+        width: 100%;
+        max-width: 350px;
+        margin: 0 auto 10px;
+    }
+
+    #drDetailsModal .dr-search-container input,
+    #drDetailsModal #drItemSearchInput,
+    #drDetailsModal #drItemSearchInputModal {
+        width: 100%;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+    }
+
+/* =========================
+   DR MODAL - GENERAL STYLES
+========================= */
+#drDetailsModal {
+    color: #333; /* keep text color default */
+}
+
+/* Scrollbar hide for wrapper */
+#drDetailsModal .hide-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+#drDetailsModal .hide-scrollbar::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari, Opera */
+}
+
+/* Table wrapper */
+#drDetailsModal .table-wrapper {
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 50vh;
+    padding: 0 10px 10px 10px;
+}
+
+/* Transaction table mobile layout */
+#drDetailsModal .transaction-table {
+    width: 100%;
+    font-size: 12px;
+}
+
+#drDetailsModal .transaction-table thead {
+    display: none;
+}
+
+#drDetailsModal .transaction-table tbody,
+#drDetailsModal .transaction-table tbody tr,
+#drDetailsModal .transaction-table tbody td {
+    display: block;
+    width: 100%;
+}
+
+#drDetailsModal .transaction-table tbody tr {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+#drDetailsModal .transaction-table tbody td {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+    padding: 8px 0 !important;
+    border: none !important;
+    border-bottom: 1px solid #e0e0e0 !important;
+    word-wrap: break-word !important;
+}
+
+#drDetailsModal .transaction-table tbody td::before {
+    content: attr(data-label) !important;
+    font-weight: 600 !important;
+    color: #666 !important;
+    font-size: 12px !important;
+    width: 40% !important;
+    flex-shrink: 0 !important;
+}
+
+#drDetailsModal .transaction-table tbody td > * {
+    flex: 1 !important;
+    text-align: right !important;
+    font-size: 13px !important;
+}
+
+/* Serial container */
+#drDetailsModal .serials-list-container {
+    width: 90%;
+    max-width: 280px;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10000;
+}
+
+/* DR Search input - mobile */
+#drDetailsModal .dr-search-container {
+    width: 100%;
+    max-width: 350px;
+    margin: 0 auto 10px;
+}
+
+#drDetailsModal #drItemSearchInput,
+#drDetailsModal #drItemSearchInputModal {
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+/* =========================
+   DR TRANSACTION TABLE - DESKTOP VIEW (DARK/LIGHT MODE COMPATIBLE)
+========================= */
+@media (min-width: 768px) {
+
+    /* Wrapper */
+    #drDetailsModal .table-wrapper {
+        overflow-x: auto !important;
+        overflow-y: auto !important;
+        max-height: 70vh !important;
+        padding: 0 10px 10px 10px !important;
+    }
+
+    /* Table */
+    #drDetailsModal .transaction-table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        font-size: 13px !important;
+        border: 2px solid currentColor !important; /* inherit color for border */
+    }
+
+    /* Table header */
+    #drDetailsModal .transaction-table thead {
+        display: table-header-group !important;
+        background-color: inherit !important; /* inherit background */
+    }
+
+    #drDetailsModal .transaction-table th {
+        display: table-cell !important;
+        padding: 8px 12px !important;
+        border: 1px solid currentColor !important; /* inherit border color */
+        font-weight: 600 !important;
+        color: inherit !important; /* inherit text color */
+        text-align: left !important;
+        vertical-align: middle !important;
+    }
+
+    /* Equal width for Item Name (1st column) and Remarks (7th column) */
+    #drDetailsModal .transaction-table th:nth-child(1),
+    #drDetailsModal .transaction-table td:nth-child(1),
+    #drDetailsModal .transaction-table th:nth-child(7),
+    #drDetailsModal .transaction-table td:nth-child(7) {
+        width: 18% !important;
+    }
+
+    /* Table body */
+    #drDetailsModal .transaction-table tbody {
+        display: table-row-group !important;
+    }
+
+    #drDetailsModal .transaction-table tbody tr {
+        display: table-row !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        margin-bottom: 0 !important;
+        padding: 0 !important;
+        background-color: inherit !important; /* inherit row background */
+    }
+
+    #drDetailsModal .transaction-table tbody td {
+        display: table-cell !important;
+        padding: 8px 12px !important;
+        border: 1px solid currentColor !important; /* inherit color for cell borders */
+        text-align: left !important;
+        vertical-align: middle !important;
+
+        flex: unset !important;
+        justify-content: unset !important;
+        align-items: unset !important;
+        gap: unset !important;
+        word-wrap: normal !important;
+    }
+
+    /* Remove mobile ::before labels */
+    #drDetailsModal .transaction-table tbody td::before {
+        content: none !important;
+    }
+
+    /* Remove inner flex children */
+    #drDetailsModal .transaction-table tbody td > * {
+        flex: unset !important;
+        text-align: left !important;
+    }
+
+    /* Hover effect for rows */
+    #drDetailsModal .transaction-table tbody tr:hover {
+        background-color: rgba(0, 0, 0, 0.05); /* subtle hover */
+    }
+
+    /* =========================
+       DR SEARCH BAR - RIGHT CORNER
+    ========================= */
+    #drDetailsModal .modal-header-controls {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        gap: 10px !important;
+        padding: 0 12px !important;
+    }
+
+    #drDetailsModal .dr-search-container {
+        margin: 0 !important;
+        flex: 0 0 auto;
+        width: auto !important;
+    }
+
+    #drDetailsModal #drItemSearchInput,
+    #drDetailsModal #drItemSearchInputModal {
+        width: 250px !important;
+        padding: 8px 12px !important;
+        border-radius: 6px !important;
+        font-size: 13px !important;
+    }
+}
 
